@@ -60,9 +60,18 @@
 
   <h3>2.3 הרשאות</h3>
   <ul>
-    <li><strong>גישה למיקום (Background Location):</strong> עבור התראות קרבה גם כשהאפליקציה סגורה</li>
+    <li><strong>מיקום ברקע (Background Location):</strong> עבור התראות קרבה גם כשהאפליקציה סגורה</li>
     <li><strong>התראות:</strong> לשליחת התראות כשמגיעים למיקום יעד</li>
     <li><strong>הצגה מעל אפליקציות אחרות (Display Over Other Apps):</strong> כדי שמסך ההתראה יוצג מיידית עם ההגעה ליעד, גם אם אפליקציה אחרת פתוחה. ההרשאה מופעלת רק בזמן טריגר התראה.</li>
+    <li><strong>הצגת מסך מלא (Full Screen Intent):</strong> להצגת overlay ההגעה מעל מסך הנעילה כשהמכשיר נעול</li>
+    <li><strong>ניהול "אל תפריע" (Do Not Disturb):</strong> כדי לאפשר לצלצול ההגעה להישמע גם כש-DND פעיל, ולשחזר את ההגדרה לאחר מכן</li>
+    <li><strong>שינוי עוצמת קול:</strong> להגביר זמנית את ווליום הטלפון כשמגיעים ליעד, ולשחזרו לאחר מכן</li>
+    <li><strong>רטט:</strong> לרטט בהגעה ליעד</li>
+    <li><strong>שמירת המכשיר ערני (Wake Lock):</strong> כדי שה-GPS ימשיך לפעול ברקע גם כשהמסך כבוי</li>
+    <li><strong>הפעלה אחרי reboot:</strong> לשחזור התראות פעילות כשהמכשיר מופעל מחדש</li>
+    <li><strong>פטור מאופטימיזציית סוללה:</strong> לפעילות אמינה ברקע (האפליקציה מבקשת את אישורכם)</li>
+    <li><strong>אחסון מקומי:</strong> לשמירת מיקומים, מסלולים והגדרות על המכשיר</li>
+    <li><strong>רכישות (Billing):</strong> לעיבוד מנויים ורכישות חד-פעמיות דרך Google Play</li>
     <li><strong>אינטרנט:</strong> לחיפוש כתובות, טעינת תחנות ציבוריות ואנליטיקס</li>
   </ul>
 
@@ -96,10 +105,10 @@
   <h3>5.1 שירותים שבהם אנו משתמשים</h3>
   <ul>
     <li><strong>LocationIQ + OpenStreetMap Nominatim:</strong> שירותי geocoding (המרת כתובות לקואורדינטות). טקסט החיפוש ומיקומכם המשוער נשלחים לצורך מתן תוצאות רלוונטיות. נתוני מפה מוצגים על בסיס © OpenStreetMap contributors.</li>
-    <li><strong>Amplitude:</strong> אנליטיקס אנונימי — מדידת פעולות כלליות באפליקציה לשיפור המוצר (ללא מידע מזהה)</li>
-    <li><strong>RevenueCat:</strong> ניהול מנויים ורכישות. רכישות מעובדות על ידי App Store / Google Play ולא ישירות על ידינו</li>
+    <li><strong>Google Maps Platform:</strong> שירות geocoding משני (fallback) — טקסט החיפוש נשלח לשרתי Google אם LocationIQ לא זמין. כפוף ל-<a href="https://policies.google.com/privacy">מדיניות הפרטיות של Google</a>.</li>
+    <li><strong>Amplitude:</strong> אנליטיקס אנונימי — מדידת פעולות כלליות באפליקציה לשיפור המוצר, וכן דיווח שגיאות קריסה (ללא מידע מזהה, ללא נתוני מיקום)</li>
+    <li><strong>RevenueCat:</strong> ניהול מנויים ורכישות. רכישות מעובדות על ידי Google Play ולא ישירות על ידינו</li>
     <li><strong>Supabase:</strong> תשתית ענן לאנליטיקס אנונימי ומאגר תחנות ציבוריות</li>
-    <li><strong>שרת דיווח שגיאות (פנימי):</strong> במקרה של קריסת אפליקציה, נשלח דיווח שגיאה הכולל סוג השגיאה ופעולה שבוצעה — <strong>ללא מידע אישי או נתוני מיקום</strong></li>
     <li><strong>Expo / EAS:</strong> תשתית הפצת האפליקציה</li>
   </ul>
 
