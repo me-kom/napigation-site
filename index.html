@@ -11,16 +11,16 @@
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://me-kum.app/" />
+  <meta property="og:url" content="https://me-kom.app/" />
   <meta property="og:title" content="מי-קום — לעולם לא תפספס את התחנה שלך" />
   <meta property="og:description" content="אפליקציית התראות קרבה לתחבורה ציבורית. עובדת ברקע, מדויקת, ושומרת על פרטיותך." />
   <meta property="og:locale" content="he_IL" />
   <meta property="og:locale:alternate" content="en_US" />
 
   <!-- hreflang -->
-  <link rel="alternate" hreflang="he" href="https://me-kum.app/" />
-  <link rel="alternate" hreflang="en" href="https://me-kum.app/?lang=en" />
-  <link rel="canonical" href="https://me-kum.app/" />
+  <link rel="alternate" hreflang="he" href="https://me-kom.app/" />
+  <link rel="alternate" hreflang="en" href="https://me-kom.app/?lang=en" />
+  <link rel="canonical" href="https://me-kom.app/" />
 
   <style>
     :root {
@@ -228,6 +228,50 @@
     .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
     .feature-card p { font-size: 0.88rem; color: var(--text-light); line-height: 1.55; }
 
+    /* ── Plans ── */
+    #plans { background: var(--bg); }
+    .plans-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      max-width: 680px;
+      margin: 0 auto;
+    }
+    .plan-card {
+      border-radius: var(--radius);
+      padding: 32px 28px;
+      border: 2px solid var(--border);
+      background: var(--white);
+      position: relative;
+    }
+    .plan-card.featured {
+      border-color: var(--accent);
+      box-shadow: 0 4px 24px rgba(67,97,238,0.15);
+    }
+    .plan-badge {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 3px 14px;
+      border-radius: 20px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+    [lang="he"] .plan-badge { left: 50%; transform: translateX(-50%); }
+    .plan-name { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
+    .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; line-height: 1.2; }
+    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-light); }
+    .plan-desc { font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px; }
+    .plan-features { list-style: none; padding: 0; margin: 0; }
+    .plan-features li { font-size: 0.9rem; padding: 7px 0; border-bottom: 1px solid var(--border); color: var(--text); display: flex; gap: 8px; align-items: baseline; }
+    .plan-features li:last-child { border-bottom: none; }
+    .plan-features li::before { content: '✓'; color: #2e7d32; font-weight: 700; flex-shrink: 0; }
+
     /* ── FAQ ── */
     #faq { background: var(--white); }
     .faq-list { max-width: 720px; margin: 0 auto; }
@@ -346,6 +390,8 @@
     <a href="#how" class="en-content">How it works</a>
     <a href="#faq" class="he-content">שאלות נפוצות</a>
     <a href="#faq" class="en-content">FAQ</a>
+    <a href="#plans" class="he-content">תוכניות</a>
+    <a href="#plans" class="en-content">Plans</a>
     <a href="#download" class="he-content">הורדה</a>
     <a href="#download" class="en-content">Download</a>
     <a href="#contact" class="he-content">צור קשר</a>
@@ -364,7 +410,7 @@
       <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">▶ הורד ל-Android</a>
       <a class="btn-secondary" href="#how">איך זה עובד?</a>
     </div>
-    <p class="hero-note">הורדה חינמית · ללא הרשמה · iOS בקרוב</p>
+    <p class="hero-note">חינמי תמיד · מנוי פרימיום זמין · iOS בקרוב</p>
   </div>
   <div class="en-content">
     <div class="hero-badge">📱 Available on Android · iOS coming soon</div>
@@ -374,7 +420,7 @@
       <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">▶ Download for Android</a>
       <a class="btn-secondary" href="#how">How does it work?</a>
     </div>
-    <p class="hero-note">Free download · No registration · iOS coming soon</p>
+    <p class="hero-note">Free forever · Premium subscription available · iOS coming soon</p>
   </div>
 </section>
 
@@ -460,6 +506,72 @@
         <h3 class="en-content">Loud ring</h3>
         <p class="he-content">מי-קום מגבירה ווליום אוטומטית ומעירה גם ממצב שקט — כדי שלא תפספס.</p>
         <p class="en-content">Me-Kom auto-boosts volume and rings even in silent mode — so you won't miss it.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Plans -->
+<section id="plans">
+  <div class="section-inner">
+    <div class="he-content">
+      <p class="section-label">תוכניות</p>
+      <h2 class="section-title">חינמי תמיד — עם אפשרות לשדרג</h2>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <p class="plan-name">חינמי</p>
+          <p class="plan-price">₪0 <span>/ לתמיד</span></p>
+          <p class="plan-desc">לכל מה שצריך כדי לא לפספס</p>
+          <ul class="plan-features">
+            <li>עד 3 מיקומים שמורים</li>
+            <li>עד 1 מסלול</li>
+            <li>התראות קרבה ברקע</li>
+            <li>צלצול + רטט + הגברת ווליום</li>
+            <li>ללא הרשמה</li>
+          </ul>
+        </div>
+        <div class="plan-card featured">
+          <span class="plan-badge">הכי פופולרי</span>
+          <p class="plan-name">פרימיום</p>
+          <p class="plan-price">₪9.90 <span>/ חודש</span></p>
+          <p class="plan-desc">לנוסעים קבועים שרוצים יותר</p>
+          <ul class="plan-features">
+            <li>מיקומים שמורים ללא הגבלה</li>
+            <li>מסלולים ללא הגבלה</li>
+            <li>הכל מהתוכנית החינמית</li>
+            <li>עדיפות בתמיכה</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="en-content">
+      <p class="section-label">Plans</p>
+      <h2 class="section-title">Free forever — with an option to upgrade</h2>
+      <div class="plans-grid">
+        <div class="plan-card">
+          <p class="plan-name">Free</p>
+          <p class="plan-price">₪0 <span>/ forever</span></p>
+          <p class="plan-desc">Everything you need to never miss your stop</p>
+          <ul class="plan-features">
+            <li>Up to 3 saved locations</li>
+            <li>Up to 1 route</li>
+            <li>Background proximity alerts</li>
+            <li>Ring + vibration + volume boost</li>
+            <li>No registration required</li>
+          </ul>
+        </div>
+        <div class="plan-card featured">
+          <span class="plan-badge">Most popular</span>
+          <p class="plan-name">Premium</p>
+          <p class="plan-price">₪9.90 <span>/ month</span></p>
+          <p class="plan-desc">For frequent commuters who want more</p>
+          <ul class="plan-features">
+            <li>Unlimited saved locations</li>
+            <li>Unlimited routes</li>
+            <li>Everything in Free</li>
+            <li>Priority support</li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
@@ -556,11 +668,11 @@
       <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
         <span class="store-icon">▶</span> Google Play
       </a>
-      <a class="store-btn disabled" href="#" aria-disabled="true">
+      <span class="store-btn disabled">
         <span class="store-icon">🍎</span>
         <span class="he-content">App Store — בקרוב</span>
         <span class="en-content">App Store — coming soon</span>
-      </a>
+      </span>
     </div>
   </div>
 </section>
@@ -604,7 +716,7 @@
   "description": "Proximity alert app for public transport. Never miss your bus stop or train station again.",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
   "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
-  "url": "https://me-kum.app",
+  "url": "https://me-kom.app",
   "inLanguage": ["he", "en"],
   "author": { "@type": "Organization", "name": "Me-Kom", "email": "me.kum.support@gmail.com" }
 }
@@ -672,6 +784,13 @@
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
     localStorage.setItem('me-kom-lang', lang);
+    // aria-hidden for accessibility and SEO — hide inactive language from screen readers
+    document.querySelectorAll('.he-content').forEach(function(el) {
+      el.setAttribute('aria-hidden', lang === 'he' ? 'false' : 'true');
+    });
+    document.querySelectorAll('.en-content').forEach(function(el) {
+      el.setAttribute('aria-hidden', lang === 'en' ? 'false' : 'true');
+    });
   }
 
   function toggleLang() {
