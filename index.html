@@ -232,9 +232,9 @@
     #plans { background: var(--bg); }
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
       gap: 24px;
-      max-width: 680px;
+      max-width: 1050px;
       margin: 0 auto;
     }
     .plan-card {
@@ -388,10 +388,10 @@
   <div class="navbar-links">
     <a href="#how" class="he-content">איך זה עובד</a>
     <a href="#how" class="en-content">How it works</a>
-    <a href="#faq" class="he-content">שאלות נפוצות</a>
-    <a href="#faq" class="en-content">FAQ</a>
     <a href="#plans" class="he-content">תוכניות</a>
     <a href="#plans" class="en-content">Plans</a>
+    <a href="#faq" class="he-content">שאלות נפוצות</a>
+    <a href="#faq" class="en-content">FAQ</a>
     <a href="#download" class="he-content">הורדה</a>
     <a href="#download" class="en-content">Download</a>
     <a href="#contact" class="he-content">צור קשר</a>
@@ -434,24 +434,24 @@
     <div class="steps">
       <div class="step">
         <div class="step-number">1</div>
-        <h3 class="he-content">שמור מיקום</h3>
-        <h3 class="en-content">Save a location</h3>
-        <p class="he-content">בחר תחנה, צומת, או כל נקודה על המפה. תן לה שם וקבע רדיוס התראה.</p>
-        <p class="en-content">Pick any stop, station, or point on the map. Give it a name and set an alert radius.</p>
+        <h3 class="he-content">בחר יעד</h3>
+        <h3 class="en-content">Choose your stop</h3>
+        <p class="he-content">סמן תחנה, צומת או כל נקודה אחרת על המפה, וקבע כמה מטרים לפני ההגעה תרצה שהאפליקציה תעיר אותך.</p>
+        <p class="en-content">Pin any stop, intersection, or point on the map, and set how close you want to be before the app wakes you up.</p>
       </div>
       <div class="step">
         <div class="step-number">2</div>
-        <h3 class="he-content">הפעל פעמון</h3>
-        <h3 class="en-content">Activate the alarm</h3>
-        <p class="he-content">לפני שנכנסים לאוטובוס או לרכבת — לחץ על הפעמון. מי-קום תתחיל לעקוב.</p>
-        <p class="en-content">Before boarding the bus or train — tap the bell. Me-Kom starts tracking.</p>
+        <h3 class="he-content">הפעל התראה</h3>
+        <h3 class="en-content">Start the alert</h3>
+        <p class="he-content">עלית לאוטובוס או לרכבת? לחץ על ההפעלה ומי-קום תתחיל לעקוב אחרי המיקום שלך ברקע.</p>
+        <p class="en-content">Boarded the bus or train? Tap start and Me-Kom will track your location in the background.</p>
       </div>
       <div class="step">
         <div class="step-number">3</div>
-        <h3 class="he-content">תנוח</h3>
-        <h3 class="en-content">Relax</h3>
-        <p class="he-content">ישן, קרא ספר, שחק בטלפון — מי-קום תצלצל חזק כשמגיעים לרדיוס שקבעת.</p>
-        <p class="en-content">Sleep, read, scroll — Me-Kom will ring loudly when you enter your chosen radius.</p>
+        <h3 class="he-content">סע בראש שקט</h3>
+        <h3 class="en-content">Sit back and relax</h3>
+        <p class="he-content">זה הזמן לישון, לקרוא או לשמוע מוזיקה. מי-קום תצלצל ותתריע בדיוק כשתתקרב ליעד.</p>
+        <p class="en-content">Sleep, read, or listen to music. Me-Kom will ring and alert you the moment you're approaching your stop.</p>
       </div>
     </div>
   </div>
@@ -542,6 +542,24 @@
             <li>עדיפות בתמיכה</li>
           </ul>
         </div>
+        <div class="plan-card">
+          <p class="plan-name">שנתי</p>
+          <p class="plan-price" style="font-size:1.1rem;">שנתי <span>/ חיסכון מול חודשי</span></p>
+          <p class="plan-desc">ציין אחת לשנה</p>
+          <ul class="plan-features">
+            <li>הכל כמו תוכנית פרימיום</li>
+            <li>חיסכון לעומת מנוי חודשי</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <p class="plan-name">לכל החיים</p>
+          <p class="plan-price" style="font-size:1.1rem;">תשלום חד פעמי <span>/ לנצח</span></p>
+          <p class="plan-desc">משלם פעם אחת, משתמש לנצח</p>
+          <ul class="plan-features">
+            <li>הכל כמו תוכנית פרימיום</li>
+            <li>אין חיוב חוזר אי פעם</li>
+          </ul>
+        </div>
       </div>
     </div>
     <div class="en-content">
@@ -570,6 +588,24 @@
             <li>Unlimited routes</li>
             <li>Everything in Free</li>
             <li>Priority support</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <p class="plan-name">Yearly</p>
+          <p class="plan-price" style="font-size:1.1rem;">Annual <span>/ save vs. monthly</span></p>
+          <p class="plan-desc">One payment per year</p>
+          <ul class="plan-features">
+            <li>Everything in Premium</li>
+            <li>Save vs. monthly billing</li>
+          </ul>
+        </div>
+        <div class="plan-card">
+          <p class="plan-name">Lifetime</p>
+          <p class="plan-price" style="font-size:1.1rem;">One-time <span>/ forever</span></p>
+          <p class="plan-desc">Pay once, use forever</p>
+          <ul class="plan-features">
+            <li>Everything in Premium</li>
+            <li>No recurring charges</li>
           </ul>
         </div>
       </div>
