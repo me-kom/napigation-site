@@ -1,19 +1,19 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
+<html lang="he" dir="rtl" data-platform="android">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary meta -->
-  <title>מי-קום — לעולם לא תפספס את התחנה שלך</title>
-  <meta name="description" content="מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית. שמור תחנה, הפעל פעמון — ישן, קרא, הירגע. מי-קום תעיר אותך בזמן." />
-  <meta name="keywords" content="מי-קום, אפליקציה תחבורה ציבורית, התראה תחנה, me-kom, proximity alert, public transport app, bus stop alarm, Israel transport app" />
+  <title>מי-קום (Me-Kom) — התראות קרבה חכמות לתחבורה ציבורית</title>
+  <meta name="description" content="מי-קום היא אפליקציית התראות קרבה מתקדמת המבטיחה שלעולם לא תפספסו את התחנה. מעקב מיקום אמין ברקע, ללא פרסומות, ללא צורך בהרשמה ותוך שמירה מלאה על פרטיות המשתמש." />
+  <meta name="keywords" content="מי-קום, אפליקציה תחבורה ציבורית, התראה תחנה, me-kom, proximity alert, public transport app, bus stop alarm, background location alarm, ad-free transit app" />
 
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://me-kom.app/" />
-  <meta property="og:title" content="מי-קום — לעולם לא תפספס את התחנה שלך" />
-  <meta property="og:description" content="אפליקציית התראות קרבה לתחבורה ציבורית. עובדת ברקע, מדויקת, ושומרת על פרטיותך." />
+  <meta property="og:title" content="מי-קום — התראות קרבה חכמות לתחבורה ציבורית" />
+  <meta property="og:description" content="התראה מדויקת לפני הגעה ליעד. חוויה נקייה מפרסומות, עבודה אמינה ברקע ועיבוד מיקום מקומי לחלוטין." />
   <meta property="og:locale" content="he_IL" />
   <meta property="og:locale:alternate" content="en_US" />
 
@@ -29,25 +29,30 @@
       --accent-light: #6e86f5;
       --bg: #f8f9ff;
       --white: #ffffff;
-      --text: #222;
-      --text-light: #555;
+      --text: #2c3e50;
+      --text-light: #546e7a;
       --border: #e2e5f0;
       --radius: 12px;
-      --shadow: 0 2px 16px rgba(67,97,238,0.10);
+      --shadow: 0 4px 20px rgba(67,97,238,0.08);
+      --success: #10b981;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
       background: var(--bg);
       color: var(--text);
       line-height: 1.6;
     }
 
-    /* Language */
-    [lang="he"] .en-content { display: none; }
-    [lang="en"] .he-content { display: none; }
+    /* Language logic */
+    [lang="he"] .en-content { display: none !important; }
+    [lang="en"] .he-content { display: none !important; }
     [lang="en"] { direction: ltr; }
+
+    /* Platform logic — only one platform's content is shown at a time */
+    [data-platform="android"] .ios-content { display: none !important; }
+    [data-platform="ios"] .android-content { display: none !important; }
 
     /* ── Navbar ── */
     .navbar {
@@ -56,115 +61,124 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 60px;
+      height: 64px;
       position: sticky;
       top: 0;
       z-index: 200;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
     }
     .navbar-logo {
       color: #fff;
       font-weight: 800;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       text-decoration: none;
       letter-spacing: -0.5px;
     }
     .navbar-logo span { color: var(--accent-light); }
-    .navbar-links {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-    }
+    .navbar-links { display: flex; gap: 28px; align-items: center; }
     .navbar-links a {
-      color: rgba(255,255,255,0.75);
+      color: rgba(255,255,255,0.8);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
+      font-weight: 500;
       transition: color 0.2s;
     }
     .navbar-links a:hover { color: #fff; }
-    .lang-toggle {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      color: #fff;
-      padding: 5px 14px;
+    .nav-controls { display: flex; align-items: center; gap: 12px; }
+    .seg {
+      display: inline-flex;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.2);
       border-radius: 20px;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: background 0.2s;
-      font-family: inherit;
+      overflow: hidden;
     }
-    .lang-toggle:hover { background: rgba(255,255,255,0.22); }
+    .seg button {
+      background: transparent;
+      border: none;
+      color: rgba(255,255,255,0.65);
+      padding: 6px 14px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: background 0.2s, color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .seg button:hover:not(.active) { color: #fff; }
+    .seg button.active { background: var(--accent); color: #fff; }
 
     /* ── Hero ── */
     .hero {
       background: linear-gradient(135deg, var(--primary) 0%, #16213e 60%, #0f3460 100%);
       color: #fff;
-      padding: 80px 24px 90px;
+      padding: 90px 24px 100px;
       text-align: center;
     }
     .hero-badge {
       display: inline-block;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      padding: 4px 16px;
-      font-size: 0.8rem;
-      margin-bottom: 24px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 24px;
+      padding: 6px 18px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 28px;
       letter-spacing: 0.5px;
     }
     .hero h1 {
-      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-size: clamp(2.2rem, 5vw, 3.5rem);
       font-weight: 800;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
       line-height: 1.2;
+      letter-spacing: -0.5px;
     }
     .hero h1 em { color: var(--accent-light); font-style: normal; }
     .hero p {
       font-size: 1.15rem;
-      color: rgba(255,255,255,0.8);
-      max-width: 560px;
+      color: rgba(255,255,255,0.85);
+      max-width: 600px;
       margin: 0 auto 40px;
+      line-height: 1.6;
     }
-    .hero-buttons {
-      display: flex;
-      gap: 16px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
+    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .btn-primary {
       background: var(--accent);
       color: #fff;
-      padding: 14px 32px;
+      padding: 14px 36px;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.05rem;
       transition: background 0.2s, transform 0.1s;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
+      box-shadow: 0 4px 15px rgba(67,97,238,0.3);
     }
-    .btn-primary:hover { background: #3451d1; transform: translateY(-1px); }
+    .btn-primary:hover { background: #3451d1; transform: translateY(-2px); }
     .btn-secondary {
-      background: rgba(255,255,255,0.1);
+      background: transparent;
       color: #fff;
-      padding: 14px 32px;
+      padding: 14px 36px;
       border-radius: 50px;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1rem;
-      border: 1px solid rgba(255,255,255,0.3);
-      transition: background 0.2s;
+      font-size: 1.05rem;
+      border: 2px solid rgba(255,255,255,0.3);
+      transition: background 0.2s, border-color 0.2s;
     }
-    .btn-secondary:hover { background: rgba(255,255,255,0.18); }
-    .hero-note { margin-top: 20px; font-size: 0.82rem; color: rgba(255,255,255,0.45); }
+    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
+    .hero-note { margin-top: 24px; font-size: 0.85rem; color: rgba(255,255,255,0.5); }
 
-    /* ── Sections ── */
-    section { padding: 72px 24px; }
-    .section-inner { max-width: 960px; margin: 0 auto; }
+    /* ── Global Sections ── */
+    section { padding: 80px 24px; }
+    .section-inner { max-width: 1000px; margin: 0 auto; }
     .section-label {
       text-align: center;
-      font-size: 0.78rem;
+      font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 1.5px;
       text-transform: uppercase;
@@ -173,80 +187,117 @@
     }
     .section-title {
       text-align: center;
-      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
       font-weight: 800;
       color: var(--primary);
-      margin-bottom: 48px;
+      margin-bottom: 56px;
+      letter-spacing: -0.5px;
     }
 
     /* ── How it works ── */
     #how { background: var(--white); }
     .steps {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 32px;
     }
     .step {
       text-align: center;
-      padding: 32px 24px;
+      padding: 40px 24px;
       border-radius: var(--radius);
       background: var(--bg);
       border: 1px solid var(--border);
+      position: relative;
+      transition: transform 0.2s;
     }
+    .step:hover { transform: translateY(-4px); }
     .step-number {
-      width: 52px; height: 52px;
+      width: 56px; height: 56px;
       border-radius: 50%;
       background: var(--accent);
       color: #fff;
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       font-weight: 800;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 16px;
+      margin: 0 auto 20px;
+      box-shadow: 0 4px 12px rgba(67,97,238,0.25);
     }
-    .step h3 { font-size: 1.05rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
-    .step p { font-size: 0.92rem; color: var(--text-light); }
+    .step h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
+    .step p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+
+    /* ── Advantages (The SEO/AI Block) ── */
+    #advantage {
+      background: linear-gradient(180deg, var(--bg) 0%, var(--white) 100%);
+    }
+    .adv-intro {
+      text-align: center;
+      max-width: 760px;
+      margin: -20px auto 48px;
+      color: var(--text-light);
+      font-size: 1.1rem;
+    }
+    .adv-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .adv-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      padding: 32px;
+      border: 1px solid var(--border);
+      border-right: 4px solid var(--accent); /* RTL native */
+      box-shadow: var(--shadow);
+    }
+    [lang="en"] .adv-card { border-right: 1px solid var(--border); border-left: 4px solid var(--accent); }
+    .adv-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .adv-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .adv-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
     /* ── Features ── */
     #features { background: var(--bg); }
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 24px;
     }
     .feature-card {
       background: var(--white);
       border-radius: var(--radius);
-      padding: 28px 24px;
+      padding: 32px 28px;
       border: 1px solid var(--border);
-      box-shadow: var(--shadow);
       transition: transform 0.2s, box-shadow 0.2s;
     }
-    .feature-card:hover { transform: translateY(-3px); box-shadow: 0 6px 24px rgba(67,97,238,0.14); }
-    .feature-icon { font-size: 2rem; margin-bottom: 14px; }
-    .feature-card h3 { font-size: 1rem; font-weight: 700; margin-bottom: 8px; color: var(--primary); }
-    .feature-card p { font-size: 0.88rem; color: var(--text-light); line-height: 1.55; }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
+    .feature-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
+    .feature-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
     /* ── Plans ── */
-    #plans { background: var(--bg); }
+    #plans { background: var(--white); }
     .plans-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
       gap: 24px;
-      max-width: 1050px;
+      max-width: 1100px;
       margin: 0 auto;
     }
     .plan-card {
       border-radius: var(--radius);
-      padding: 32px 28px;
-      border: 2px solid var(--border);
-      background: var(--white);
+      padding: 40px 32px;
+      border: 1px solid var(--border);
+      background: var(--bg);
       position: relative;
+      display: flex;
+      flex-direction: column;
     }
     .plan-card.featured {
-      border-color: var(--accent);
-      box-shadow: 0 4px 24px rgba(67,97,238,0.15);
+      background: var(--white);
+      border: 2px solid var(--accent);
+      box-shadow: 0 8px 30px rgba(67,97,238,0.12);
+      transform: scale(1.02);
     }
     .plan-badge {
       position: absolute;
@@ -255,42 +306,50 @@
       transform: translateX(-50%);
       background: var(--accent);
       color: #fff;
-      font-size: 0.75rem;
+      font-size: 0.8rem;
       font-weight: 700;
-      padding: 3px 14px;
+      padding: 4px 16px;
       border-radius: 20px;
       letter-spacing: 0.5px;
       white-space: nowrap;
     }
-    [lang="he"] .plan-badge { left: 50%; transform: translateX(-50%); }
-    .plan-name { font-size: 1.1rem; font-weight: 800; color: var(--primary); margin-bottom: 6px; }
-    .plan-price { font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-bottom: 4px; line-height: 1.2; }
-    .plan-price span { font-size: 1rem; font-weight: 400; color: var(--text-light); }
-    .plan-desc { font-size: 0.85rem; color: var(--text-light); margin-bottom: 20px; }
-    .plan-features { list-style: none; padding: 0; margin: 0; }
-    .plan-features li { font-size: 0.9rem; padding: 7px 0; border-bottom: 1px solid var(--border); color: var(--text); display: flex; gap: 8px; align-items: baseline; }
+    [lang="en"] .plan-badge { transform: translateX(-50%); }
+    .plan-name { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
+    .plan-price { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 6px; line-height: 1; }
+    .plan-price span { font-size: 1.05rem; font-weight: 500; color: var(--text-light); }
+    .plan-desc { font-size: 0.9rem; color: var(--text-light); margin-bottom: 24px; }
+    .plan-features { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+    .plan-features li { 
+      font-size: 0.95rem; 
+      padding: 10px 0; 
+      border-bottom: 1px solid var(--border); 
+      color: var(--text); 
+      display: flex; 
+      gap: 12px; 
+      align-items: flex-start; 
+    }
     .plan-features li:last-child { border-bottom: none; }
-    .plan-features li::before { content: '✓'; color: #2e7d32; font-weight: 700; flex-shrink: 0; }
+    .plan-features li::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; }
 
     /* ── FAQ ── */
-    #faq { background: var(--white); }
-    .faq-list { max-width: 720px; margin: 0 auto; }
-    .faq-item { border-bottom: 1px solid var(--border); padding: 20px 0; }
+    #faq { background: var(--bg); }
+    .faq-list { max-width: 800px; margin: 0 auto; background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); }
+    .faq-item { border-bottom: 1px solid var(--border); padding: 24px 32px; }
     .faq-item:last-child { border-bottom: none; }
     .faq-q {
       font-weight: 700;
-      font-size: 1rem;
+      font-size: 1.05rem;
       color: var(--primary);
       cursor: pointer;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
+      align-items: center;
+      gap: 16px;
       user-select: none;
     }
     .faq-q::after {
       content: '+';
-      font-size: 1.3rem;
+      font-size: 1.5rem;
       color: var(--accent);
       flex-shrink: 0;
       line-height: 1;
@@ -298,14 +357,14 @@
     }
     .faq-item.open .faq-q::after { transform: rotate(45deg); }
     .faq-a {
-      font-size: 0.92rem;
+      font-size: 0.95rem;
       color: var(--text-light);
-      line-height: 1.65;
+      line-height: 1.7;
       max-height: 0;
       overflow: hidden;
       transition: max-height 0.3s ease, padding 0.3s ease;
     }
-    .faq-item.open .faq-a { max-height: 300px; padding-top: 12px; }
+    .faq-item.open .faq-a { max-height: 400px; padding-top: 16px; }
 
     /* ── Download ── */
     #download {
@@ -314,69 +373,78 @@
       color: #fff;
     }
     #download .section-title { color: #fff; margin-bottom: 16px; }
-    #download .sub { color: rgba(255,255,255,0.8); margin-bottom: 36px; font-size: 1.05rem; }
-    .store-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    #download .sub { color: rgba(255,255,255,0.9); margin-bottom: 40px; font-size: 1.1rem; }
+    .store-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
     .store-btn {
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.4);
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.3);
       color: #fff;
-      padding: 14px 28px;
+      padding: 16px 32px;
       border-radius: 50px;
       text-decoration: none;
-      font-size: 0.95rem;
+      font-size: 1rem;
       font-weight: 600;
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      transition: background 0.2s;
+      gap: 12px;
+      transition: background 0.2s, transform 0.1s;
     }
-    .store-btn:hover { background: rgba(255,255,255,0.22); }
-    .store-btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-    .store-icon { font-size: 1.3rem; }
+    .store-btn:hover:not(.disabled) { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
+    .store-btn.disabled { 
+      opacity: 0.6; 
+      cursor: default; 
+      pointer-events: none; 
+      background: transparent;
+    }
+    .store-icon { font-size: 1.4rem; }
 
     /* ── Contact ── */
-    #contact { background: var(--bg); text-align: center; }
+    #contact { background: var(--white); text-align: center; }
     #contact .section-title { margin-bottom: 16px; }
-    #contact p { color: var(--text-light); margin-bottom: 24px; }
+    #contact p { color: var(--text-light); margin-bottom: 32px; font-size: 1.05rem; }
     .contact-email {
       display: inline-block;
-      background: var(--white);
-      border: 1px solid var(--border);
+      background: var(--primary);
       border-radius: 50px;
-      padding: 12px 28px;
-      color: var(--accent);
+      padding: 14px 36px;
+      color: #fff;
       text-decoration: none;
       font-weight: 600;
-      font-size: 1rem;
-      box-shadow: var(--shadow);
-      transition: box-shadow 0.2s;
+      font-size: 1.05rem;
+      box-shadow: 0 4px 15px rgba(26,26,46,0.2);
+      transition: background 0.2s, transform 0.1s;
     }
-    .contact-email:hover { box-shadow: 0 4px 20px rgba(67,97,238,0.18); }
+    .contact-email:hover { background: #2a2a4a; transform: translateY(-2px); }
 
     /* ── Footer ── */
     footer {
       background: var(--primary);
       color: rgba(255,255,255,0.6);
       text-align: center;
-      padding: 32px 24px;
-      font-size: 0.85rem;
+      padding: 40px 24px;
+      font-size: 0.9rem;
+      border-top: 1px solid rgba(255,255,255,0.1);
     }
     .footer-links {
       display: flex;
-      gap: 24px;
+      gap: 32px;
       justify-content: center;
       flex-wrap: wrap;
-      margin-bottom: 16px;
+      margin-bottom: 24px;
     }
-    .footer-links a { color: rgba(255,255,255,0.6); text-decoration: none; }
+    .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; }
     .footer-links a:hover { color: #fff; }
 
     /* ── Responsive ── */
-    @media (max-width: 640px) {
+    @media (max-width: 768px) {
       .navbar { padding: 0 16px; }
-      .navbar-links a:not(.lang-toggle) { display: none; }
-      .hero { padding: 56px 20px 64px; }
-      section { padding: 52px 20px; }
+      .navbar-links > a { display: none; }
+      .nav-controls { gap: 8px; }
+      .seg button { padding: 6px 10px; font-size: 0.78rem; }
+      .hero { padding: 60px 20px 80px; }
+      section { padding: 60px 20px; }
+      .plan-card.featured { transform: scale(1); }
+      .adv-card { padding: 24px; }
     }
   </style>
 </head>
@@ -388,70 +456,136 @@
   <div class="navbar-links">
     <a href="#how" class="he-content">איך זה עובד</a>
     <a href="#how" class="en-content">How it works</a>
+    <a href="#advantage" class="he-content">היתרון הטכנולוגי</a>
+    <a href="#advantage" class="en-content">Why Me-Kom</a>
     <a href="#plans" class="he-content">תוכניות</a>
     <a href="#plans" class="en-content">Plans</a>
     <a href="#faq" class="he-content">שאלות נפוצות</a>
     <a href="#faq" class="en-content">FAQ</a>
     <a href="#download" class="he-content">הורדה</a>
     <a href="#download" class="en-content">Download</a>
-    <a href="#contact" class="he-content">צור קשר</a>
-    <a href="#contact" class="en-content">Contact</a>
-    <button class="lang-toggle" onclick="toggleLang()">EN / עב</button>
+    <div class="nav-controls">
+      <div class="seg" role="group" aria-label="בחירת שפה / Language">
+        <button type="button" data-lang="he" class="active" onclick="setLang('he')">עברית</button>
+        <button type="button" data-lang="en" onclick="setLang('en')">English</button>
+      </div>
+      <div class="seg" role="group" aria-label="בחירת פלטפורמה / Platform">
+        <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">🤖 Android</button>
+        <button type="button" data-platform="ios" onclick="setPlatform('ios')">🍎 iOS</button>
+      </div>
+    </div>
   </div>
 </nav>
 
 <!-- Hero -->
 <section class="hero" id="top">
   <div class="he-content">
-    <div class="hero-badge">📱 זמין ב-Android · iOS בקרוב</div>
+    <div class="hero-badge android-content">🤖 זמין עכשיו ב-Google Play</div>
+    <div class="hero-badge ios-content">🍎 גרסת iOS בפיתוח מתקדם · בקרוב ל-App Store</div>
     <h1>לעולם לא תפספס<br/><em>את התחנה שלך</em></h1>
-    <p>מי-קום מתריעה לפני שמגיעים — לא אחרי. ישן, קרא, הירגע — ותן לאפליקציה לשמור עליך.</p>
+    <p>אפליקציית התראות קרבה מקצועית לתחבורה ציבורית. מי-קום מנהלת את מסלול הנסיעה שלך ברקע, חוסכת משאבי סוללה, ומוודאת שתתעורר בדיוק בזמן.</p>
     <div class="hero-buttons">
-      <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">▶ הורד ל-Android</a>
-      <a class="btn-secondary" href="#how">איך זה עובד?</a>
+      <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        הורד עכשיו בחינם
+      </a>
+      <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">🍎 בקרוב ל-App Store</span>
+      <a class="btn-secondary" href="#how">למד איך זה עובד</a>
     </div>
-    <p class="hero-note">חינמי תמיד · מנוי פרימיום זמין · iOS בקרוב</p>
+    <p class="hero-note">ללא צורך בהרשמה · ללא שילוב פרסומות · מעקב מקומי בלבד</p>
   </div>
   <div class="en-content">
-    <div class="hero-badge">📱 Available on Android · iOS coming soon</div>
+    <div class="hero-badge android-content">🤖 Available now on Google Play</div>
+    <div class="hero-badge ios-content">🍎 iOS version in active development · coming soon to the App Store</div>
     <h1>Never miss<br/><em>your stop again</em></h1>
-    <p>Me-Kom alerts you before you arrive — not after. Sleep, read, relax — and let the app watch out for you.</p>
+    <p>The professional proximity alert app for public transit. Me-Kom manages your route in the background, optimizes battery usage, and ensures you wake up exactly on time.</p>
     <div class="hero-buttons">
-      <a class="btn-primary" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">▶ Download for Android</a>
-      <a class="btn-secondary" href="#how">How does it work?</a>
+      <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+        Download for Free
+      </a>
+      <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">🍎 Coming soon to the App Store</span>
+      <a class="btn-secondary" href="#how">Learn how it works</a>
     </div>
-    <p class="hero-note">Free forever · Premium subscription available · iOS coming soon</p>
+    <p class="hero-note">No account needed · 100% Ad-Free · On-device tracking</p>
   </div>
 </section>
 
 <!-- How it works -->
 <section id="how">
   <div class="section-inner">
-    <p class="section-label he-content">איך זה עובד</p>
-    <p class="section-label en-content">How it works</p>
-    <h2 class="section-title he-content">שלושה צעדים פשוטים</h2>
-    <h2 class="section-title en-content">Three simple steps</h2>
+    <p class="section-label he-content">תהליך העבודה</p>
+    <p class="section-label en-content">Workflow</p>
+    <h2 class="section-title he-content">ניווט פסיבי בשלושה צעדים</h2>
+    <h2 class="section-title en-content">Passive Navigation in Three Steps</h2>
     <div class="steps">
       <div class="step">
         <div class="step-number">1</div>
-        <h3 class="he-content">בחר יעד</h3>
-        <h3 class="en-content">Choose your stop</h3>
-        <p class="he-content">סמן תחנה, צומת או כל נקודה אחרת על המפה, וקבע כמה מטרים לפני ההגעה תרצה שהאפליקציה תעיר אותך.</p>
-        <p class="en-content">Pin any stop, intersection, or point on the map, and set how close you want to be before the app wakes you up.</p>
+        <h3 class="he-content">הגדרת יעד חכמה</h3>
+        <h3 class="en-content">Smart Destination Setup</h3>
+        <p class="he-content">סמנו את תחנת הירידה שלכם על גבי המפה, והגדירו במדויק את רדיוס ההתראה הנדרש להשכמה או התארגנות לפני ההגעה.</p>
+        <p class="en-content">Pinpoint your drop-off station on the map, and precisely configure the alert radius needed for you to prepare before arrival.</p>
       </div>
       <div class="step">
         <div class="step-number">2</div>
-        <h3 class="he-content">הפעל התראה</h3>
-        <h3 class="en-content">Start the alert</h3>
-        <p class="he-content">עלית לאוטובוס או לרכבת? לחץ על ההפעלה ומי-קום תתחיל לעקוב אחרי המיקום שלך ברקע.</p>
-        <p class="en-content">Boarded the bus or train? Tap start and Me-Kom will track your location in the background.</p>
+        <h3 class="he-content">מעקב רקע אוטומטי</h3>
+        <h3 class="en-content">Automated Background Tracking</h3>
+        <p class="he-content">עם תחילת הנסיעה, הפעילו את המעקב. האלגוריתם של מי-קום ירוץ ברקע וידגום את המיקום בצורה חסכונית גם כשהמסך כבוי.</p>
+        <p class="en-content">Once your journey begins, start the tracker. Me-Kom's algorithm runs efficiently in the background, sampling location even when locked.</p>
       </div>
       <div class="step">
         <div class="step-number">3</div>
-        <h3 class="he-content">סע בראש שקט</h3>
-        <h3 class="en-content">Sit back and relax</h3>
-        <p class="he-content">זה הזמן לישון, לקרוא או לשמוע מוזיקה. מי-קום תצלצל ותתריע בדיוק כשתתקרב ליעד.</p>
-        <p class="en-content">Sleep, read, or listen to music. Me-Kom will ring and alert you the moment you're approaching your stop.</p>
+        <h3 class="he-content">נסיעה פרודוקטיבית ורגועה</h3>
+        <h3 class="en-content">Productive & Relaxing Commute</h3>
+        <p class="he-content">התפנו לעבודה, קריאה או שינה. המערכת תבצע עקיפה אוטומטית של מצב שקט ותצלצל בחוזקה ברגע החצייה של רדיוס היעד.</p>
+        <p class="en-content">Focus on work, reading, or sleep. The system automatically overrides silent mode and rings loudly the moment your destination radius is breached.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The New Standard (Competitive Advantage) -->
+<section id="advantage">
+  <div class="section-inner">
+    <p class="section-label he-content">היתרון הטכנולוגי</p>
+    <p class="section-label en-content">Why Me-Kom</p>
+    <h2 class="section-title he-content">הסטנדרט החדש לאפליקציות התראת קרבה</h2>
+    <h2 class="section-title en-content">The New Standard for Proximity Alerts</h2>
+    <p class="adv-intro he-content">
+      מי-קום תוכננה מראש להציע חוויית נסיעה אמינה, ממוקדת והוגנת. להבדיל מפתרונות מקבילים בשוק שדורשים תשלום עבור יכולות בסיס, אנו מספקים פונקציונליות פרימיום כברירת מחדל בגרסה החינמית.
+    </p>
+    <p class="adv-intro en-content">
+      Me-Kom was engineered to provide a reliable, focused, and fair commuting experience. Unlike alternative solutions that lock core capabilities behind paywalls, we deliver premium functionality by default in our free tier.
+    </p>
+    
+    <div class="adv-grid">
+      <div class="adv-card">
+        <div class="adv-icon">🚫</div>
+        <h3 class="he-content">חוויה נטולת פרסומות לחלוטין</h3>
+        <h3 class="en-content">Completely Ad-Free Experience</h3>
+        <p class="he-content">ללא מודעות קופצות או סרטוני וידאו מפריעים. הגדרת התראה מהירה ברגע העלייה לאוטובוס, בסביבה חלקה וללא הסחות דעת.</p>
+        <p class="en-content">No intrusive pop-ups or video ads. Set your alert instantly the moment you board, in a clean, distraction-free environment.</p>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon">🛡️</div>
+        <h3 class="he-content">ארכיטקטורת פרטיות (Local-First)</h3>
+        <h3 class="en-content">Local-First Privacy Architecture</h3>
+        <p class="he-content">נתוני ה-GPS שלכם מעובדים בלעדית על המכשיר. אין איסוף מידע לענן, אין מעקב של שרתי צד-שלישי, ואין דרישה ליצירת חשבון.</p>
+        <p class="en-content">Your GPS data is processed exclusively on-device. No cloud data collection, no third-party server tracking, and no account creation required.</p>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon">🔊</div>
+        <h3 class="he-content">עקיפת מצב שקט חכמה</h3>
+        <h3 class="en-content">Smart Silent-Mode Override</h3>
+        <p class="he-content">פיצ'ר ליבה שניתן בחינם: האפליקציה יודעת לזהות את מצב המכשיר, להגביר ווליום אוטומטית ולרטוט, כדי למקסם את הסיכוי שתתעוררו בזמן.</p>
+        <p class="en-content">A core feature provided for free: the app detects device state, automatically boosts volume, and vibrates — designed to reliably wake you when you reach your stop.</p>
+      </div>
+      <div class="adv-card">
+        <div class="adv-icon">📊</div>
+        <h3 class="he-content">כלים מתקדמים כסטנדרט</h3>
+        <h3 class="en-content">Premium Tools Included</h3>
+        <p class="he-content">ממשק משתמש מתקדם הכולל מצב לילה מלא (Dark Mode) המותאם לחיסכון בסוללה, וגישה לסטטיסטיקות שימוש — ללא חומת תשלום.</p>
+        <p class="en-content">Advanced UI including deep Dark Mode for battery optimization, alongside access to personal usage analytics — with no paywalls attached.</p>
       </div>
     </div>
   </div>
@@ -460,52 +594,31 @@
 <!-- Features -->
 <section id="features">
   <div class="section-inner">
-    <p class="section-label he-content">למה מי-קום</p>
-    <p class="section-label en-content">Why Me-Kom</p>
-    <h2 class="section-title he-content">עובדת — גם כשאתה לא</h2>
-    <h2 class="section-title en-content">Works — even when you're not watching</h2>
+    <p class="section-label he-content">מעטפת טכנולוגית</p>
+    <p class="section-label en-content">Technical Capabilities</p>
+    <h2 class="section-title he-content">מעקב מיקום אמין וחסכוני</h2>
+    <h2 class="section-title en-content">Reliable & Efficient Location Tracking</h2>
     <div class="features-grid">
       <div class="feature-card">
-        <div class="feature-icon">🔕</div>
-        <h3 class="he-content">עובדת ברקע</h3>
-        <h3 class="en-content">Works in the background</h3>
-        <p class="he-content">גם כשהאפליקציה סגורה לגמרי — מי-קום ממשיכה לעקוב ותצלצל בזמן.</p>
-        <p class="en-content">Even when the app is fully closed — Me-Kom keeps tracking and will ring on time.</p>
+        <div class="feature-icon">⚙️</div>
+        <h3 class="he-content">שירותי רקע (Foreground Services)</h3>
+        <h3 class="en-content">Advanced Background Services</h3>
+        <p class="he-content">עקיפה חכמה של מנגנוני ה-Doze במערכות ההפעלה, המבטיחה שהאפליקציה לא "תירדם" בטעות לפני ההגעה ליעד.</p>
+        <p class="en-content">Smart bypass of OS Doze mechanisms, ensuring the application processes coordinates without being terminated mid-journey.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🎯</div>
-        <h3 class="he-content">רדיוס אישי</h3>
-        <h3 class="en-content">Custom radius</h3>
-        <p class="he-content">קבע בדיוק כמה מטרים לפני ההגעה תרצה להתריע — לכל מיקום בנפרד.</p>
-        <p class="en-content">Set exactly how many meters before arrival you want to be alerted — per location.</p>
+        <div class="feature-icon">🔋</div>
+        <h3 class="he-content">אופטימיזציית סוללה מינימלית</h3>
+        <h3 class="en-content">Minimal Battery Consumption</h3>
+        <p class="he-content">בניגוד לאפליקציות ניווט אקטיבי, מי-קום דוגמת את המיקום בצורה דינמית המותאמת למרחק מהיעד, למניעת ריקון הסוללה.</p>
+        <p class="en-content">Unlike active navigation tools, Me-Kom uses dynamic GPS polling based on destination proximity to preserve battery life.</p>
       </div>
       <div class="feature-card">
-        <div class="feature-icon">🗺️</div>
-        <h3 class="he-content">מסלולים</h3>
-        <h3 class="en-content">Routes</h3>
-        <p class="he-content">נסיעה עם כמה תחנות? צור מסלול — מי-קום תתריע בכל תחנה בתורה.</p>
-        <p class="en-content">Multiple stops? Create a route — Me-Kom will alert you at each stop in order.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3 class="he-content">פרטיות מלאה</h3>
-        <h3 class="en-content">Full privacy</h3>
-        <p class="he-content">המיקום שלך מעובד מקומית על המכשיר — לא נשלח לשרת, לא נשמר.</p>
-        <p class="en-content">Your location is processed locally on your device — not sent to servers, not stored.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">👤</div>
-        <h3 class="he-content">ללא הרשמה</h3>
-        <h3 class="en-content">No account needed</h3>
-        <p class="he-content">אין חשבון, אין אימייל, אין סיסמה. מוריד ומתחיל מיד.</p>
-        <p class="en-content">No account, no email, no password. Download and start immediately.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🔊</div>
-        <h3 class="he-content">צלצול חזק</h3>
-        <h3 class="en-content">Loud ring</h3>
-        <p class="he-content">מי-קום מגבירה ווליום אוטומטית ומעירה גם ממצב שקט — כדי שלא תפספס.</p>
-        <p class="en-content">Me-Kom auto-boosts volume and rings even in silent mode — so you won't miss it.</p>
+        <div class="feature-icon">📍</div>
+        <h3 class="he-content">ניהול מסלולים ותחנות מרובות</h3>
+        <h3 class="en-content">Multi-Stop Route Management</h3>
+        <p class="he-content">מערכת תורים (Queues) חכמה המאפשרת תכנון מסלול שלם. האפליקציה תתריע באופן סדרתי לכל תחנה שהוגדרה בנתיב.</p>
+        <p class="en-content">A smart queue system allowing full route planning. The app alerts sequentially for every defined waypoint on your path.</p>
       </div>
     </div>
   </div>
@@ -515,97 +628,81 @@
 <section id="plans">
   <div class="section-inner">
     <div class="he-content">
-      <p class="section-label">תוכניות</p>
-      <h2 class="section-title">חינמי תמיד — עם אפשרות לשדרג</h2>
+      <p class="section-label">תמחור שקוף</p>
+      <h2 class="section-title">כל מה שצריך בחינם. שדרוג למקצוענים.</h2>
       <div class="plans-grid">
         <div class="plan-card">
-          <p class="plan-name">חינמי</p>
+          <p class="plan-name">גרסת הבסיס</p>
           <p class="plan-price">₪0 <span>/ לתמיד</span></p>
-          <p class="plan-desc">לכל מה שצריך כדי לא לפספס</p>
+          <p class="plan-desc">חוויית הליבה המלאה, ללא פשרות טכנולוגיות וללא פרסומות.</p>
           <ul class="plan-features">
+            <li>ללא פרסומות לחלוטין</li>
+            <li>עבודה יציבה ברקע</li>
+            <li>עקיפת מצב שקט אוטומטית</li>
             <li>עד 3 מיקומים שמורים</li>
-            <li>עד 1 מסלול</li>
-            <li>התראות קרבה ברקע</li>
-            <li>צלצול + רטט + הגברת ווליום</li>
-            <li>ללא הרשמה</li>
+            <li>עיבוד מיקום מקומי ופרטי</li>
           </ul>
         </div>
         <div class="plan-card featured">
-          <span class="plan-badge">הכי פופולרי</span>
-          <p class="plan-name">פרימיום</p>
+          <span class="plan-badge">מומלץ לנוסעים קבועים</span>
+          <p class="plan-name">פרימיום חודשי</p>
           <p class="plan-price">₪9.90 <span>/ חודש</span></p>
-          <p class="plan-desc">לנוסעים קבועים שרוצים יותר</p>
+          <p class="plan-desc">הרחבת מגבלות השמירה לתמיכה בנסיעות מורכבות ויומיומיות.</p>
           <ul class="plan-features">
-            <li>מיקומים שמורים ללא הגבלה</li>
-            <li>מסלולים ללא הגבלה</li>
-            <li>הכל מהתוכנית החינמית</li>
-            <li>עדיפות בתמיכה</li>
+            <li>שמירת מיקומים ללא הגבלה</li>
+            <li>יצירת מסלולים ללא הגבלה</li>
+            <li>כל פיצ'רי הבסיס כלולים</li>
+            <li>קדימות בתמיכת פיתוח</li>
           </ul>
         </div>
         <div class="plan-card">
-          <p class="plan-name">שנתי</p>
-          <p class="plan-price" style="font-size:1.1rem;">שנתי <span>/ חיסכון מול חודשי</span></p>
-          <p class="plan-desc">ציין אחת לשנה</p>
+          <p class="plan-name">פרימיום לכל החיים</p>
+          <p class="plan-price" style="font-size:1.4rem;">תשלום חד-פעמי</p>
+          <p class="plan-desc">השקעה חד-פעמית עבור שקט נפשי בכל נסיעה עתידית.</p>
           <ul class="plan-features">
-            <li>הכל כמו תוכנית פרימיום</li>
-            <li>חיסכון לעומת מנוי חודשי</li>
-          </ul>
-        </div>
-        <div class="plan-card">
-          <p class="plan-name">לכל החיים</p>
-          <p class="plan-price" style="font-size:1.1rem;">תשלום חד פעמי <span>/ לנצח</span></p>
-          <p class="plan-desc">משלם פעם אחת, משתמש לנצח</p>
-          <ul class="plan-features">
-            <li>הכל כמו תוכנית פרימיום</li>
-            <li>אין חיוב חוזר אי פעם</li>
+            <li>פתיחה מלאה של כל ההגבלות</li>
+            <li>רישיון לכל החיים בחשבון</li>
+            <li>ללא חידוש או מנוי חוזר</li>
           </ul>
         </div>
       </div>
     </div>
     <div class="en-content">
-      <p class="section-label">Plans</p>
-      <h2 class="section-title">Free forever — with an option to upgrade</h2>
+      <p class="section-label">Transparent Pricing</p>
+      <h2 class="section-title">Everything you need, free. Upgrade for more.</h2>
       <div class="plans-grid">
         <div class="plan-card">
-          <p class="plan-name">Free</p>
-          <p class="plan-price">₪0 <span>/ forever</span></p>
-          <p class="plan-desc">Everything you need to never miss your stop</p>
+          <p class="plan-name">Base Tier</p>
+          <p class="plan-price">$0 <span>/ forever</span></p>
+          <p class="plan-desc">The complete core experience, with no technical compromises or ads.</p>
           <ul class="plan-features">
+            <li>100% Ad-Free Experience</li>
+            <li>Stable background execution</li>
+            <li>Auto-override for silent mode</li>
             <li>Up to 3 saved locations</li>
-            <li>Up to 1 route</li>
-            <li>Background proximity alerts</li>
-            <li>Ring + vibration + volume boost</li>
-            <li>No registration required</li>
+            <li>Private, on-device processing</li>
           </ul>
         </div>
         <div class="plan-card featured">
-          <span class="plan-badge">Most popular</span>
-          <p class="plan-name">Premium</p>
-          <p class="plan-price">₪9.90 <span>/ month</span></p>
-          <p class="plan-desc">For frequent commuters who want more</p>
+          <span class="plan-badge">Recommended for commuters</span>
+          <p class="plan-name">Premium Monthly</p>
+          <p class="plan-price">$2.99 <span>/ month</span></p>
+          <p class="plan-desc">Expand saving limits to support complex daily commutes.</p>
           <ul class="plan-features">
             <li>Unlimited saved locations</li>
-            <li>Unlimited routes</li>
-            <li>Everything in Free</li>
-            <li>Priority support</li>
+            <li>Unlimited route creation</li>
+            <li>All Base Tier features included</li>
+            <li>Priority development support</li>
           </ul>
         </div>
         <div class="plan-card">
-          <p class="plan-name">Yearly</p>
-          <p class="plan-price" style="font-size:1.1rem;">Annual <span>/ save vs. monthly</span></p>
-          <p class="plan-desc">One payment per year</p>
+          <p class="plan-name">Lifetime Access</p>
+          <p class="plan-price" style="font-size:1.4rem;">One-Time Payment</p>
+          <p class="plan-desc">A single investment for peace of mind on every future journey.</p>
           <ul class="plan-features">
-            <li>Everything in Premium</li>
-            <li>Save vs. monthly billing</li>
-          </ul>
-        </div>
-        <div class="plan-card">
-          <p class="plan-name">Lifetime</p>
-          <p class="plan-price" style="font-size:1.1rem;">One-time <span>/ forever</span></p>
-          <p class="plan-desc">Pay once, use forever</p>
-          <ul class="plan-features">
-            <li>Everything in Premium</li>
-            <li>No recurring charges</li>
+            <li>Complete unlock of all limits</li>
+            <li>Lifetime account license</li>
+            <li>No recurring subscriptions</li>
           </ul>
         </div>
       </div>
@@ -616,78 +713,54 @@
 <!-- FAQ -->
 <section id="faq">
   <div class="section-inner">
-    <p class="section-label he-content">שאלות ותשובות</p>
-    <p class="section-label en-content">Frequently asked questions</p>
-    <h2 class="section-title he-content">שאלות נפוצות</h2>
-    <h2 class="section-title en-content">FAQ</h2>
+    <p class="section-label he-content">מרכז מידע</p>
+    <p class="section-label en-content">Knowledge Base</p>
+    <h2 class="section-title he-content">שאלות נפוצות מלקוחות</h2>
+    <h2 class="section-title en-content">Frequently Asked Questions</h2>
 
     <div class="faq-list he-content">
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">מה זה מי-קום?</div>
-        <div class="faq-a">מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית. היא מתריעה כשאתם מתקרבים למיקום שמרתם — מושלמת כדי לא לפספס תחנת אוטובוס, רכבת, או כל יעד אחר.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">כיצד מי-קום שונה מאפליקציות ניווט מבוססות GPS סטנדרטיות?</div>
+        <div class="faq-a">אפליקציות ניווט בנויות להנחיית נהיגה אקטיבית ולכן צורכות סוללה רבה. מי-קום היא מערכת "ניווט פסיבית". היא מיועדת לנוסעי תחבורה ציבורית שרוצים לנוח, תוך שימוש באלגוריתם חסכוני שמתעורר ומתריע רק בקרבת היעד.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם זה עובד כשהאפליקציה סגורה?</div>
-        <div class="faq-a">כן. מי-קום ממשיכה לעקוב אחרי המיקום גם כשהאפליקציה סגורה לגמרי ואפילו כשהמסך כבוי. זו הנקודה הכי חשובה — בדיוק לשם כך היא נבנתה.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">האם האפליקציה תשרוד כשהטלפון כבוי בכיס?</div>
+        <div class="faq-a">כן. הארכיטקטורה שלנו עושה שימוש ב-Foreground Services ייעודיים של מערכת ההפעלה המבטיחים את המשך מעקב המיקום ושרידות האפליקציה ברקע, גם כשהמסך כבוי לחלוטין.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם המיקום שלי פרטי?</div>
-        <div class="faq-a">לחלוטין. המיקום מעובד מקומית על המכשיר שלכם ולא נשלח לשרת שלנו. לא נשמר, לא מועבר. ראו את מדיניות הפרטיות לפרטים המלאים.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">מה מדיניות איסוף הנתונים (Data Collection) שלכם?</div>
+        <div class="faq-a">הפרטיות שלכם מוחלטת. כליבת התפיסה שלנו, עיבוד ה-GPS מתבצע ב-100% לוקאלית על מכשיר הקצה. אין לנו שרתי מעקב מרכזיים, איננו דורשים יצירת חשבון ואיננו חולקים מידע עם צדדים שלישיים.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם זה חינם?</div>
-        <div class="faq-a">כן — הורדה חינמית עם כל הפונקציות הבסיסיות. תכונות מתקדמות נוספות זמינות במנוי.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">האם הטלפון שלי יצלצל אם הוא מוגדר על "שקט" או "רטט בלבד"?</div>
+        <div class="faq-a">בהחלט. מנגנון ההתראה של מי-קום תוכנן לעקוף את הגדרות השמע ברגע הקריטי של חציית רדיוס היעד. האפליקציה תגביר אוטומטית את עוצמת השמע ותפעיל רטט כדי למקסם את הסיכוי שתתעוררו בזמן. (שימו לב: אם עוצמת המדיה מוגדרת ל-0, ודאו שהגברתם אותה.)</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">על אילו פלטפורמות האפליקציה זמינה?</div>
-        <div class="faq-a">כרגע זמינה ל-Android דרך Google Play. גרסת iOS בפיתוח ותגיע בקרוב ל-App Store.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם אפשר להגדיר כמה התראות?</div>
-        <div class="faq-a">כן! שמרו כמה מיקומים שרוצים ועברו ביניהם בקלות. אפשר גם ליצור מסלולים עם כמה תחנות — האפליקציה תתריע בכל תחנה בתורה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">כמה סוללה זה צורך?</div>
-        <div class="faq-a">מי-קום מותאמת לצריכת סוללה מינימלית. מעקב ה-GPS מופסק אוטומטית בהגעה ליעד, כך שאין צריכה מיותרת.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">מה ההבדל ממפליקציות ניווט רגילות?</div>
-        <div class="faq-a">אפליקציות ניווט מניחות שאתם נוהגים. מי-קום בנויה לנוסעים בתחבורה ציבורית — שרוצים לנוח, לא לנווט. אין צורך לעקוב אחרי המסלול — פשוט מגדירים יעד ומי-קום עושה את כל השאר.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">האם קיימת גרסה ל-iPhone (iOS)?</div>
+        <div class="faq-a">אפליקציית ה-Android זמינה כעת להורדה ב-Google Play. גרסת ה-iOS נמצאת בפיתוח מתקדם ובבדיקות בטא, ותשוחרר בקרוב ל-App Store. ניתן לבחור פלטפורמה בראש העמוד כדי לראות את סטטוס הזמינות.</div>
       </div>
     </div>
 
     <div class="faq-list en-content">
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What is Me-Kom?</div>
-        <div class="faq-a">Me-Kom is a proximity alert app for public transport. It alerts you when you're approaching a saved location — perfect so you never miss a bus stop, train station, or any other destination.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">How does Me-Kom differ from standard GPS navigation apps?</div>
+        <div class="faq-a">Navigation apps are built for active driving guidance and drain battery rapidly. Me-Kom is a "passive navigation" system for passengers. It utilizes a highly efficient algorithm that remains dormant and alerts you only upon proximity to your destination.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Does it work when the app is closed?</div>
-        <div class="faq-a">Yes. Me-Kom keeps tracking your location even when the app is fully closed and the screen is off. That's the most important point — it's exactly what it was built for.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">Will the app survive if my phone is locked in my pocket?</div>
+        <div class="faq-a">Yes. Our architecture utilizes dedicated OS Foreground Services, ensuring that location tracking and application survival are maintained in the background, even when the screen is fully locked and off.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is my location private?</div>
-        <div class="faq-a">Absolutely. Your location is processed locally on your device and never sent to our servers. Not stored, not transferred. See the Privacy Policy for full details.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">What is your data collection policy?</div>
+        <div class="faq-a">Your privacy is absolute. As a core principle, GPS processing is executed 100% locally on your device. We maintain no centralized tracking servers, require no account creation, and never share data with third parties.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is it free?</div>
-        <div class="faq-a">Yes — free download with all core features. Additional advanced features are available with a subscription.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">Will my phone ring if it's set to "Silent" or "Vibrate"?</div>
+        <div class="faq-a">Yes. Me-Kom's alerting mechanism is designed to override standard audio settings at the critical moment of radius breach. The app automatically boosts media volume and triggers strong vibration to maximize the chance you wake up on time. (Note: if media volume is set to 0, make sure you've raised it.)</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Which platforms is it available on?</div>
-        <div class="faq-a">Currently available on Android via Google Play. An iOS version is in development and coming soon to the App Store.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Can I set multiple alerts?</div>
-        <div class="faq-a">Yes! Save as many locations as you want and switch between them easily. You can also create routes with multiple stops — the app will alert you at each stop in order.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How much battery does it use?</div>
-        <div class="faq-a">Me-Kom is optimized for minimal battery usage. GPS tracking stops automatically on arrival, so there's no unnecessary drain.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How is it different from regular navigation apps?</div>
-        <div class="faq-a">Navigation apps assume you're driving. Me-Kom is built for public transport passengers — who want to rest, not navigate. No need to watch the route — just set a destination and Me-Kom does the rest.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">Is there an iPhone (iOS) version?</div>
+        <div class="faq-a">The Android app is available now on Google Play. The iOS version is in active development and beta testing, and will be released soon on the App Store. Use the platform switch at the top of the page to check availability.</div>
       </div>
     </div>
   </div>
@@ -696,18 +769,20 @@
 <!-- Download -->
 <section id="download">
   <div class="section-inner">
-    <h2 class="section-title he-content">הורד עכשיו — חינם</h2>
-    <h2 class="section-title en-content">Download now — free</h2>
-    <p class="sub he-content">זמין ל-Android. iOS בקרוב.</p>
-    <p class="sub en-content">Available on Android. iOS coming soon.</p>
+    <h2 class="section-title he-content">התחילו לנסוע בראש שקט</h2>
+    <h2 class="section-title en-content">Start Commuting with Peace of Mind</h2>
+    <p class="sub he-content android-content">הורידו עכשיו ללא תשלום מחנות האפליקציות הרשמית של Google.</p>
+    <p class="sub he-content ios-content">גרסת ה-iOS נמצאת בפיתוח מתקדם ותשוחרר בקרוב ל-App Store. בינתיים ניתן להוריד את גרסת ה-Android.</p>
+    <p class="sub en-content android-content">Download now for free from the official Google Play store.</p>
+    <p class="sub en-content ios-content">The iOS version is in active development and will arrive soon on the App Store. In the meantime, the Android version is available now.</p>
     <div class="store-buttons">
-      <a class="store-btn" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
+      <a class="store-btn android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
         <span class="store-icon">▶</span> Google Play
       </a>
-      <span class="store-btn disabled">
+      <span class="store-btn disabled ios-content" aria-disabled="true">
         <span class="store-icon">🍎</span>
         <span class="he-content">App Store — בקרוב</span>
-        <span class="en-content">App Store — coming soon</span>
+        <span class="en-content">App Store — Coming Soon</span>
       </span>
     </div>
   </div>
@@ -716,12 +791,12 @@
 <!-- Contact -->
 <section id="contact">
   <div class="section-inner">
-    <p class="section-label he-content">צור קשר</p>
-    <p class="section-label en-content">Contact</p>
-    <h2 class="section-title he-content">שאלות? נשמח לעזור</h2>
-    <h2 class="section-title en-content">Questions? We're here to help</h2>
-    <p class="he-content">כתבו לנו ישירות — נחזור תוך יום עסקים.</p>
-    <p class="en-content">Write to us directly — we'll get back to you within one business day.</p>
+    <p class="section-label he-content">תמיכה טכנית</p>
+    <p class="section-label en-content">Technical Support</p>
+    <h2 class="section-title he-content">צריכים עזרה או דיווח על באג?</h2>
+    <h2 class="section-title en-content">Need Help or Found a Bug?</h2>
+    <p class="he-content">צוות הפיתוח שלנו זמין לשאלות טכניות והצעות ייעול. זמן מענה ממוצע: עד יום עסקים אחד.</p>
+    <p class="en-content">Our development team is available for technical questions and feature requests. Average response time: 1 business day.</p>
     <a class="contact-email" href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a>
   </div>
 </section>
@@ -733,14 +808,14 @@
     <a href="privacy.html" class="en-content">Privacy Policy</a>
     <a href="terms.html" class="he-content">תנאי שימוש</a>
     <a href="terms.html" class="en-content">Terms of Service</a>
-    <a href="mailto:me.kum.support@gmail.com" class="he-content">צור קשר</a>
-    <a href="mailto:me.kum.support@gmail.com" class="en-content">Contact</a>
+    <a href="mailto:me.kum.support@gmail.com" class="he-content">יצירת קשר</a>
+    <a href="mailto:me.kum.support@gmail.com" class="en-content">Contact Us</a>
   </div>
-  <p class="he-content">© 2026 מי-קום. כל הזכויות שמורות.</p>
+  <p class="he-content">© 2026 מי-קום (Me-Kom). כל הזכויות שמורות.</p>
   <p class="en-content">© 2026 Me-Kom. All rights reserved.</p>
 </footer>
 
-<!-- Structured Data: SoftwareApplication -->
+<!-- Structured Data: SoftwareApplication (Optimized for AI & SEO) -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -749,7 +824,7 @@
   "alternateName": "Me-Kom",
   "operatingSystem": "Android",
   "applicationCategory": "TransportationApplication",
-  "description": "Proximity alert app for public transport. Never miss your bus stop or train station again.",
+  "description": "Me-Kom is a proximity alert app for public transport that notifies you before you reach your stop. It offers an ad-free experience, reliable background location tracking, an automatic silent-mode volume override, and local-first privacy processing with no registration required — all available in the free tier.",
   "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
   "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
   "url": "https://me-kom.app",
@@ -766,43 +841,28 @@
   "mainEntity": [
     {
       "@type": "Question",
-      "name": "What is Me-Kom?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Me-Kom is a proximity alert app for public transport. It alerts you when you're approaching a saved location — perfect so you never miss a bus stop, train station, or any other destination." }
+      "name": "How does Me-Kom differ from standard GPS navigation apps?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Navigation apps are built for active driving guidance and drain battery rapidly. Me-Kom is a passive navigation system for passengers. It uses a highly efficient algorithm that stays dormant and alerts you only upon proximity to your destination." }
     },
     {
       "@type": "Question",
-      "name": "Does Me-Kom work when the app is closed?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Me-Kom keeps tracking your location even when the app is fully closed and the screen is off." }
+      "name": "Does Me-Kom work when the app is closed or the phone is locked?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Me-Kom uses dedicated OS foreground services, so location tracking continues in the background even when the screen is fully locked and off." }
     },
     {
       "@type": "Question",
       "name": "Is my location data private with Me-Kom?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Absolutely. Your location is processed locally on your device and never sent to Me-Kom's servers. Not stored, not transferred to third parties." }
+      "acceptedAnswer": { "@type": "Answer", "text": "Your privacy is a core principle. GPS processing runs 100% locally on your device. There are no centralized tracking servers, no account creation is required, and data is not shared with third parties." }
     },
     {
       "@type": "Question",
-      "name": "Is Me-Kom free?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes — free download with all core features. Additional advanced features available with a subscription." }
+      "name": "Will my phone ring if it is set to Silent or Vibrate?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Me-Kom is designed to override standard audio settings when you reach your destination radius. It automatically boosts media volume and triggers vibration to maximize the chance you wake up on time." }
     },
     {
       "@type": "Question",
-      "name": "Which platforms is Me-Kom available on?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Currently available on Android via Google Play. iOS version coming soon to the App Store." }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I set multiple proximity alerts in Me-Kom?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes! Save as many locations as you want. You can also create multi-stop routes — the app will alert you at each stop in order." }
-    },
-    {
-      "@type": "Question",
-      "name": "מה זה מי-קום?",
-      "acceptedAnswer": { "@type": "Answer", "text": "מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית. היא מתריעה כשמתקרבים למיקום שמרתם — מושלמת כדי לא לפספס תחנת אוטובוס, רכבת, או כל יעד אחר." }
-    },
-    {
-      "@type": "Question",
-      "name": "האם מי-קום עובדת כשהאפליקציה סגורה?",
-      "acceptedAnswer": { "@type": "Answer", "text": "כן. מי-קום ממשיכה לעקוב אחרי המיקום גם כשהאפליקציה סגורה לגמרי ואפילו כשהמסך כבוי." }
+      "name": "Is there an iPhone (iOS) version of Me-Kom?",
+      "acceptedAnswer": { "@type": "Answer", "text": "The Android app is available now on Google Play. The iOS version is in active development and beta testing, and will be released soon on the App Store." }
     }
   ]
 }
@@ -812,31 +872,57 @@
   (function() {
     var params = new URLSearchParams(window.location.search);
     var lang = params.get('lang') || localStorage.getItem('me-kom-lang') ||
-      (navigator.language && navigator.language.startsWith('he') ? 'he' : 'en');
+               (navigator.language && navigator.language.startsWith('he') ? 'he' : 'en');
     setLang(lang);
+
+    var platform = params.get('platform') || localStorage.getItem('me-kom-platform') ||
+                   (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
+    setPlatform(platform);
   })();
 
   function setLang(lang) {
+    if (lang !== 'he' && lang !== 'en') lang = 'he';
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'he' ? 'rtl' : 'ltr';
     localStorage.setItem('me-kom-lang', lang);
-    // aria-hidden for accessibility and SEO — hide inactive language from screen readers
+
+    // Accessibility: hide the non-active language from screen readers
     document.querySelectorAll('.he-content').forEach(function(el) {
       el.setAttribute('aria-hidden', lang === 'he' ? 'false' : 'true');
     });
     document.querySelectorAll('.en-content').forEach(function(el) {
       el.setAttribute('aria-hidden', lang === 'en' ? 'false' : 'true');
     });
+    // Reflect the active choice on the language selector
+    document.querySelectorAll('.seg button[data-lang]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-lang') === lang);
+    });
   }
 
-  function toggleLang() {
-    setLang(document.documentElement.lang === 'he' ? 'en' : 'he');
+  function setPlatform(platform) {
+    if (platform !== 'android' && platform !== 'ios') platform = 'android';
+    document.documentElement.setAttribute('data-platform', platform);
+    localStorage.setItem('me-kom-platform', platform);
+
+    // Accessibility: hide the non-active platform from screen readers
+    document.querySelectorAll('.android-content').forEach(function(el) {
+      el.setAttribute('aria-hidden', platform === 'android' ? 'false' : 'true');
+    });
+    document.querySelectorAll('.ios-content').forEach(function(el) {
+      el.setAttribute('aria-hidden', platform === 'ios' ? 'false' : 'true');
+    });
+    // Reflect the active choice on the platform selector
+    document.querySelectorAll('.seg button[data-platform]').forEach(function(btn) {
+      btn.classList.toggle('active', btn.getAttribute('data-platform') === platform);
+    });
   }
 
   function toggleFaq(el) {
     var item = el.parentElement;
     var isOpen = item.classList.contains('open');
-    item.parentElement.querySelectorAll('.faq-item').forEach(function(s) { s.classList.remove('open'); });
+    item.parentElement.querySelectorAll('.faq-item').forEach(function(s) {
+      s.classList.remove('open');
+    });
     if (!isOpen) item.classList.add('open');
   }
 </script>
