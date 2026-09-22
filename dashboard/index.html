@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Napigation Dashboard</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
+    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid rgba(148,163,184,0.25); background: rgba(15,23,42,0.9); }
+    .title { font-size: 1.2rem; font-weight: 700; }
+    .actions { display: flex; gap: 12px; align-items: center; }
+    .pill { border: 1px solid rgba(148,163,184,0.2); background: rgba(255,255,255,0.05); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
+    button { border: 0; border-radius: 10px; background: #2563eb; color: white; padding: 10px 14px; cursor: pointer; }
+    .wrap { padding: 24px; }
+    .card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148,163,184,0.2); border-radius: 16px; padding: 20px; max-width: 960px; margin: 0 auto; }
+    h1 { margin-top: 0; }
+    p { color: #cbd5e1; line-height: 1.7; }
+    .status { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(34,197,94,0.12); color: #bbf7d0; border: 1px solid rgba(34,197,94,0.3); }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="title">Napigation Dashboard</div>
+    <div class="actions">
+      <div id="dashboard-user-pill" class="pill">בודק הרשאה...</div>
+      <button id="dashboard-signout" type="button">התנתקות</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="status">גישה מאושרת</div>
+      <h1>דשבורד מאובטח</h1>
+      <p>העמוד נפתח רק לאחר התחברות עם חשבון מאושר.</p>
+      <p>בשלב זה רצוי להחזיק את הדשבורד מתחת ל-URL כמו <strong>/dashboard</strong> או <strong>dashboard.napigation.com</strong> עם OAuth / Supabase Auth.</p>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="js/config.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>
