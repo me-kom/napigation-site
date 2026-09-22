@@ -42,7 +42,7 @@
       return true;
     }
 
-    window.location.href = '/dashboard/auth';
+    window.location.href = './auth.html';
     return false;
   }
 
@@ -54,7 +54,7 @@
 
   async function signOutDashboard() {
     clearDashboardAccess();
-    window.location.href = '/dashboard/auth';
+    window.location.href = './auth.html';
   }
 
   function bindAuthPage() {
@@ -100,7 +100,7 @@
         }
 
         setDashboardAccessGranted();
-        window.location.href = '/dashboard';
+        window.location.href = './';
       } catch (error) {
         errorBox.textContent = error?.message || 'התחברות נכשלה. נסה שוב.';
         errorBox.style.display = 'block';

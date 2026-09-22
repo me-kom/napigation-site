@@ -4,6 +4,10 @@
     { "source": "/dashboard/", "destination": "/dashboard/index.html" },
     { "source": "/dashboard/auth", "destination": "/dashboard/auth.html" },
     { "source": "/dashboard/auth/", "destination": "/dashboard/auth.html" },
+    { "source": "/dashboard/js/(.*)", "destination": "/dashboard/js/$1" },
+    { "source": "/dashboard/styles.css", "destination": "/dashboard/styles.css" },
+    { "source": "/js/(.*)", "destination": "/dashboard/js/$1" },
+    { "source": "/styles.css", "destination": "/dashboard/styles.css" },
     { "source": "/", "destination": "/index.html" }
   ]
 }
