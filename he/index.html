@@ -3,993 +3,976 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Primary meta -->
-  <title>מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית</title>
-  <meta name="description" content="מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית עם מעקב אמין ברקע, ללא פרסומות, ללא צורך בהרשמה ועם עיבוד מיקום מקומי ושומר פרטיות." />
-  <meta name="keywords" content="מי-קום, אפליקציה תחבורה ציבורית, התראה תחנה, me-kom, napigation, proximity alert, public transport app, bus stop alarm, background location alarm, ad-free transit app" />
-  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
-  <meta name="author" content="Me-Kum" />
-  <meta name="application-name" content="Napigation" />
-  <meta name="apple-mobile-web-app-title" content="Napigation" />
-  <meta name="theme-color" content="#1a1a2e" />
+  <title>מי-קום | התראות חכמות לפני התחנה שלך</title>
+  <meta name="description" content="מי-קום היא אפליקציית Android לשומרי שינה בתחבורה ציבורית: התראה לפני התחנה, מעקב אמין ברקע, פרטיות על המכשיר וללא צורך בהרשמה." />
+  <meta name="keywords" content="מי-קום, Napigation, אפליקציית תחבורה ציבורית, התראה לפני תחנה, אפליקציית נסיעה, מעקב ברקע, התראת ירידה" />
+  <meta name="robots" content="index,follow,max-snippet:-1,max-image-preview:large,max-video-preview:-1" />
+  <meta name="author" content="Napigation" />
+  <meta name="application-name" content="מי-קום" />
+  <meta name="apple-mobile-web-app-title" content="מי-קום" />
+  <meta name="theme-color" content="#132238" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-  <!-- Open Graph -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.napigation.com/" />
-  <meta property="og:title" content="מי-קום - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta property="og:description" content="התראה מדויקת לפני ההגעה ליעד, ללא פרסומות, עם מעקב אמין ברקע ועיבוד מיקום מקומי לחלוטין." />
+  <meta property="og:url" content="https://www.napigation.com/he/" />
+  <meta property="og:title" content="מי-קום | התראות חכמות לפני התחנה שלך" />
+  <meta property="og:description" content="אפליקציה לנוסעי תחבורה ציבורית שרוצים לנוח, לקרוא או לעבוד ולקבל התראה לפני הירידה." />
   <meta property="og:site_name" content="Napigation" />
   <meta property="og:locale" content="he_IL" />
   <meta property="og:locale:alternate" content="en_US" />
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta name="twitter:description" content="אפליקציית התראות קרבה לתחבורה ציבורית עם עבודה אמינה ברקע, פרטיות מלאה וללא פרסומות." />
+  <meta name="twitter:title" content="מי-קום | התראות חכמות לפני התחנה שלך" />
+  <meta name="twitter:description" content="התראות מדויקות לפני התחנה, בלי לצפות במסך לאורך כל הנסיעה." />
 
-  <!-- hreflang -->
-  <link rel="alternate" hreflang="en" href="https://www.napigation.com/" />
-  <link rel="alternate" hreflang="he" href="https://www.napigation.com/he/" />
-  <link rel="alternate" hreflang="x-default" href="https://www.napigation.com/" />
   <link rel="canonical" href="https://www.napigation.com/he/" />
+  <link rel="alternate" hreflang="he" href="https://www.napigation.com/he/" />
+  <link rel="alternate" hreflang="en" href="https://www.napigation.com/" />
+  <link rel="alternate" hreflang="x-default" href="https://www.napigation.com/" />
 
   <style>
     :root {
-      --primary: #1a1a2e;
-      --accent: #4361ee;
-      --accent-light: #6e86f5;
-      --bg: #f8f9ff;
-      --white: #ffffff;
-      --text: #2c3e50;
-      --text-light: #546e7a;
-      --border: #e2e5f0;
-      --radius: 12px;
-      --shadow: 0 4px 20px rgba(67,97,238,0.08);
-      --success: #10b981;
+      --ink: #132238;
+      --ink-soft: #35516f;
+      --accent: #0f9d7a;
+      --accent-deep: #0a7f63;
+      --accent-warm: #ffb649;
+      --paper: #ffffff;
+      --line: #d9e5f2;
+      --shadow: 0 18px 60px rgba(19, 34, 56, 0.12);
+      --radius: 24px;
+      --radius-sm: 16px;
     }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.6;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(15, 157, 122, 0.16), transparent 28%),
+        linear-gradient(180deg, #f3f9ff 0%, #ffffff 38%, #f8fbff 100%);
+      line-height: 1.7;
     }
-
-    /* Language logic */
-    [lang="he"] .en-content { display: none !important; }
-    [lang="en"] .he-content { display: none !important; }
-    [lang="en"] { direction: ltr; }
-
-    /* Platform logic — only one platform's content is shown at a time */
-    [data-platform="android"] .ios-content { display: none !important; }
-    [data-platform="ios"] .android-content { display: none !important; }
-
-    /* ── Navbar ── */
-    .navbar {
-      background: var(--primary);
-      padding: 0 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
+    a { color: inherit; }
+    img { max-width: 100%; display: block; }
+    .android-content[data-platform-hidden="true"],
+    .ios-content[data-platform-hidden="true"] { display: none !important; }
+    .shell { width: min(1180px, calc(100% - 40px)); margin: 0 auto; }
+    .site-header {
       position: sticky;
       top: 0;
-      z-index: 200;
-      box-shadow: 0 2px 12px rgba(0,0,0,0.15);
+      z-index: 20;
+      backdrop-filter: blur(14px);
+      background: rgba(247, 251, 255, 0.9);
+      border-bottom: 1px solid rgba(19, 34, 56, 0.08);
     }
-    .navbar-logo {
+    .site-header .shell {
+      min-height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+    .brand {
       display: inline-flex;
       align-items: center;
-      gap: 10px;
-      color: #fff;
+      gap: 12px;
+      text-decoration: none;
       font-weight: 800;
-      font-size: 1.25rem;
-      text-decoration: none;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.03em;
+      font-size: 1.15rem;
     }
-    .navbar-logo img {
-      width: 30px;
-      height: 30px;
-      object-fit: contain;
-      flex-shrink: 0;
+    .brand img { width: 34px; height: 34px; }
+    .brand small {
+      display: block;
+      color: var(--ink-soft);
+      font-size: 0.76rem;
+      font-weight: 600;
+      letter-spacing: 0.04em;
     }
-    .navbar-logo span { color: var(--accent-light); }
-    .navbar-links { display: flex; gap: 28px; align-items: center; }
-    .navbar-links a {
-      color: rgba(255,255,255,0.8);
+    .nav-links, .controls { display: flex; align-items: center; gap: 14px; }
+    .nav-links a {
       text-decoration: none;
+      color: var(--ink-soft);
+      font-weight: 600;
       font-size: 0.95rem;
-      font-weight: 500;
-      transition: color 0.2s;
     }
-    .navbar-links a:hover { color: #fff; }
-    .nav-controls { display: flex; align-items: center; gap: 12px; }
+    .nav-links a:hover { color: var(--ink); }
     .seg {
       display: inline-flex;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 20px;
-      overflow: hidden;
+      padding: 4px;
+      border-radius: 999px;
+      background: rgba(19, 34, 56, 0.06);
+      border: 1px solid rgba(19, 34, 56, 0.08);
     }
-    .seg button,
-    .seg a {
+    .seg a,
+    .seg button {
+      border: 0;
       background: transparent;
-      border: none;
-      color: rgba(255,255,255,0.65);
-      padding: 6px 14px;
-      font-size: 0.82rem;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: background 0.2s, color 0.2s;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      white-space: nowrap;
-      text-decoration: none;
-    }
-    .seg button:hover:not(.active),
-    .seg a:hover:not(.active) { color: #fff; }
-    .seg button.active,
-    .seg a.active { background: var(--accent); color: #fff; }
-
-    /* ── Hero ── */
-    .hero {
-      background: linear-gradient(135deg, var(--primary) 0%, #16213e 60%, #0f3460 100%);
-      color: #fff;
-      padding: 90px 24px 100px;
-      text-align: center;
-    }
-    .hero-badge {
-      display: inline-block;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.15);
-      border-radius: 24px;
-      padding: 6px 18px;
-      font-size: 0.85rem;
-      font-weight: 500;
-      margin-bottom: 28px;
-      letter-spacing: 0.5px;
-    }
-    .hero h1 {
-      font-size: clamp(2.2rem, 5vw, 3.5rem);
-      font-weight: 800;
-      margin-bottom: 24px;
-      line-height: 1.2;
-      letter-spacing: -0.5px;
-    }
-    .hero h1 em { color: var(--accent-light); font-style: normal; }
-    .hero p {
-      font-size: 1.15rem;
-      color: rgba(255,255,255,0.85);
-      max-width: 600px;
-      margin: 0 auto 40px;
-      line-height: 1.6;
-    }
-    .hero-fact {
-      max-width: 760px;
-      margin: -16px auto 32px;
-      padding: 14px 18px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.14);
-      border-radius: 16px;
-      font-size: 1rem;
-      color: rgba(255,255,255,0.92);
-    }
-    .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-    .btn-primary {
-      background: var(--accent);
-      color: #fff;
-      padding: 14px 36px;
-      border-radius: 50px;
-      text-decoration: none;
+      color: var(--ink-soft);
+      font: inherit;
+      font-size: 0.86rem;
       font-weight: 700;
-      font-size: 1.05rem;
-      transition: background 0.2s, transform 0.1s;
+      text-decoration: none;
+      padding: 8px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+    }
+    .seg .active {
+      background: var(--paper);
+      color: var(--ink);
+      box-shadow: 0 8px 20px rgba(19, 34, 56, 0.08);
+    }
+    .hero { padding: 70px 0 52px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.1fr 0.9fr;
+      gap: 36px;
+      align-items: center;
+    }
+    .eyebrow {
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      box-shadow: 0 4px 15px rgba(67,97,238,0.3);
-    }
-    .btn-primary:hover { background: #3451d1; transform: translateY(-2px); }
-    .btn-secondary {
-      background: transparent;
-      color: #fff;
-      padding: 14px 36px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.05rem;
-      border: 2px solid rgba(255,255,255,0.3);
-      transition: background 0.2s, border-color 0.2s;
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.5); }
-    .hero-note { margin-top: 24px; font-size: 0.85rem; color: rgba(255,255,255,0.5); }
-
-    /* ── Global Sections ── */
-    section { padding: 80px 24px; }
-    .section-inner { max-width: 1000px; margin: 0 auto; }
-    .section-label {
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 12px;
-    }
-    .section-title {
-      text-align: center;
-      font-size: clamp(1.8rem, 3.5vw, 2.4rem);
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(15, 157, 122, 0.12);
+      color: var(--accent-deep);
       font-weight: 800;
-      color: var(--primary);
-      margin-bottom: 56px;
-      letter-spacing: -0.5px;
+      margin-bottom: 18px;
     }
-
-    /* ── How it works ── */
-    #how { background: var(--white); }
-    .steps {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 32px;
+    h1 {
+      font-size: clamp(2.4rem, 6vw, 4.5rem);
+      line-height: 1.02;
+      letter-spacing: -0.05em;
+      margin-bottom: 20px;
+      max-width: 11ch;
     }
-    .step {
-      text-align: center;
-      padding: 40px 24px;
-      border-radius: var(--radius);
-      background: var(--bg);
-      border: 1px solid var(--border);
-      position: relative;
-      transition: transform 0.2s;
+    .hero-lead {
+      font-size: 1.12rem;
+      color: var(--ink-soft);
+      max-width: 34em;
+      margin-bottom: 24px;
     }
-    .step:hover { transform: translateY(-4px); }
-    .step-number {
-      width: 56px; height: 56px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      font-size: 1.5rem;
-      font-weight: 800;
+    .trust-badge {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 20px;
-      box-shadow: 0 4px 12px rgba(67,97,238,0.25);
-    }
-    .step h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
-    .step p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
-
-    /* ── Advantages (The SEO/AI Block) ── */
-    #advantage {
-      background: linear-gradient(180deg, var(--bg) 0%, var(--white) 100%);
-    }
-    .adv-intro {
-      text-align: center;
-      max-width: 760px;
-      margin: -20px auto 48px;
-      color: var(--text-light);
-      font-size: 1.1rem;
-    }
-    .adv-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-    }
-    .adv-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 32px;
-      border: 1px solid var(--border);
-      border-right: 4px solid var(--accent); /* RTL native */
-      box-shadow: var(--shadow);
-    }
-    [lang="en"] .adv-card { border-right: 1px solid var(--border); border-left: 4px solid var(--accent); }
-    .adv-icon { font-size: 2.2rem; margin-bottom: 16px; }
-    .adv-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-    .adv-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
-
-    /* ── Features ── */
-    #features { background: var(--bg); }
-    .features-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 24px;
-    }
-    .feature-card {
-      background: var(--white);
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      border: 1px solid var(--border);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    .feature-card:hover { transform: translateY(-4px); box-shadow: var(--shadow); }
-    .feature-icon { font-size: 2.2rem; margin-bottom: 16px; }
-    .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
-    .feature-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
-
-    /* ── Plans ── */
-    #plans { background: var(--white); }
-    .plans-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 24px;
-      max-width: 1100px;
-      margin: 0 auto;
-    }
-    .plan-card {
-      border-radius: var(--radius);
-      padding: 40px 32px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      position: relative;
-      display: flex;
-      flex-direction: column;
-    }
-    .plan-card.featured {
-      background: var(--white);
-      border: 2px solid var(--accent);
-      box-shadow: 0 8px 30px rgba(67,97,238,0.12);
-      transform: scale(1.02);
-    }
-    .plan-badge {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 4px 16px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
-    }
-    [lang="en"] .plan-badge { transform: translateX(-50%); }
-    .plan-name { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
-    .plan-desc { font-size: 0.9rem; color: var(--text-light); margin-bottom: 24px; }
-    .plan-features { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-    .plan-features li {
-      font-size: 0.95rem;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      color: var(--text);
-      display: flex;
-      gap: 12px;
+      gap: 14px;
       align-items: flex-start;
+      padding: 18px 20px;
+      background: linear-gradient(135deg, rgba(15, 157, 122, 0.12), rgba(255, 182, 73, 0.14));
+      border: 1px solid rgba(15, 157, 122, 0.18);
+      border-radius: 18px;
+      margin-bottom: 28px;
+      max-width: 640px;
     }
-    .plan-features li:last-child { border-bottom: none; }
-    .plan-features li::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; }
-
-    /* ── FAQ ── */
-    #faq { background: var(--bg); }
-    .faq-list { max-width: 800px; margin: 0 auto; background: var(--white); border-radius: var(--radius); border: 1px solid var(--border); }
-    .faq-item { border-bottom: 1px solid var(--border); padding: 24px 32px; }
-    .faq-item:last-child { border-bottom: none; }
-    .faq-q {
-      font-weight: 700;
-      font-size: 1.05rem;
-      color: var(--primary);
-      cursor: pointer;
+    .trust-badge strong { display: block; margin-bottom: 4px; }
+    .hero-actions {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      user-select: none;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
     }
-    .faq-q::after {
-      content: '+';
-      font-size: 1.5rem;
-      color: var(--accent);
-      flex-shrink: 0;
-      line-height: 1;
-      transition: transform 0.2s;
-    }
-    .faq-item.open .faq-q::after { transform: rotate(45deg); }
-    .faq-a {
-      font-size: 0.95rem;
-      color: var(--text-light);
-      line-height: 1.7;
-      max-height: 0;
-      overflow: hidden;
-      transition: max-height 0.3s ease, padding 0.3s ease;
-    }
-    .faq-item.open .faq-a { max-height: 400px; padding-top: 16px; }
-
-    /* ── Download ── */
-    #download {
-      background: linear-gradient(135deg, var(--accent) 0%, #3451d1 100%);
-      text-align: center;
-      color: #fff;
-    }
-    #download .section-title { color: #fff; margin-bottom: 16px; }
-    #download .sub { color: rgba(255,255,255,0.9); margin-bottom: 40px; font-size: 1.1rem; }
-    .store-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-    .store-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
-      padding: 16px 32px;
-      border-radius: 50px;
+    .cta,
+    .ghost,
+    .store-badge {
       text-decoration: none;
-      font-size: 1rem;
-      font-weight: 600;
+      border-radius: 18px;
+      font-weight: 800;
       display: inline-flex;
       align-items: center;
-      gap: 12px;
-      transition: background 0.2s, transform 0.1s;
+      justify-content: center;
+      gap: 10px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
     }
-    .store-btn:hover:not(.disabled) { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
-    .store-btn.disabled { 
-      opacity: 0.6; 
-      cursor: default; 
-      pointer-events: none; 
-      background: transparent;
-    }
-    .store-icon { font-size: 1.4rem; }
-
-    /* ── Contact ── */
-    #contact { background: var(--white); text-align: center; }
-    #contact .section-title { margin-bottom: 16px; }
-    #contact p { color: var(--text-light); margin-bottom: 32px; font-size: 1.05rem; }
-    .contact-email {
-      display: inline-block;
-      background: var(--primary);
-      border-radius: 50px;
-      padding: 14px 36px;
+    .cta {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-deep) 100%);
       color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.05rem;
-      box-shadow: 0 4px 15px rgba(26,26,46,0.2);
-      transition: background 0.2s, transform 0.1s;
+      padding: 16px 24px;
+      box-shadow: 0 18px 40px rgba(15, 157, 122, 0.24);
     }
-    .contact-email:hover { background: #2a2a4a; transform: translateY(-2px); }
-
-    /* ── Footer ── */
-    footer {
-      background: var(--primary);
-      color: rgba(255,255,255,0.6);
-      text-align: center;
-      padding: 40px 24px;
-      font-size: 0.9rem;
-      border-top: 1px solid rgba(255,255,255,0.1);
+    .ghost {
+      padding: 16px 24px;
+      border: 1px solid rgba(19, 34, 56, 0.12);
+      background: rgba(255, 255, 255, 0.72);
+      color: var(--ink);
+    }
+    .cta:hover,
+    .ghost:hover,
+    .store-badge:hover { transform: translateY(-2px); }
+    .hero-note {
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .hero-visual {
+      background: linear-gradient(160deg, #17304e 0%, #102138 70%, #0d1930 100%);
+      color: #fff;
+      border-radius: 30px;
+      padding: 26px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-visual::after {
+      content: "";
+      position: absolute;
+      inset: auto auto -70px -60px;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255, 182, 73, 0.18);
+      filter: blur(6px);
+    }
+    .hero-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      margin-top: 24px;
+    }
+    .hero-panel,
+    .stat-card,
+    .screen-card,
+    .feature-card,
+    .plan-card,
+    .contact-card,
+    .faq-list details {
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(19, 34, 56, 0.08);
+      background: var(--paper);
+      box-shadow: 0 12px 32px rgba(19, 34, 56, 0.06);
+    }
+    .hero-panel {
+      color: var(--ink);
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .hero-panel strong,
+    .stat-card strong { display: block; font-size: 1rem; }
+    .hero-panel p,
+    .stat-card p,
+    .screen-card p,
+    .feature-card p,
+    .plan-card p,
+    .contact-card p,
+    .faq-list p { color: var(--ink-soft); }
+    .hero-panel ul { margin-top: 10px; padding-right: 18px; }
+    .hero-panel li { margin: 6px 0; }
+    .stat-card { padding: 18px; }
+    main section { padding: 40px 0 28px; }
+    .section-kicker {
+      color: var(--accent-deep);
+      letter-spacing: 0.08em;
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      line-height: 1.08;
+      letter-spacing: -0.04em;
+      margin-bottom: 14px;
+    }
+    .section-copy {
+      max-width: 38em;
+      color: var(--ink-soft);
+      margin-bottom: 28px;
+      font-size: 1.04rem;
+    }
+    .steps,
+    .preview-grid,
+    .feature-grid,
+    .plans-grid,
+    .contact-grid {
+      display: grid;
+      gap: 22px;
+    }
+    .steps { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .step-card,
+    .screen-card,
+    .feature-card,
+    .plan-card,
+    .contact-card {
+      padding: 24px;
+      background: rgba(255, 255, 255, 0.92);
+    }
+    .step-index {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 800;
+      margin-bottom: 16px;
+    }
+    .step-card h3,
+    .screen-card h3,
+    .feature-card h3,
+    .plan-card h3,
+    .contact-card h3,
+    .faq-list summary {
+      font-size: 1.08rem;
+      margin-bottom: 10px;
+    }
+    .preview-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .screen-card { overflow: hidden; }
+    .phone {
+      border-radius: 28px;
+      border: 8px solid #0f1d31;
+      background: linear-gradient(180deg, #eef7ff 0%, #ffffff 100%);
+      padding: 16px;
+      margin-bottom: 18px;
+      min-height: 300px;
+      box-shadow: inset 0 0 0 1px rgba(19, 34, 56, 0.05);
+    }
+    .phone-bar {
+      width: 40%;
+      height: 6px;
+      background: rgba(19, 34, 56, 0.18);
+      border-radius: 999px;
+      margin: 0 auto 16px;
+    }
+    .phone-chip,
+    .mini-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(15, 157, 122, 0.12);
+      color: var(--accent-deep);
+      font-size: 0.8rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .map-card,
+    .alert-card,
+    .trip-card {
+      border-radius: 18px;
+      padding: 14px;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      margin-bottom: 12px;
+    }
+    .map-card strong,
+    .alert-card strong,
+    .trip-card strong { display: block; margin-bottom: 6px; }
+    .route-line {
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #dce8f4 0%, #dce8f4 38%, var(--accent) 38%, var(--accent) 100%);
+      margin: 12px 0 10px;
+    }
+    .pulse {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-warm);
+      box-shadow: 0 0 0 8px rgba(255, 182, 73, 0.22);
+      margin-bottom: 12px;
+    }
+    .feature-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    .feature-card { position: relative; }
+    .feature-card::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 0 auto;
+      width: 5px;
+      border-radius: 0 16px 16px 0;
+      background: linear-gradient(180deg, var(--accent), var(--accent-warm));
+    }
+    .plans-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: stretch; }
+    .plan-card { position: relative; }
+    .plan-card.featured {
+      transform: translateY(-10px);
+      border: 2px solid var(--accent);
+      box-shadow: 0 20px 60px rgba(15, 157, 122, 0.18);
+    }
+    .plan-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: var(--ink);
+      color: #fff;
+      font-size: 0.76rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+    }
+    .price {
+      font-size: 2rem;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 10px;
+    }
+    .price small { font-size: 0.95rem; font-weight: 700; color: var(--ink-soft); }
+    .plan-list {
+      list-style: none;
+      margin: 18px 0 24px;
+      display: grid;
+      gap: 10px;
+    }
+    .plan-list li {
+      padding-right: 22px;
+      position: relative;
+      color: var(--ink-soft);
+    }
+    .plan-list li::before {
+      content: "✓";
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: var(--accent);
+      font-weight: 900;
+    }
+    .faq-list {
+      display: grid;
+      gap: 14px;
+      max-width: 920px;
+    }
+    .faq-list details { padding: 20px 22px; }
+    .faq-list summary {
+      list-style: none;
+      cursor: pointer;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+    .faq-list summary::-webkit-details-marker { display: none; }
+    .faq-list summary::after {
+      content: "+";
+      color: var(--accent);
+      font-size: 1.6rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .faq-list details[open] summary::after { content: "−"; }
+    .faq-list p { margin-top: 12px; }
+    .download-band {
+      background: linear-gradient(135deg, #17304e 0%, #102138 100%);
+      color: #fff;
+      border-radius: 30px;
+      padding: 34px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 24px;
+      align-items: center;
+      box-shadow: var(--shadow);
+    }
+    .download-band p { color: rgba(255,255,255,0.82); }
+    .store-badge {
+      min-width: 230px;
+      padding: 14px 18px;
+      background: #000;
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.16);
+    }
+    .store-badge svg { flex-shrink: 0; }
+    .store-text small { display: block; font-size: 0.7rem; opacity: 0.78; letter-spacing: 0.08em; }
+    .store-text strong { display: block; font-size: 1.1rem; }
+    .ios-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 999px;
+      padding: 10px 14px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.16);
+      font-weight: 700;
+    }
+    .contact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .contact-card { min-height: 100%; }
+    .contact-link {
+      text-decoration: none;
+      color: var(--accent-deep);
+      font-weight: 800;
+    }
+    .site-footer {
+      padding: 40px 0 56px;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+    .footer-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px;
+      border-top: 1px solid rgba(19, 34, 56, 0.08);
+      padding-top: 22px;
+      flex-wrap: wrap;
     }
     .footer-links {
       display: flex;
-      gap: 32px;
-      justify-content: center;
+      gap: 18px;
       flex-wrap: wrap;
-      margin-bottom: 24px;
     }
-    .footer-links a { color: rgba(255,255,255,0.7); text-decoration: none; font-weight: 500; }
-    .footer-links a:hover { color: #fff; }
-
-    /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .navbar { padding: 0 16px; }
-      .navbar-links > a { display: none; }
-      .nav-controls { gap: 8px; }
-      .seg button { padding: 6px 10px; font-size: 0.78rem; }
-      .hero { padding: 60px 20px 80px; }
-      section { padding: 60px 20px; }
-      .plan-card.featured { transform: scale(1); }
-      .adv-card { padding: 24px; }
+    .footer-links a { text-decoration: none; }
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .steps,
+      .preview-grid,
+      .feature-grid,
+      .plans-grid,
+      .contact-grid,
+      .download-band {
+        grid-template-columns: 1fr;
+      }
+      .plan-card.featured { transform: none; }
+    }
+    @media (max-width: 820px) {
+      .site-header .shell {
+        min-height: auto;
+        padding: 14px 0;
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .nav-links,
+      .controls {
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+      .hero { padding-top: 44px; }
+      .shell { width: min(1180px, calc(100% - 24px)); }
+      .download-band { padding: 24px; }
     }
   </style>
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    "name": "מי-קום",
+    "alternateName": "Napigation",
+    "url": "https://www.napigation.com/he/",
+    "inLanguage": "he",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Android",
+    "isAccessibleForFree": true,
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD",
+      "availability": "https://schema.org/InStock"
+    },
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
+    "description": "מי-קום מתריעה לנוסעי תחבורה ציבורית לפני התחנה עם מעקב אמין ברקע ופרטיות מבוססת עיבוד על המכשיר.",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Napigation",
+      "email": "support@napigation.com"
+    }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "איך מי-קום עובדת?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "בוחרים יעד, מפעילים התראה, ומי-קום עוקבת ברקע עד שמתקרבים לתחנה ומחזירה התראה בזמן."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "האם מי-קום שומרת על פרטיות?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "כן. עיבוד המיקום נעשה על המכשיר, אין צורך בהרשמה, ונתוני מיקום רגישים לא נשמרים בשרתי מי-קום."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "האם יש מסלול חינמי?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "כן. מסלול הבסיס כולל את חוויית השימוש היומיומית, ומסלולי הפרימיום מוסיפים יותר יעדים שמורים, מסלולים ושליטה מתקדמת."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "האם קיימת גרסת iPhone?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "גרסת Android זמינה כעת ב-Google Play. גרסת iPhone נמצאת בהכנה ותפורסם כאשר תהיה זמינות ב-App Store."
+        }
+      }
+    ]
+  }
+  </script>
 </head>
 <body>
-
-<!-- Navbar -->
-<nav class="navbar">
-  <a class="navbar-logo" href="#top"><img src="../location-icon.png" alt="Napigation logo" width="30" height="30" /><span class="he-content" style="color:inherit">מי<span>-</span>קום</span><span class="en-content" style="color:inherit">Napigation</span></a>
-  <div class="navbar-links">
-    <a href="#how" class="he-content">איך זה עובד</a>
-    <a href="#how" class="en-content">How it works</a>
-    <a href="#advantage" class="he-content">היתרון הטכנולוגי</a>
-    <a href="#advantage" class="en-content">Why Napigation</a>
-    <a href="#plans" class="he-content">תוכניות</a>
-    <a href="#plans" class="en-content">Plans</a>
-    <a href="#faq" class="he-content">שאלות נפוצות</a>
-    <a href="#faq" class="en-content">FAQ</a>
-    <a href="#download" class="he-content">הורדה</a>
-    <a href="#download" class="en-content">Download</a>
-    <div class="nav-controls">
-      <div class="seg" role="group" aria-label="Language">
-        <a href="./" hreflang="he" class="active" aria-current="page">עברית</a>
-        <a href="../" hreflang="en">English</a>
-      </div>
-      <div class="seg" role="group" aria-label="בחירת פלטפורמה / Platform">
-        <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">Android</button>
-        <button type="button" data-platform="ios" onclick="setPlatform('ios')">iOS</button>
-      </div>
-    </div>
-  </div>
-</nav>
-
-<!-- Hero -->
-<section class="hero" id="top">
-  <div class="he-content">
-    <div class="hero-badge android-content">זמין עכשיו ב-Google Play</div>
-    <div class="hero-badge ios-content">גרסת iOS בדרך ל-App Store</div>
-    <h1>לעולם אל תפספס<br/><em>את התחנה שלך</em></h1>
-    <p>מי-קום עוזרת לנוסעי תחבורה ציבורית לרדת בזמן. בוחרים יעד, ממשיכים בנסיעה כרגיל, ומקבלים התראה לפני תחנת הירידה.</p>
-    <p class="hero-fact">האפליקציה נועדה למי שקורא, עובד או נרדם בדרך ורוצה כלי פשוט, ברור ואמין יותר מהפעלת ניווט מלא לאורך כל הנסיעה.</p>
-    <div class="hero-buttons">
-      <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        הורד עכשיו בחינם
+  <header class="site-header">
+    <div class="shell">
+      <a class="brand" href="#top">
+        <img src="../location-icon.png" alt="לוגו מי-קום" width="34" height="34" />
+        <span>
+          מי-קום
+          <small>Napigation למי שנוסעים בראש שקט</small>
+        </span>
       </a>
-      <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">בקרוב ל-App Store</span>
-      <a class="btn-secondary" href="#how">למד איך זה עובד</a>
-    </div>
-    <p class="hero-note">ללא הרשמה · ללא פרסומות · עיבוד מיקום על המכשיר</p>
-  </div>
-  <div class="en-content">
-    <div class="hero-badge android-content">Available now on Google Play</div>
-    <div class="hero-badge ios-content">iOS version coming to the App Store</div>
-    <h1>Never miss<br/><em>your stop again</em></h1>
-    <p>Napigation helps public transit riders get off at the right stop. Set a destination, continue your trip normally, and get an alert before it is time to leave.</p>
-    <p class="hero-fact">It is built for riders who want to read, work, or rest on the way without running full navigation for the entire trip.</p>
-    <div class="hero-buttons">
-      <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        Download for Free
-      </a>
-      <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">Coming soon to the App Store</span>
-      <a class="btn-secondary" href="#how">Learn how it works</a>
-    </div>
-    <p class="hero-note">No account required · No ads · On-device location processing</p>
-  </div>
-</section>
-
-<!-- How it works -->
-<section id="how">
-  <div class="section-inner">
-    <p class="section-label he-content">איך זה עובד</p>
-    <p class="section-label en-content">How It Works</p>
-    <h2 class="section-title he-content">שלושה צעדים פשוטים</h2>
-    <h2 class="section-title en-content">Three Simple Steps</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h3 class="he-content">בוחרים יעד</h3>
-        <h3 class="en-content">Choose Your Stop</h3>
-        <p class="he-content">מחפשים כתובת או בוחרים נקודה על המפה, ואז מגדירים מתי תרצו לקבל התראה לפני ההגעה.</p>
-        <p class="en-content">Search for an address or pick a point on the map, then choose when you want the alert to arrive.</p>
-      </div>
-      <div class="step">
-        <div class="step-number">2</div>
-        <h3 class="he-content">מפעילים התראה</h3>
-        <h3 class="en-content">Start the Alert</h3>
-        <p class="he-content">ברגע שהנסיעה מתחילה, מפעילים את ההתראה. מי-קום ממשיכה לעקוב גם כשהטלפון בכיס או כשהמסך כבוי.</p>
-        <p class="en-content">When the trip starts, turn on the alert. Napigation keeps tracking even when your phone is in your pocket or the screen is off.</p>
-      </div>
-      <div class="step">
-        <div class="step-number">3</div>
-        <h3 class="he-content">נוסעים בראש שקט</h3>
-        <h3 class="en-content">Ride Without Watching the Screen</h3>
-        <p class="he-content">אפשר לקרוא, לעבוד או לנוח. כשהיעד מתקרב, האפליקציה מתריעה בזמן כדי שלא תפספסו את הירידה.</p>
-        <p class="en-content">Read, work, or rest during the ride. When your stop is close, the app alerts you in time to get off.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- The New Standard (Competitive Advantage) -->
-<section id="advantage">
-  <div class="section-inner">
-    <p class="section-label he-content">למה מי-קום</p>
-    <p class="section-label en-content">Why Napigation</p>
-    <h2 class="section-title he-content">פחות רעש, יותר ביטחון בנסיעה</h2>
-    <h2 class="section-title en-content">Built for Riders, Not for Noise</h2>
-    <p class="adv-intro he-content">
-      במקום עוד אפליקציה עמוסת מסכים והבטחות, מי-קום מתמקדת בדבר אחד: לעזור לכם לרדת בזמן, בלי להעמיס על הנסיעה.
-    </p>
-    <p class="adv-intro en-content">
-      Napigation focuses on one job: helping you get off at the right stop without turning the whole ride into a navigation session.
-    </p>
-    
-    <div class="adv-grid">
-      <div class="adv-card">
-        <h3 class="he-content">ללא פרסומות וללא הסחות דעת</h3>
-        <h3 class="en-content">No Ads, No Distractions</h3>
-        <p class="he-content">אפשר להגדיר התראה במהירות ולהמשיך בנסיעה, בלי חלונות קופצים ובלי עומס מיותר על המסך.</p>
-        <p class="en-content">Set an alert quickly and move on with your trip, without pop-ups or extra clutter.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">פרטיות בשפה ברורה</h3>
-        <h3 class="en-content">Privacy, Clearly Explained</h3>
-        <p class="he-content">המיקום שלכם מעובד על המכשיר. אין צורך בהרשמה, והמידע הרגיש לא נשמר אצלנו בענן.</p>
-        <p class="en-content">Your location is processed on your device. No sign-up is required, and sensitive location data is not stored in our cloud.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">התראה שקשה לפספס</h3>
-        <h3 class="en-content">An Alert You Are Likely to Notice</h3>
-        <p class="he-content">מי-קום נבנתה כדי להתריע גם כשלא מסתכלים על המסך, עם דגש על צליל ורטט בזמן הנכון.</p>
-        <p class="en-content">Napigation is designed to alert you even when you are not watching the screen, with sound and vibration at the right moment.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">גרסה חינמית שבאמת שימושית</h3>
-        <h3 class="en-content">A Free Version That Is Actually Useful</h3>
-        <p class="he-content">יכולות הליבה זמינות כבר מההתחלה, ושדרוגים מיועדים למי שצריך יותר גמישות בניהול יעדים ומסלולים.</p>
-        <p class="en-content">The core experience is available from the start, while paid plans are for riders who want more flexibility with saved places and routes.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features -->
-<section id="features">
-  <div class="section-inner">
-    <p class="section-label he-content">בפועל</p>
-    <p class="section-label en-content">In Practice</p>
-    <h2 class="section-title he-content">מותאמת לנסיעה אמיתית</h2>
-    <h2 class="section-title en-content">Designed for Real Commutes</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3 class="he-content">מעקב ברקע</h3>
-        <h3 class="en-content">Background Tracking</h3>
-        <p class="he-content">המעקב ממשיך גם כשהטלפון בכיס, כדי שלא תצטרכו להשאיר את האפליקציה פתוחה לאורך כל הדרך.</p>
-        <p class="en-content">Tracking continues while your phone is in your pocket, so you do not need to keep the app open for the entire ride.</p>
-      </div>
-      <div class="feature-card">
-        <h3 class="he-content">שימוש מאוזן בסוללה</h3>
-        <h3 class="en-content">Battery-Aware Monitoring</h3>
-        <p class="he-content">מי-קום לא מתנהגת כמו אפליקציית ניווט מלאה, ולכן מתאימה יותר לנסיעות שבהן רק רוצים לקבל התראה בזמן.</p>
-        <p class="en-content">Napigation does not behave like full-turn navigation, which makes it a better fit for rides where you only need a timely alert.</p>
-      </div>
-      <div class="feature-card">
-        <h3 class="he-content">יעדים ומסלולים שמורים</h3>
-        <h3 class="en-content">Saved Stops and Routes</h3>
-        <p class="he-content">אפשר לשמור מקומות קבועים ולחזור אליהם במהירות, בלי להגדיר הכול מחדש בכל נסיעה.</p>
-        <p class="en-content">Save frequent stops and routes so regular trips take less setup.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Plans -->
-<section id="plans">
-  <div class="section-inner">
-    <div class="he-content">
-      <p class="section-label">תמחור שקוף</p>
-      <h2 class="section-title">חינם לשימוש יומיומי, פרימיום למי שצריך יותר</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <p class="plan-name">גרסת הבסיס</p>
-          <p class="plan-desc">כל מה שצריך כדי להתחיל להשתמש באפליקציה בצורה נוחה וברורה.</p>
-          <ul class="plan-features">
-            <li>ללא פרסומות לחלוטין</li>
-            <li>עבודה יציבה ברקע</li>
-            <li>עקיפת מצב שקט אוטומטית</li>
-            <li>עד 5 מיקומים שמורים</li>
-            <li>עיבוד מיקום מקומי ופרטי</li>
-          </ul>
+      <nav class="nav-links" aria-label="ניווט ראשי">
+        <a href="#how">איך זה עובד</a>
+        <a href="#preview">תצוגת האפליקציה</a>
+        <a href="#plans">מסלולים</a>
+        <a href="#faq">שאלות נפוצות</a>
+        <a href="#download">הורדה</a>
+      </nav>
+      <div class="controls">
+        <div class="seg" role="group" aria-label="בחירת שפה">
+          <a href="./" hreflang="he" class="active" aria-current="page">עברית</a>
+          <a href="../" hreflang="en">English</a>
         </div>
-        <div class="plan-card featured">
-          <span class="plan-badge">מומלץ לנוסעים קבועים</span>
-          <p class="plan-name">פרימיום חודשי</p>
-          <p class="plan-desc">למשתמשים קבועים שרוצים יותר מקומות שמורים, יותר מסלולים ויותר אפשרויות שליטה.</p>
-          <ul class="plan-features">
-            <li>שמירת מיקומים ללא הגבלה</li>
-            <li>יצירת מסלולים ללא הגבלה</li>
-            <li>סגנון התראה "שיחה נכנסת"</li>
-            <li>מגן שינה — חוסם הפרעות בזמן מעקב (Android)</li>
-            <li>ניווט חיצוני בלחיצה — פתיחת אפליקציית הניווט בלחיצת כפתור</li>
-            <li>יעדים חד-פעמיים — נמחקים אוטומטית בהגעה ליעד</li>
-          </ul>
-        </div>
-        <div class="plan-card">
-          <p class="plan-name">פרימיום לכל החיים</p>
-          <p class="plan-desc">תשלום חד-פעמי למי שמעדיף גישה מלאה בלי חידוש חודשי.</p>
-          <ul class="plan-features">
-            <li>פתיחה מלאה של כל ההגבלות</li>
-            <li>רישיון לכל החיים בחשבון</li>
-            <li>ללא חידוש או מנוי חוזר</li>
-          </ul>
+        <div class="seg" role="group" aria-label="בחירת פלטפורמה">
+          <button type="button" class="active" data-platform-button="android" onclick="setPlatform('android')">Android</button>
+          <button type="button" data-platform-button="ios" onclick="setPlatform('ios')">iPhone</button>
         </div>
       </div>
     </div>
-    <div class="en-content">
-      <p class="section-label">Transparent Pricing</p>
-      <h2 class="section-title">Free for everyday use, premium when you need more</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <p class="plan-name">Base Tier</p>
-          <p class="plan-desc">Everything you need to start using the app comfortably.</p>
-          <ul class="plan-features">
-            <li>100% Ad-Free Experience</li>
-            <li>Stable background execution</li>
-            <li>Auto-override for silent mode</li>
-            <li>Up to 5 saved locations</li>
-            <li>Private, on-device processing</li>
-          </ul>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow android-content">גרסת Android זמינה עכשיו ב-Google Play</p>
+          <p class="eyebrow ios-content">גרסת iPhone בדרך</p>
+          <h1>לעולם אל תפספסו שוב את התחנה.</h1>
+          <p class="hero-lead">מי-קום עוזרת לנוסעי תחבורה ציבורית לקרוא, לעבוד או לנוח לאורך הנסיעה, ועדיין לקבל התראה לפני שצריך לרדת.</p>
+
+          <div class="trust-badge">
+            <div aria-hidden="true">🔒</div>
+            <div>
+              <strong>פרטיות קודם כל</strong>
+              עיבוד המיקום נשאר על המכשיר, אין צורך בהרשמה, והאפליקציה בנויה כדי לפתור משימה אחת היטב: להעיר אתכם לפני התחנה.
+            </div>
+          </div>
+
+          <div class="hero-actions android-content">
+            <a class="cta" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">להורדה ב-Google Play</a>
+            <a class="ghost" href="#preview">לצפייה בזרימת האפליקציה</a>
+          </div>
+          <div class="hero-actions ios-content">
+            <span class="cta" aria-disabled="true">גרסת iPhone בקרוב</span>
+            <a class="ghost" href="#download">סטטוס ההשקה</a>
+          </div>
+          <p class="hero-note">ללא פרסומות. ללא חשבון. התראות אמינות ברקע לנסיעות אמיתיות.</p>
         </div>
-        <div class="plan-card featured">
-          <span class="plan-badge">Recommended for commuters</span>
-          <p class="plan-name">Premium Monthly</p>
-          <p class="plan-desc">For regular riders who want more saved places, more routes, and more control.</p>
-          <ul class="plan-features">
-            <li>Unlimited saved locations</li>
-            <li>Unlimited route creation</li>
-            <li>"Incoming Call" alarm style</li>
-            <li>Sleep Guard — blocks interruptions while tracking (Android)</li>
-            <li>One-Tap External Navigation — open your navigation app with a single tap</li>
-            <li>One-Time Destinations — auto-deleted upon arrival</li>
-          </ul>
+
+        <aside class="hero-visual" aria-label="יתרונות מרכזיים">
+          <div class="hero-panel">
+            <strong>נבנתה לנוסעים, לא לניווט רציף</strong>
+            <p>מי-קום ממוקדת בדבר אחד: יעד, מעקב ברקע, התראה, וסיום. בלי להפוך את כל הנסיעה לסשן ניווט מלא.</p>
+            <ul>
+              <li>בוחרים תחנה או כתובת</li>
+              <li>נותנים לאפליקציה לעקוב ברקע</li>
+              <li>מקבלים התראה לפני הירידה</li>
+            </ul>
+          </div>
+          <div class="hero-stat-grid">
+            <article class="stat-card">
+              <strong>פרטיות על המכשיר</strong>
+              <p>הטיפול במיקום הרגיש נשאר מקומי בטלפון.</p>
+            </article>
+            <article class="stat-card">
+              <strong>מותאמת לרקע</strong>
+              <p>מיועדת לנסיעה שבה לא מסתכלים כל הזמן במסך.</p>
+            </article>
+            <article class="stat-card android-content">
+              <strong>Android זמין עכשיו</strong>
+              <p>הורדה מיידית דרך Google Play.</p>
+            </article>
+            <article class="stat-card ios-content">
+              <strong>iPhone בהכנה</strong>
+              <p>הדף משקף זמינות אמיתית במקום להסתיר אותה.</p>
+            </article>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="shell">
+        <p class="section-kicker">איך זה עובד</p>
+        <h2>שלושה צעדים, פחות חרדה לאורך הנסיעה.</h2>
+        <p class="section-copy">הדף מסביר עכשיו את המוצר בצורה קלה לסריקה גם לבני אדם וגם למנועי חיפוש: מה האפליקציה עושה, למי היא מיועדת, ולמה היא שונה מניווט מלא.</p>
+        <div class="steps">
+          <article class="step-card">
+            <div class="step-index">1</div>
+            <h3>בוחרים יעד</h3>
+            <p>מחפשים כתובת או נקודה על המפה, ומגדירים מתי תרצו לקבל את ההתראה לפני התחנה.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-index">2</div>
+            <h3>מפעילים התראת נסיעה</h3>
+            <p>ברגע שהנסיעה מתחילה, מי-קום ממשיכה לעקוב גם כשהטלפון בכיס או כשהמסך כבוי.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-index">3</div>
+            <h3>נוסעים בלי לעקוב אחרי המסך</h3>
+            <p>קוראים, עובדים או נחים. האפליקציה נועדה להחזיר התראה בדיוק לפני שמגיע הזמן לרדת.</p>
+          </article>
         </div>
-        <div class="plan-card">
-          <p class="plan-name">Lifetime Access</p>
-          <p class="plan-desc">One payment for full access, without monthly renewal.</p>
-          <ul class="plan-features">
-            <li>Complete unlock of all limits</li>
-            <li>Lifetime account license</li>
-            <li>No recurring subscriptions</li>
-          </ul>
+      </div>
+    </section>
+
+    <section id="preview">
+      <div class="shell">
+        <p class="section-kicker">תצוגת האפליקציה</p>
+        <h2>ברור איך זה נראה עוד לפני ההתקנה.</h2>
+        <p class="section-copy">במקום דף טקסטואלי בלבד, נוספו מוקאפים בסגנון מסך טלפון כדי להמחיש מיד את הזרימה ואת הפשטות של השימוש.</p>
+        <div class="preview-grid">
+          <article class="screen-card">
+            <div class="phone" aria-hidden="true">
+              <div class="phone-bar"></div>
+              <span class="phone-chip">הגדרת יעד</span>
+              <div class="map-card">
+                <strong>תחנת מרכז</strong>
+                <p>התראה 700 מטר לפני ההגעה</p>
+                <div class="route-line"></div>
+                <p>מסלול שמור לנסיעה קבועה</p>
+              </div>
+              <div class="map-card">
+                <strong>התחלה מהירה</strong>
+                <p>חיפוש, לחיצה, אישור, ויוצאים לדרך.</p>
+              </div>
+            </div>
+            <h3>הגדרה פשוטה של יעד</h3>
+            <p>המסך הראשון מראה שמדובר בכלי מהיר וממוקד, לא במערכת ניווט עמוסה.</p>
+          </article>
+          <article class="screen-card">
+            <div class="phone" aria-hidden="true">
+              <div class="phone-bar"></div>
+              <span class="phone-chip">מעקב נסיעה ברקע</span>
+              <div class="trip-card">
+                <strong>הנסיעה פעילה</strong>
+                <p>המעקב עובד בשקט גם כשהמסך כבוי.</p>
+              </div>
+              <div class="trip-card">
+                <span class="mini-tag">מודע לסוללה</span>
+                <p>לא ניווט מלא. רק לוגיקת ההתראה שחשובה באמת.</p>
+              </div>
+            </div>
+            <h3>מצב נסיעה שמבוסס על רקע</h3>
+            <p>ההבטחה העיקרית מוצגת עכשיו ויזואלית: אין צורך להחזיק את המסך פתוח לאורך כל הדרך.</p>
+          </article>
+          <article class="screen-card">
+            <div class="phone" aria-hidden="true">
+              <div class="phone-bar"></div>
+              <span class="phone-chip">התראת הגעה</span>
+              <div class="alert-card">
+                <div class="pulse"></div>
+                <strong>התחנה שלך מתקרבת</strong>
+                <p>צליל ורטט מופעלים לפני שצריך לרדת.</p>
+              </div>
+              <div class="alert-card">
+                <strong>ערך מיידי</strong>
+                <p>הצלחת הנסיעה הראשונה בונה אמון מהרגע הראשון.</p>
+              </div>
+            </div>
+            <h3>רגע ההתראה ברור ומוחשי</h3>
+            <p>הצעת הערך מוצגת במפורש: פחות פספוסי תחנות ופחות מתח לאורך הדרך.</p>
+          </article>
         </div>
       </div>
+    </section>
+
+    <section id="why">
+      <div class="shell">
+        <p class="section-kicker">למה מי-קום</p>
+        <h2>סיפור אמון חד יותר עבור אפליקציה מבוססת מיקום.</h2>
+        <p class="section-copy">הדף מציג עכשיו את המוצר כמקצועי, ממוקד ושומר פרטיות, במקום כמו עוד דף אפליקציה גנרי.</p>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>פרטיות על המכשיר</h3>
+            <p>המסר על הפרטיות קיבל מקום בולט מתחת ל-CTA הראשי, ולא נשאר קבור במדיניות.</p>
+          </article>
+          <article class="feature-card">
+            <h3>ללא הרשמה</h3>
+            <p>פחות חיכוך בכניסה ושדרוג אמון משמעותי למשתמשים שחוששים מגישה למיקום.</p>
+          </article>
+          <article class="feature-card">
+            <h3>ללא פרסומות</h3>
+            <p>המסר נשאר על נסיעה רגועה ולא על מודל מסחרי רועש.</p>
+          </article>
+          <article class="feature-card">
+            <h3>מיועדת לנוסעים אמיתיים</h3>
+            <p>המיצוב מחבר עכשיו טוב יותר בין Napigation לבין מי-קום עבור הקהל המקומי.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans">
+      <div class="shell">
+        <p class="section-kicker">תמחור</p>
+        <h2>כרטיסיות מנוי סטנדרטיות עם מסלול מומלץ ברור.</h2>
+        <p class="section-copy">התמחור מוצג עכשיו בצורה מוכרת יותר לעין, כך שקל יותר להבין מה בחינם, מה מתאים לנוסעים קבועים, ואיזה מסלול מקבל את ההמלצה המרכזית.</p>
+        <div class="plans-grid">
+          <article class="plan-card">
+            <h3>בסיס</h3>
+            <div class="price">חינם <small>לתמיד</small></div>
+            <p>כל מה שצריך כדי להתחיל להשתמש במי-קום בנסיעות יומיומיות.</p>
+            <ul class="plan-list">
+              <li>התראות ליבה ללא פרסומות</li>
+              <li>מעקב אמין ברקע</li>
+              <li>עד 5 יעדים שמורים</li>
+              <li>עיבוד מיקום מקומי</li>
+            </ul>
+            <a class="ghost" href="#download">להתחיל בחינם</a>
+          </article>
+          <article class="plan-card featured">
+            <span class="plan-badge">הכי פופולרי</span>
+            <h3>פרימיום חודשי</h3>
+            <div class="price">גמיש <small>בתשלום חודשי</small></div>
+            <p>לנוסעים קבועים שרוצים יותר יעדים שמורים, יותר מסלולים ויותר שליטה.</p>
+            <ul class="plan-list">
+              <li>יעדים שמורים ללא הגבלה</li>
+              <li>מסלולים ללא הגבלה</li>
+              <li>אפשרויות התראה מתקדמות</li>
+              <li>תוספות נוחות לנסיעות קבועות</li>
+            </ul>
+            <a class="cta" href="#download">לבחור פרימיום</a>
+          </article>
+          <article class="plan-card">
+            <h3>לכל החיים</h3>
+            <div class="price">חד פעמי <small>גישה מלאה</small></div>
+            <p>למי שמעדיפים תשלום אחד במקום מנוי מתחדש.</p>
+            <ul class="plan-list">
+              <li>פתיחת כל יכולות הפרימיום</li>
+              <li>ללא חידוש חודשי</li>
+              <li>שימוש מלא לטווח ארוך</li>
+            </ul>
+            <a class="ghost" href="#download">לבדיקת זמינות</a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="faq">
+      <div class="shell">
+        <p class="section-kicker">שאלות נפוצות</p>
+        <h2>תשובות מסודרות למשתמשים, למנועי חיפוש ול-AI.</h2>
+        <p class="section-copy">אזור השאלות בנוי עכשיו בצורה סמנטית ונתמך ב-FAQ schema, כך שקל יותר לאנדקס אותו והוא מתאים יותר לתוצאות עשירות.</p>
+        <div class="faq-list">
+          <details>
+            <summary>איך מי-קום עובדת?</summary>
+            <p>בוחרים יעד, מפעילים התראה, ומי-קום עוקבת ברקע עד שמתקרבים לתחנה ומחזירה התראה בזמן.</p>
+          </details>
+          <details>
+            <summary>במה מי-קום שונה מאפליקציות ניווט רגילות?</summary>
+            <p>אפליקציות ניווט מיועדות להכוונה רציפה עם מסך פעיל. מי-קום מיועדת לנוסעים שרק צריכים תזכורת אמינה לפני הירידה.</p>
+          </details>
+          <details>
+            <summary>אפשר להשתמש במי-קום בחינם?</summary>
+            <p>כן. מסלול הבסיס כולל את חוויית השימוש היומיומית, ומסלולי הפרימיום מוסיפים יותר יעדים שמורים, מסלולים ושליטה מתקדמת.</p>
+          </details>
+          <details>
+            <summary>האם המיקום שלי נשאר פרטי?</summary>
+            <p>כן. עיבוד המיקום הרגיש מתבצע על המכשיר, אין צורך בהרשמה, ונתוני מיקום פרטיים לא נשמרים בשרתי מי-קום.</p>
+          </details>
+          <details>
+            <summary>האם קיימת גרסת iPhone?</summary>
+            <p>גרסת Android זמינה כעת ב-Google Play. גרסת iPhone נמצאת בהכנה ותפורסם כשיהיה אפשר להוריד אותה מה-App Store.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <section id="download">
+      <div class="shell">
+        <div class="download-band">
+          <div>
+            <p class="section-kicker" style="color:#9fe8d5; margin-bottom:8px;">הורדה</p>
+            <h2 style="margin-bottom:12px;">מוכנים לנסיעה הבאה?</h2>
+            <p class="android-content">אפשר להוריד עכשיו את גרסת Android ולהפוך את הנסיעה הבאה ליותר רגועה ויותר בטוחה.</p>
+            <p class="ios-content">גרסת iPhone עדיין בהכנה. הדף מציג עכשיו את סטטוס הזמינות בצורה גלויה במקום לרמוז על משהו שלא קיים עדיין.</p>
+          </div>
+          <div class="android-content">
+            <a class="store-badge" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="להורדת מי-קום מ-Google Play">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 3L18 12L4 21V3Z" fill="#34a853"></path>
+                <path d="M4 3L12 11L9.5 13.5L4 21" fill="#4285f4"></path>
+                <path d="M18 12L9.5 13.5L12 11L18 12Z" fill="#fbbc04"></path>
+                <path d="M4 3L9.5 10.5L18 12" fill="#ea4335"></path>
+              </svg>
+              <span class="store-text">
+                <small>להורדה ב-</small>
+                <strong>Google Play</strong>
+              </span>
+            </a>
+          </div>
+          <div class="ios-content">
+            <span class="ios-pill">סטטוס גרסת iPhone: בקרוב</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="shell">
+        <p class="section-kicker">תמיכה</p>
+        <h2>פרטי קשר מקצועיים למוצר שמבקש גישת מיקום.</h2>
+        <p class="section-copy">כתובת התמיכה עודכנה לכתובת מבוססת דומיין במקום Gmail, כדי שהאתר יתאים טוב יותר לרמת האמון שמוצר כזה דורש.</p>
+        <div class="contact-grid">
+          <article class="contact-card">
+            <h3>תמיכה ודיווח על תקלות</h3>
+            <p>לשאלות, תמיכה או דיווח על בעיה, אפשר ליצור קשר ישירות דרך הכתובת הרשמית.</p>
+            <p><a class="contact-link" href="mailto:support@napigation.com">support@napigation.com</a></p>
+          </article>
+          <article class="contact-card">
+            <h3>סימני האמון המרכזיים</h3>
+            <p>מסר פרטיות בולט, סטטוס פלטפורמה ברור, HTML סמנטי יותר ו-CTA חזק יותר פועלים יחד כדי לשדר מוצר בוגר ואמין יותר.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="shell footer-row">
+      <div class="footer-links">
+        <a href="privacy.html">מדיניות פרטיות</a>
+        <a href="terms.html">תנאי שימוש</a>
+        <a href="mailto:support@napigation.com">יצירת קשר</a>
+      </div>
+      <p>© 2026 מי-קום / Napigation. כל הזכויות שמורות.</p>
     </div>
-  </div>
-</section>
+  </footer>
 
-<!-- FAQ -->
-<section id="faq">
-  <div class="section-inner">
-    <p class="section-label he-content">שאלות נפוצות</p>
-    <p class="section-label en-content">FAQ</p>
-    <h2 class="section-title he-content">מה חשוב לדעת לפני שמתחילים</h2>
-    <h2 class="section-title en-content">What to Know Before You Start</h2>
+  <script>
+    (function () {
+      var platform = new URLSearchParams(window.location.search).get('platform') || localStorage.getItem('napigation-platform') || (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
+      setPlatform(platform);
+    })();
 
-    <div class="faq-list he-content">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">איך מתחילים להשתמש במי-קום?</div>
-        <div class="faq-a">מורידים את האפליקציה, בוחרים יעד, מפעילים התראה וממשיכים בנסיעה. כאשר מתקרבים ליעד, מתקבלת התראה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">כיצד מי-קום שונה מאפליקציות ניווט מבוססות GPS סטנדרטיות?</div>
-        <div class="faq-a">אפליקציות ניווט רגילות מיועדות למסך פתוח ולהכוונה רציפה. מי-קום מיועדת לנוסעים שרק צריכים תזכורת לרדת בזמן.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם אפשר להשתמש באפליקציה בלי לשלם?</div>
-        <div class="faq-a">כן. האפליקציה זמינה להורדה בחינם וכוללת את חוויית הליבה לשימוש יומיומי. קיימות גם יכולות מתקדמות למשתמשים שרוצים הרחבה מעבר לכך.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם האפליקציה תשרוד כשהמסך כבוי והטלפון בכיס?</div>
-        <div class="faq-a">זאת בדיוק המטרה. מי-קום נבנתה לעבודה ברקע, כדי שלא תצטרכו להשאיר את המסך דלוק או את האפליקציה פתוחה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">למי מיועדת מי-קום?</div>
-        <div class="faq-a">מי-קום מיועדת לנוסעים באוטובוס, רכבת או כל תחבורה ציבורית אחרת שרוצים לקרוא, לעבוד או לנוח בזמן הנסיעה ולקבל התראה לפני הירידה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">מה מדיניות איסוף הנתונים שלכם?</div>
-        <div class="faq-a">מיקום ה-GPS שלכם מעובד על המכשיר ולעולם לא נשלח לשרתים שלנו ולא נשמר, ואיננו דורשים חשבון. לשיפור המוצר אנו אוספים אנליטיקס אנונימי ומצטבר בלבד (ללא זיהוי אישי), וחיפושי כתובות מועברים לשירות geocoding חיצוני. הפירוט המלא במדיניות הפרטיות.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם הטלפון שלי יצלצל אם הוא מוגדר על "שקט" או "רטט בלבד"?</div>
-        <div class="faq-a">במכשירים נתמכים, האפליקציה מנסה להבליט את ההתראה גם אם הטלפון במצב שקט או רטט. עדיין מומלץ לוודא שעוצמת המדיה אינה על אפס.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם קיימת גרסה ל-iPhone (iOS)?</div>
-        <div class="faq-a">אפליקציית ה-Android זמינה כעת להורדה ב-Google Play. גרסת ה-iOS נמצאת בפיתוח מתקדם ובבדיקות בטא, ותשוחרר בקרוב ל-App Store. ניתן לבחור פלטפורמה בראש העמוד כדי לראות את סטטוס הזמינות.</div>
-      </div>
-    </div>
+    function setPlatform(platform) {
+      if (platform !== 'android' && platform !== 'ios') {
+        platform = 'android';
+      }
 
-    <div class="faq-list en-content">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How do I get started with Napigation?</div>
-        <div class="faq-a">Download the app, choose a destination, turn on an alert, and continue your trip. You will be notified when your stop is close.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">How does Napigation differ from standard GPS navigation apps?</div>
-        <div class="faq-a">Regular navigation apps are made for constant guidance with the screen in use. Napigation is for riders who only need a reliable reminder before getting off.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Can I use Napigation without paying?</div>
-        <div class="faq-a">Yes. The app is free to download and includes the core daily-use experience. Advanced capabilities are available for riders who want expanded functionality.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Will the app keep working if my phone is in my pocket with the screen off?</div>
-        <div class="faq-a">That is the point of the app. Napigation is designed to keep working in the background so you do not need to watch the screen during the ride.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Who is Napigation for?</div>
-        <div class="faq-a">Napigation is built for bus, train, and public transport riders who want to read, work, or rest during a trip and receive an alert before they need to get off.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">What is your data collection policy?</div>
-        <div class="faq-a">Your GPS location is processed on-device and never sent to our servers or stored, and no account is required. To improve the app we collect only anonymous, aggregated analytics with no personal identification, and address searches are forwarded to an external geocoding service. See our Privacy Policy for full details.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Will my phone ring if it's set to "Silent" or "Vibrate"?</div>
-        <div class="faq-a">On supported devices, the app attempts to make the alert noticeable even when the phone is on silent or vibrate. It is still a good idea to make sure media volume is not set to zero.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">Is there an iPhone (iOS) version?</div>
-        <div class="faq-a">The Android app is available now on Google Play. The iOS version is in active development and beta testing, and will be released soon on the App Store. Use the platform switch at the top of the page to check availability.</div>
-      </div>
-    </div>
-  </div>
-</section>
+      document.documentElement.setAttribute('data-platform', platform);
+      localStorage.setItem('napigation-platform', platform);
 
-<!-- Download -->
-<section id="download">
-  <div class="section-inner">
-    <h2 class="section-title he-content">אפשר להתחיל כבר בנסיעה הבאה</h2>
-    <h2 class="section-title en-content">Ready for Your Next Ride</h2>
-    <p class="sub he-content android-content">גרסת Android זמינה עכשיו להורדה ב-Google Play.</p>
-    <p class="sub he-content ios-content">גרסת iOS עדיין בהכנה. עד אז אפשר להשתמש בגרסת Android.</p>
-    <p class="sub en-content android-content">The Android version is available now on Google Play.</p>
-    <p class="sub en-content ios-content">The iOS version is still on the way. Until then, the Android version is available now.</p>
-    <div class="store-buttons">
-      <a class="store-btn android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-        <span class="store-icon">▶</span> Google Play
-      </a>
-      <span class="store-btn disabled ios-content" aria-disabled="true">
-        <span class="store-icon">iOS</span>
-        <span class="he-content">App Store — בקרוב</span>
-        <span class="en-content">App Store — Coming Soon</span>
-      </span>
-    </div>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="section-inner">
-    <p class="section-label he-content">תמיכה טכנית</p>
-    <p class="section-label en-content">Technical Support</p>
-    <h2 class="section-title he-content">שאלות, תמיכה או דיווח על בעיה</h2>
-    <h2 class="section-title en-content">Questions, Support, or Bug Reports</h2>
-    <p class="he-content">אפשר לכתוב לנו לגבי תמיכה, בעיות בשימוש או הצעות לשיפור.</p>
-    <p class="en-content">Contact us for support, bug reports, or suggestions.</p>
-    <a class="contact-email" href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a>
-  </div>
-</section>
-
-<!-- Footer -->
-<footer>
-  <div class="footer-links">
-    <a href="privacy.html" class="he-content">מדיניות פרטיות</a>
-    <a href="privacy.html" class="en-content">Privacy Policy</a>
-    <a href="terms.html" class="he-content">תנאי שימוש</a>
-    <a href="terms.html" class="en-content">Terms of Service</a>
-    <a href="mailto:me.kum.support@gmail.com" class="he-content">יצירת קשר</a>
-    <a href="mailto:me.kum.support@gmail.com" class="en-content">Contact Us</a>
-  </div>
-  <p class="he-content">© 2026 מי-קום (Napigation). כל הזכויות שמורות.</p>
-  <p class="en-content">© 2026 Napigation. All rights reserved.</p>
-</footer>
-
-<!-- Structured Data: SoftwareApplication (Optimized for AI & SEO) -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "SoftwareApplication",
-  "name": "Napigation",
-  "alternateName": "מי-קום",
-  "applicationCategory": "TravelApplication",
-  "operatingSystem": "Android, iOS",
-  "isAccessibleForFree": true,
-  "description": "Napigation is a mobile app for public transport riders that lets users set a destination, monitor a trip in the background, and get an alert before reaching their stop.",
-  "offers": { "@type": "Offer", "availability": "https://schema.org/InStock" },
-  "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
-  "url": "https://www.napigation.com/",
-  "inLanguage": "he",
-  "publisher": { "@type": "Organization", "name": "Me-Kum" },
-  "author": { "@type": "Organization", "name": "Napigation", "email": "me.kum.support@gmail.com" }
-}
-</script>
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebSite",
-  "name": "Napigation",
-  "alternateName": "מי-קום",
-  "url": "https://www.napigation.com/",
-  "inLanguage": "he",
-  "publisher": { "@type": "Organization", "name": "Me-Kum" }
-}
-</script>
-
-<!-- Structured Data: FAQPage -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  "mainEntity": [
-    {
-      "@type": "Question",
-      "name": "How do I get started with Napigation?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Download the app, choose a destination on the map or through search, enable a proximity alarm, and let Napigation monitor your trip in the background until you are near your stop." }
-    },
-    {
-      "@type": "Question",
-      "name": "How does Napigation differ from standard GPS navigation apps?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Navigation apps are built for active driving guidance and drain battery rapidly. Napigation is a passive navigation system for passengers. It uses a highly efficient algorithm that stays dormant and alerts you only upon proximity to your destination." }
-    },
-    {
-      "@type": "Question",
-      "name": "Can I use Napigation without paying?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The app is free to download and includes the core daily-use experience. Advanced capabilities are available for riders who want expanded functionality." }
-    },
-    {
-      "@type": "Question",
-      "name": "Does Napigation work when the screen is off and the phone is in your pocket?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Napigation uses dedicated OS foreground services, so location tracking continues in the background even when the screen is fully locked and off." }
-    },
-    {
-      "@type": "Question",
-      "name": "Who is Napigation for?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Napigation is built for bus, train, and public transport riders who want to read, work, or rest during a trip and receive an alert before they need to get off." }
-    },
-    {
-      "@type": "Question",
-      "name": "Is my location data private with Napigation?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Your GPS location is processed on-device and is never sent to our servers or stored, and no account is required. To improve the app we collect only anonymous, aggregated analytics with no personal identification; address searches are forwarded to an external geocoding service." }
-    },
-    {
-      "@type": "Question",
-      "name": "Will my phone ring if it is set to Silent or Vibrate?",
-      "acceptedAnswer": { "@type": "Answer", "text": "Napigation is designed to override standard audio settings when you approach your destination. It automatically boosts media volume and triggers vibration to maximize the chance you wake up on time." }
-    },
-    {
-      "@type": "Question",
-      "name": "Is there an iPhone (iOS) version of Napigation?",
-      "acceptedAnswer": { "@type": "Answer", "text": "The Android app is available now on Google Play. The iOS version is in active development and beta testing, and will be released soon on the App Store." }
+      document.querySelectorAll('.android-content').forEach(function (element) {
+        element.setAttribute('data-platform-hidden', platform === 'android' ? 'false' : 'true');
+      });
+      document.querySelectorAll('.ios-content').forEach(function (element) {
+        element.setAttribute('data-platform-hidden', platform === 'ios' ? 'false' : 'true');
+      });
+      document.querySelectorAll('[data-platform-button]').forEach(function (button) {
+        var active = button.getAttribute('data-platform-button') === platform;
+        button.classList.toggle('active', active);
+        button.setAttribute('aria-pressed', active ? 'true' : 'false');
+      });
     }
-  ]
-}
-</script>
-
-<script>
-  (function() {
-    var params = new URLSearchParams(window.location.search);
-    var platform = params.get('platform') || localStorage.getItem('me-kom-platform') ||
-                   (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
-    setPlatform(platform);
-
-    document.querySelectorAll('.he-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', 'false');
-    });
-    document.querySelectorAll('.en-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', 'true');
-    });
-  })();
-
-  function setPlatform(platform) {
-    if (platform !== 'android' && platform !== 'ios') platform = 'android';
-    document.documentElement.setAttribute('data-platform', platform);
-    localStorage.setItem('me-kom-platform', platform);
-
-    // Accessibility: hide the non-active platform from screen readers
-    document.querySelectorAll('.android-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', platform === 'android' ? 'false' : 'true');
-    });
-    document.querySelectorAll('.ios-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', platform === 'ios' ? 'false' : 'true');
-    });
-    // Reflect the active choice on the platform selector
-    document.querySelectorAll('.seg button[data-platform]').forEach(function(btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-platform') === platform);
-    });
-  }
-
-  function toggleFaq(el) {
-    var item = el.parentElement;
-    var isOpen = item.classList.contains('open');
-    item.parentElement.querySelectorAll('.faq-item').forEach(function(s) {
-      s.classList.remove('open');
-    });
-    if (!isOpen) item.classList.add('open');
-  }
-</script>
+  </script>
 </body>
 </html>
