@@ -72,7 +72,21 @@
       top: 0;
       z-index: 100;
     }
-    .navbar-logo { color: #fff; font-weight: 700; font-size: 1.1rem; text-decoration: none; }
+    .navbar-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-decoration: none;
+    }
+    .navbar-logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      flex-shrink: 0;
+    }
     .navbar-links { display: flex; gap: 20px; align-items: center; }
     .navbar-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.9rem; }
     .navbar-links a:hover { color: #fff; }
@@ -114,7 +128,7 @@
 <body>
 
 <nav class="navbar">
-  <a class="navbar-logo" href="index.html">מי-קום / Napigation</a>
+  <a class="navbar-logo" href="index.html"><img src="location-icon.png" alt="Napigation logo" width="28" height="28" />מי-קום / Napigation</a>
   <div class="navbar-links">
     <a href="index.html" class="he-content">בית</a>
     <a href="index.html" class="en-content">Home</a>

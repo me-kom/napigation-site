@@ -67,10 +67,19 @@
       z-index: 100;
     }
     .navbar-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
       color: #fff;
       font-weight: 700;
       font-size: 1.1rem;
       text-decoration: none;
+    }
+    .navbar-logo img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      flex-shrink: 0;
     }
     .navbar-links {
       display: flex;
@@ -126,7 +135,7 @@
 <body>
 
 <nav class="navbar">
-  <a class="navbar-logo" href="index.html">Napigation</a>
+  <a class="navbar-logo" href="index.html"><img src="location-icon.png" alt="Napigation logo" width="28" height="28" />Napigation</a>
   <div class="navbar-links">
     <a href="index.html">Home</a>
     <a href="terms.html">Terms</a>
