@@ -20,14 +20,9 @@
 <body>
   <main class="card">
     <h1>הזדהות לדשבורד</h1>
-    <p>הגישה מוגנת. נדרשת התחברות עם חשבון מאושר.</p>
+    <p>הגישה מוגנת. הזן את הסיסמה המשותפת כדי להמשיך.</p>
 
     <form id="dashboard-login-form" novalidate>
-      <label>
-        אימייל
-        <input id="dashboard-email" type="email" autocomplete="email" required placeholder="you@company.com" />
-      </label>
-
       <label>
         סיסמה
         <input id="dashboard-password" type="password" autocomplete="current-password" required placeholder="••••••••" />
@@ -37,7 +32,7 @@
       <button id="dashboard-login-btn" type="submit">התחברות</button>
     </form>
 
-    <div class="note">גישה ניתנת רק לחשבונות מאושרים ב-Supabase.</div>
+    <div class="note">הסיסמה נבדקת מול המסד הנתונים ולא נגד קוד צד לקוח.</div>
   </main>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>

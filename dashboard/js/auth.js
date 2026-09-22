@@ -1,83 +1,59 @@
 (function () {
-  const SUPABASE_URL = window.DASHBOARD_SUPABASE_URL;
-  const SUPABASE_ANON_KEY = window.DASHBOARD_SUPABASE_ANON_KEY;
+  const STORAGE_KEY = 'napigation_dashboard_access';
 
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-    auth: {
-      persistSession: true,
-      autoRefreshToken: true,
-      detectSessionInUrl: false,
-    },
-  });
-
-  async function getSession() {
-    const { data, error } = await supabase.auth.getSession();
-    if (error) {
-      return { session: null, error };
+  const DASHBOARD_CLIENT = window.supabase.createClient(
+    window.DASHBOARD_SUPABASE_URL,
+    window.DASHBOARD_SUPABASE_ANON_KEY,
+    {
+      auth: {
+        persistSession: true,
+        autoRefreshToken: true,
+        detectSessionInUrl: false,
+      },
     }
-    return { session: data.session, error: null };
+  );
+
+  function setDashboardAccessGranted() {
+    try {
+      localStorage.setItem(STORAGE_KEY, 'true');
+    } catch (error) {
+      console.warn('dashboard localStorage write failed:', error);
+    }
   }
 
-  async function isApprovedUser() {
+  function clearDashboardAccess() {
     try {
-      const { data: isAllowed, error: accessError } = await supabase.rpc('dashboard_access_allowed');
-      return !accessError && !!isAllowed;
-    } catch (e) {
-      console.error('Dashboard approval check failed:', e);
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (error) {
+      console.warn('dashboard localStorage clear failed:', error);
+    }
+  }
+
+  function isDashboardAccessGranted() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) === 'true';
+    } catch (error) {
       return false;
     }
   }
 
   async function ensureApprovedAccess() {
-    const { session, error } = await getSession();
-    if (error || !session?.user) {
-      window.location.href = '/dashboard/auth';
-      return false;
-    }
-
-    const isAllowed = await isApprovedUser();
-    if (!isAllowed) {
-      await supabase.auth.signOut();
-      window.location.href = '/dashboard/auth?error=not-approved';
-      return false;
-    }
-
-    return true;
-  }
-
-  async function maybeRedirectApprovedUser() {
-    const { session, error } = await getSession();
-    if (error || !session?.user) return false;
-
-    const isAllowed = await isApprovedUser();
-    if (isAllowed) {
-      window.location.replace('/dashboard');
+    if (isDashboardAccessGranted()) {
       return true;
     }
 
-    await supabase.auth.signOut();
+    window.location.href = '/dashboard/auth';
     return false;
   }
 
   async function renderSignedInUser() {
     const userPill = document.getElementById('dashboard-user-pill');
     if (!userPill) return;
-
-    const { session } = await getSession();
-    if (!session?.user?.email) {
-      userPill.textContent = 'לא מחובר';
-      return;
-    }
-
-    userPill.textContent = `מחובר: ${session.user.email}`;
+    userPill.textContent = 'גישה מאושרת';
   }
 
   async function signOutDashboard() {
-    const { error } = await supabase.auth.signOut();
-    if (error) {
-      console.error('Sign out failed:', error.message);
-      return;
-    }
+    clearDashboardAccess();
     window.location.href = '/dashboard/auth';
   }
 
@@ -85,51 +61,48 @@
     const form = document.getElementById('dashboard-login-form');
     if (!form) return;
 
-    const emailField = document.getElementById('dashboard-email');
     const passwordField = document.getElementById('dashboard-password');
     const errorBox = document.getElementById('dashboard-auth-error');
     const submitBtn = document.getElementById('dashboard-login-btn');
 
     const params = new URLSearchParams(window.location.search);
     if (params.get('error') === 'not-approved') {
-      errorBox.textContent = 'החשבון לא אושר לגישה לדשבורד. בקש הרשאה ממנהל המערכת.';
+      errorBox.textContent = 'הסיסמה שגויה או שאין הרשאה. נסה שוב.';
       errorBox.style.display = 'block';
     }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      const email = (emailField.value || '').trim();
-      const password = passwordField.value || '';
+      const password = (passwordField.value || '').trim();
 
-      if (!email || !password) {
-        errorBox.textContent = 'יש להזין אימייל וסיסמה.';
+      if (!password) {
+        errorBox.textContent = 'יש להזין סיסמה.';
         errorBox.style.display = 'block';
         return;
       }
 
       submitBtn.disabled = true;
-      submitBtn.textContent = 'מתחבר...';
+      submitBtn.textContent = 'בודק סיסמה...';
       errorBox.style.display = 'none';
 
       try {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({
-          email: email.toLowerCase(),
-          password,
+        const { data, error } = await DASHBOARD_CLIENT.rpc('dashboard_password_ok', {
+          candidate_password: password,
         });
 
-        if (signInError || !data.user) {
-          throw signInError || new Error('התחברות נכשלה.');
+        if (error) {
+          throw new Error(error.message || 'הבדיקה מול המסד נכשלה.');
         }
 
-        const isAllowed = await isApprovedUser();
-        if (!isAllowed) {
-          await supabase.auth.signOut();
-          throw new Error('החשבון לא אושר לגישה לדשבורד.');
+        if (!data) {
+          clearDashboardAccess();
+          throw new Error('הסיסמה שגויה.');
         }
 
+        setDashboardAccessGranted();
         window.location.href = '/dashboard';
       } catch (error) {
-        errorBox.textContent = error?.message || 'התחברות נכשלה. בדוק את הפרטים ונסה שוב.';
+        errorBox.textContent = error?.message || 'התחברות נכשלה. נסה שוב.';
         errorBox.style.display = 'block';
       } finally {
         submitBtn.disabled = false;
@@ -142,8 +115,6 @@
     const isAuthPage = !!document.getElementById('dashboard-login-form');
 
     if (isAuthPage) {
-      const alreadyApproved = await maybeRedirectApprovedUser();
-      if (alreadyApproved) return;
       bindAuthPage();
       return;
     }
@@ -173,6 +144,7 @@
     ensureApprovedAccess,
     renderSignedInUser,
     signOutDashboard,
-    supabase,
+    isDashboardAccessGranted,
+    client: DASHBOARD_CLIENT,
   };
 })();
