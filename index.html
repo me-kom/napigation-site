@@ -36,24 +36,6 @@
   <link rel="alternate" hreflang="x-default" href="https://me-kom.github.io/napigation-site/" />
   <link rel="canonical" href="https://me-kom.github.io/napigation-site/" />
 
-  <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "SoftwareApplication",
-      "name": "Napigation",
-      "alternateName": "מי-קום",
-      "applicationCategory": "TravelApplication",
-      "operatingSystem": "Android, iOS",
-      "inLanguage": ["he", "en"],
-      "description": "Napigation is a proximity alarm app for public transport that alerts riders before their stop with privacy-first background location tracking.",
-      "url": "https://me-kom.github.io/napigation-site/",
-      "publisher": {
-        "@type": "Organization",
-        "name": "Me-Kum"
-      }
-    }
-  </script>
-
   <style>
     :root {
       --primary: #1a1a2e;
@@ -174,6 +156,16 @@
       max-width: 600px;
       margin: 0 auto 40px;
       line-height: 1.6;
+    }
+    .hero-fact {
+      max-width: 760px;
+      margin: -16px auto 32px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.14);
+      border-radius: 16px;
+      font-size: 1rem;
+      color: rgba(255,255,255,0.92);
     }
     .hero-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .btn-primary {
@@ -514,6 +506,7 @@
     <div class="hero-badge ios-content">🍎 גרסת iOS בפיתוח מתקדם · בקרוב ל-App Store</div>
     <h1>לעולם אל תפספס<br/><em>את התחנה שלך</em></h1>
     <p>אפליקציית התראות קרבה מקצועית לתחבורה ציבורית. מי-קום מנהלת את מסלול הנסיעה שלך ברקע, חוסכת משאבי סוללה, ומוודאת שתתעורר בדיוק בזמן.</p>
+    <p class="hero-fact">Napigation (מי-קום) היא אפליקציית מובייל לנוסעי תחבורה ציבורית. היא מאפשרת להגדיר יעד, לעקוב אחרי ההתקדמות ברקע, ולקבל התראה לפני שמגיעים לתחנה או לנקודת הירידה.</p>
     <div class="hero-buttons">
       <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -529,6 +522,7 @@
     <div class="hero-badge ios-content">🍎 iOS version in active development · coming soon to the App Store</div>
     <h1>Never miss<br/><em>your stop again</em></h1>
     <p>The professional proximity alert app for public transit. Napigation manages your route in the background, optimizes battery usage, and ensures you wake up exactly on time.</p>
+    <p class="hero-fact">Napigation is a mobile app for public transport riders. It lets users set a destination, keep trip monitoring active in the background, and receive an alert before reaching their stop or drop-off point.</p>
     <div class="hero-buttons">
       <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
@@ -748,12 +742,24 @@
 
     <div class="faq-list he-content">
       <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">איך מתחילים להשתמש במי-קום?</div>
+        <div class="faq-a">מורידים את האפליקציה, בוחרים יעד על המפה או מתוך חיפוש, מפעילים התראת קרבה, ונותנים לאפליקציה לעקוב ברקע עד שמתקרבים לתחנה.</div>
+      </div>
+      <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">כיצד מי-קום שונה מאפליקציות ניווט מבוססות GPS סטנדרטיות?</div>
         <div class="faq-a">אפליקציות ניווט בנויות להנחיית נהיגה אקטיבית ולכן צורכות סוללה רבה. מי-קום היא מערכת "ניווט פסיבית". היא מיועדת לנוסעי תחבורה ציבורית שרוצים לנוח, תוך שימוש באלגוריתם חסכוני שמתעורר ומתריע רק בקרבת היעד.</div>
       </div>
       <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">האם אפשר להשתמש באפליקציה בלי לשלם?</div>
+        <div class="faq-a">כן. האפליקציה זמינה להורדה בחינם וכוללת את חוויית הליבה לשימוש יומיומי. קיימות גם יכולות מתקדמות למשתמשים שרוצים הרחבה מעבר לכך.</div>
+      </div>
+      <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">האם האפליקציה תשרוד כשהמסך כבוי והטלפון בכיס?</div>
         <div class="faq-a">כן. הארכיטקטורה שלנו עושה שימוש ב-Foreground Services ייעודיים של מערכת ההפעלה המבטיחים את המשך מעקב המיקום ושרידות האפליקציה ברקע, גם כשהמסך כבוי לחלוטין.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">למי מיועדת מי-קום?</div>
+        <div class="faq-a">מי-קום מיועדת לנוסעים באוטובוס, רכבת או כל תחבורה ציבורית אחרת שרוצים לקרוא, לעבוד או לנוח בזמן הנסיעה ולקבל התראה לפני הירידה.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">מה מדיניות איסוף הנתונים שלכם?</div>
@@ -771,12 +777,24 @@
 
     <div class="faq-list en-content">
       <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">How do I get started with Napigation?</div>
+        <div class="faq-a">Download the app, choose a destination on the map or through search, enable a proximity alarm, and let Napigation monitor your trip in the background until you are near your stop.</div>
+      </div>
+      <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">How does Napigation differ from standard GPS navigation apps?</div>
         <div class="faq-a">Navigation apps are built for active driving guidance and drain battery rapidly. Napigation is a "passive navigation" system for passengers. It utilizes a highly efficient algorithm that remains dormant and alerts you only upon proximity to your destination.</div>
       </div>
       <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Can I use Napigation without paying?</div>
+        <div class="faq-a">Yes. The app is free to download and includes the core daily-use experience. Advanced capabilities are available for riders who want expanded functionality.</div>
+      </div>
+      <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">Will the app keep working if my phone is in my pocket with the screen off?</div>
         <div class="faq-a">Yes. Our architecture utilizes dedicated OS Foreground Services, ensuring that location tracking and application survival are maintained in the background, even when the screen is fully locked and off.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q" onclick="toggleFaq(this)">Who is Napigation for?</div>
+        <div class="faq-a">Napigation is built for bus, train, and public transport riders who want to read, work, or rest during a trip and receive an alert before they need to get off.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">What is your data collection policy?</div>
@@ -850,14 +868,28 @@
   "@type": "SoftwareApplication",
   "name": "Napigation",
   "alternateName": "מי-קום",
-  "operatingSystem": "Android",
-  "applicationCategory": "TransportationApplication",
-  "description": "Napigation is a proximity alert app for public transport that notifies you before you reach your stop. It offers an ad-free experience, reliable background location tracking, an automatic silent-mode volume override, and local-first privacy processing with no registration required — all available in the free tier.",
-  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "ILS" },
+  "applicationCategory": "TravelApplication",
+  "operatingSystem": "Android, iOS",
+  "isAccessibleForFree": true,
+  "description": "Napigation is a mobile app for public transport riders that lets users set a destination, monitor a trip in the background, and get an alert before reaching their stop.",
+  "offers": { "@type": "Offer", "availability": "https://schema.org/InStock" },
   "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
-  "url": "https://napigation.app",
+  "url": "https://me-kom.github.io/napigation-site/",
   "inLanguage": ["he", "en"],
+  "publisher": { "@type": "Organization", "name": "Me-Kum" },
   "author": { "@type": "Organization", "name": "Napigation", "email": "me.kum.support@gmail.com" }
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Napigation",
+  "alternateName": "מי-קום",
+  "url": "https://me-kom.github.io/napigation-site/",
+  "inLanguage": ["he", "en"],
+  "publisher": { "@type": "Organization", "name": "Me-Kum" }
 }
 </script>
 
@@ -869,13 +901,28 @@
   "mainEntity": [
     {
       "@type": "Question",
+      "name": "How do I get started with Napigation?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Download the app, choose a destination on the map or through search, enable a proximity alarm, and let Napigation monitor your trip in the background until you are near your stop." }
+    },
+    {
+      "@type": "Question",
       "name": "How does Napigation differ from standard GPS navigation apps?",
       "acceptedAnswer": { "@type": "Answer", "text": "Navigation apps are built for active driving guidance and drain battery rapidly. Napigation is a passive navigation system for passengers. It uses a highly efficient algorithm that stays dormant and alerts you only upon proximity to your destination." }
     },
     {
       "@type": "Question",
-      "name": "Does Napigation work when the app is closed or the phone is locked?",
+      "name": "Can I use Napigation without paying?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. The app is free to download and includes the core daily-use experience. Advanced capabilities are available for riders who want expanded functionality." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does Napigation work when the screen is off and the phone is in your pocket?",
       "acceptedAnswer": { "@type": "Answer", "text": "Yes. Napigation uses dedicated OS foreground services, so location tracking continues in the background even when the screen is fully locked and off." }
+    },
+    {
+      "@type": "Question",
+      "name": "Who is Napigation for?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Napigation is built for bus, train, and public transport riders who want to read, work, or rest during a trip and receive an alert before they need to get off." }
     },
     {
       "@type": "Question",
