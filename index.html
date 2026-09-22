@@ -47,11 +47,6 @@
       "inLanguage": ["he", "en"],
       "description": "Napigation is a proximity alarm app for public transport that alerts riders before their stop with privacy-first background location tracking.",
       "url": "https://me-kom.github.io/napigation-site/",
-      "offers": {
-        "@type": "Offer",
-        "price": "0",
-        "priceCurrency": "ILS"
-      },
       "publisher": {
         "@type": "Organization",
         "name": "Me-Kum"
@@ -351,19 +346,17 @@
       white-space: nowrap;
     }
     [lang="en"] .plan-badge { transform: translateX(-50%); }
-    .plan-name { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 8px; }
-    .plan-price { font-size: 2rem; font-weight: 800; color: var(--accent); margin-bottom: 6px; line-height: 1; }
-    .plan-price span { font-size: 1.05rem; font-weight: 500; color: var(--text-light); }
+    .plan-name { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
     .plan-desc { font-size: 0.9rem; color: var(--text-light); margin-bottom: 24px; }
     .plan-features { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-    .plan-features li { 
-      font-size: 0.95rem; 
-      padding: 10px 0; 
-      border-bottom: 1px solid var(--border); 
-      color: var(--text); 
-      display: flex; 
-      gap: 12px; 
-      align-items: flex-start; 
+    .plan-features li {
+      font-size: 0.95rem;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      color: var(--text);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
     }
     .plan-features li:last-child { border-bottom: none; }
     .plan-features li::before { content: '✓'; color: var(--success); font-weight: 800; flex-shrink: 0; }
@@ -670,7 +663,6 @@
       <div class="plans-grid">
         <div class="plan-card">
           <p class="plan-name">גרסת הבסיס</p>
-          <p class="plan-price">₪0 <span>/ לתמיד</span></p>
           <p class="plan-desc">חוויית הליבה המלאה, ללא פשרות טכנולוגיות וללא פרסומות.</p>
           <ul class="plan-features">
             <li>ללא פרסומות לחלוטין</li>
@@ -683,7 +675,6 @@
         <div class="plan-card featured">
           <span class="plan-badge">מומלץ לנוסעים קבועים</span>
           <p class="plan-name">פרימיום חודשי</p>
-          <p class="plan-price">₪9.90 <span>/ חודש</span></p>
           <p class="plan-desc">כל היכולות המתקדמות של מי-קום, ומגבלות שמירה ללא הגבלה — לנסיעה היומיומית.</p>
           <ul class="plan-features">
             <li>שמירת מיקומים ללא הגבלה</li>
@@ -696,7 +687,6 @@
         </div>
         <div class="plan-card">
           <p class="plan-name">פרימיום לכל החיים</p>
-          <p class="plan-price" style="font-size:1.4rem;">תשלום חד-פעמי</p>
           <p class="plan-desc">השקעה חד-פעמית עבור שקט נפשי בכל נסיעה עתידית.</p>
           <ul class="plan-features">
             <li>פתיחה מלאה של כל ההגבלות</li>
@@ -712,7 +702,6 @@
       <div class="plans-grid">
         <div class="plan-card">
           <p class="plan-name">Base Tier</p>
-          <p class="plan-price">$0 <span>/ forever</span></p>
           <p class="plan-desc">The complete core experience, with no technical compromises or ads.</p>
           <ul class="plan-features">
             <li>100% Ad-Free Experience</li>
@@ -725,7 +714,6 @@
         <div class="plan-card featured">
           <span class="plan-badge">Recommended for commuters</span>
           <p class="plan-name">Premium Monthly</p>
-          <p class="plan-price">$2.99 <span>/ month</span></p>
           <p class="plan-desc">All of Napigation's advanced capabilities, plus unlimited saving — for your daily commute.</p>
           <ul class="plan-features">
             <li>Unlimited saved locations</li>
@@ -738,7 +726,6 @@
         </div>
         <div class="plan-card">
           <p class="plan-name">Lifetime Access</p>
-          <p class="plan-price" style="font-size:1.4rem;">One-Time Payment</p>
           <p class="plan-desc">A single investment for peace of mind on every future journey.</p>
           <ul class="plan-features">
             <li>Complete unlock of all limits</li>
