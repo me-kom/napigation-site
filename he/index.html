@@ -1,12 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr" data-platform="android">
+<html lang="he" dir="rtl" data-platform="android">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary meta -->
-  <title>Napigation - Smart Proximity Alerts for Public Transit</title>
-  <meta name="description" content="Napigation is a public transit proximity alert app with reliable background tracking, ad-free commuting, no account requirement, and privacy-first on-device location processing." />
+  <title>מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית</title>
+  <meta name="description" content="מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית עם מעקב אמין ברקע, ללא פרסומות, ללא צורך בהרשמה ועם עיבוד מיקום מקומי ושומר פרטיות." />
   <meta name="keywords" content="מי-קום, אפליקציה תחבורה ציבורית, התראה תחנה, me-kom, napigation, proximity alert, public transport app, bus stop alarm, background location alarm, ad-free transit app" />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
@@ -19,22 +19,22 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.napigation.com/" />
-  <meta property="og:title" content="Napigation - Smart Proximity Alerts for Public Transit" />
-  <meta property="og:description" content="Accurate alerts before you reach your stop, with ad-free commuting, reliable background tracking, and fully local location processing." />
+  <meta property="og:title" content="מי-קום - התראות קרבה חכמות לתחבורה ציבורית" />
+  <meta property="og:description" content="התראה מדויקת לפני ההגעה ליעד, ללא פרסומות, עם מעקב אמין ברקע ועיבוד מיקום מקומי לחלוטין." />
   <meta property="og:site_name" content="Napigation" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:locale:alternate" content="he_IL" />
+  <meta property="og:locale" content="he_IL" />
+  <meta property="og:locale:alternate" content="en_US" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Napigation - Smart Proximity Alerts for Public Transit" />
-  <meta name="twitter:description" content="A public transit proximity alert app with reliable background tracking, privacy-first location handling, and no ads." />
+  <meta name="twitter:title" content="מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית" />
+  <meta name="twitter:description" content="אפליקציית התראות קרבה לתחבורה ציבורית עם עבודה אמינה ברקע, פרטיות מלאה וללא פרסומות." />
 
   <!-- hreflang -->
   <link rel="alternate" hreflang="en" href="https://www.napigation.com/" />
   <link rel="alternate" hreflang="he" href="https://www.napigation.com/he/" />
   <link rel="alternate" hreflang="x-default" href="https://www.napigation.com/" />
-  <link rel="canonical" href="https://www.napigation.com/" />
+  <link rel="canonical" href="https://www.napigation.com/he/" />
 
   <style>
     :root {
@@ -492,8 +492,8 @@
     <a href="#download" class="en-content">Download</a>
     <div class="nav-controls">
       <div class="seg" role="group" aria-label="Language">
-        <a href="he/" hreflang="he">עברית</a>
-        <a href="./" hreflang="en" class="active" aria-current="page">English</a>
+        <a href="./" hreflang="he" class="active" aria-current="page">עברית</a>
+        <a href="../" hreflang="en">English</a>
       </div>
       <div class="seg" role="group" aria-label="בחירת פלטפורמה / Platform">
         <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">🤖 Android</button>
@@ -879,7 +879,7 @@
   "offers": { "@type": "Offer", "availability": "https://schema.org/InStock" },
   "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
   "url": "https://www.napigation.com/",
-  "inLanguage": "en",
+  "inLanguage": "he",
   "publisher": { "@type": "Organization", "name": "Me-Kum" },
   "author": { "@type": "Organization", "name": "Napigation", "email": "me.kum.support@gmail.com" }
 }
@@ -892,7 +892,7 @@
   "name": "Napigation",
   "alternateName": "מי-קום",
   "url": "https://www.napigation.com/",
-  "inLanguage": "en",
+  "inLanguage": "he",
   "publisher": { "@type": "Organization", "name": "Me-Kum" }
 }
 </script>
@@ -955,10 +955,10 @@
     setPlatform(platform);
 
     document.querySelectorAll('.he-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', 'true');
+      el.setAttribute('aria-hidden', 'false');
     });
     document.querySelectorAll('.en-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', 'false');
+      el.setAttribute('aria-hidden', 'true');
     });
   })();
 
