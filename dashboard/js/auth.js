@@ -18,6 +18,16 @@
     return { session: data.session, error: null };
   }
 
+  async function isApprovedUser() {
+    try {
+      const { data: isAllowed, error: accessError } = await supabase.rpc('dashboard_access_allowed');
+      return !accessError && !!isAllowed;
+    } catch (e) {
+      console.error('Dashboard approval check failed:', e);
+      return false;
+    }
+  }
+
   async function ensureApprovedAccess() {
     const { session, error } = await getSession();
     if (error || !session?.user) {
@@ -25,19 +35,28 @@
       return false;
     }
 
-    try {
-      const { data: isAllowed, error: accessError } = await supabase.rpc('dashboard_access_allowed');
-      if (accessError || !isAllowed) {
-        await supabase.auth.signOut();
-        window.location.href = '/dashboard/auth?error=not-approved';
-        return false;
-      }
-      return true;
-    } catch (e) {
-      console.error('Dashboard approval check failed:', e);
+    const isAllowed = await isApprovedUser();
+    if (!isAllowed) {
+      await supabase.auth.signOut();
       window.location.href = '/dashboard/auth?error=not-approved';
       return false;
     }
+
+    return true;
+  }
+
+  async function maybeRedirectApprovedUser() {
+    const { session, error } = await getSession();
+    if (error || !session?.user) return false;
+
+    const isAllowed = await isApprovedUser();
+    if (isAllowed) {
+      window.location.replace('/dashboard');
+      return true;
+    }
+
+    await supabase.auth.signOut();
+    return false;
   }
 
   async function renderSignedInUser() {
@@ -102,8 +121,8 @@
           throw signInError || new Error('התחברות נכשלה.');
         }
 
-        const { data: isAllowed, error: accessError } = await supabase.rpc('dashboard_access_allowed');
-        if (accessError || !isAllowed) {
+        const isAllowed = await isApprovedUser();
+        if (!isAllowed) {
           await supabase.auth.signOut();
           throw new Error('החשבון לא אושר לגישה לדשבורד.');
         }
@@ -123,6 +142,8 @@
     const isAuthPage = !!document.getElementById('dashboard-login-form');
 
     if (isAuthPage) {
+      const alreadyApproved = await maybeRedirectApprovedUser();
+      if (alreadyApproved) return;
       bindAuthPage();
       return;
     }
@@ -132,8 +153,18 @@
       signOutButton.addEventListener('click', signOutDashboard);
     }
 
+    const statusBadge = document.getElementById('dashboard-status-badge');
+    if (statusBadge) {
+      statusBadge.style.display = 'inline-block';
+      statusBadge.textContent = 'בודק הרשאה...';
+    }
+
     const approved = await ensureApprovedAccess();
     if (!approved) return;
+
+    if (statusBadge) {
+      statusBadge.textContent = 'גישה מאושרת';
+    }
 
     await renderSignedInUser();
   });
