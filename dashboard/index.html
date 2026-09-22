@@ -3,40 +3,882 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Napigation Dashboard</title>
-  <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #0f172a; color: #e2e8f0; }
-    .topbar { display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-bottom: 1px solid rgba(148,163,184,0.25); background: rgba(15,23,42,0.9); }
-    .title { font-size: 1.2rem; font-weight: 700; }
-    .actions { display: flex; gap: 12px; align-items: center; }
-    .pill { border: 1px solid rgba(148,163,184,0.2); background: rgba(255,255,255,0.05); border-radius: 999px; padding: 8px 12px; font-size: 13px; }
-    button { border: 0; border-radius: 10px; background: #2563eb; color: white; padding: 10px 14px; cursor: pointer; }
-    .wrap { padding: 24px; }
-    .card { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(148,163,184,0.2); border-radius: 16px; padding: 20px; max-width: 960px; margin: 0 auto; }
-    h1 { margin-top: 0; }
-    p { color: #cbd5e1; line-height: 1.7; }
-    .status { display: inline-block; padding: 6px 10px; border-radius: 999px; background: rgba(34,197,94,0.12); color: #bbf7d0; border: 1px solid rgba(34,197,94,0.3); }
-  </style>
+  <title>מי-קום — דאשבורד</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <header class="topbar">
-    <div class="title">Napigation Dashboard</div>
-    <div class="actions">
-      <div id="dashboard-user-pill" class="pill">בודק הרשאה...</div>
-      <button id="dashboard-signout" type="button">התנתקות</button>
+
+<!-- ── TOP BAR ──────────────────────────────────────────────────────────── -->
+<div class="top-bar">
+  <div>
+    <h1>🚌 מי-קום — דאשבורד</h1>
+    <div class="subtitle" id="last-updated">טוען נתונים...</div>
+  </div>
+  <div class="top-bar-actions">
+    <div id="dashboard-user-pill" style="padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#eef3ff;font-size:13px;min-width:160px;text-align:center;">בודק הרשאה...</div>
+    <button class="refresh-btn" id="dashboard-signout" type="button">התנתקות</button>
+    <div class="export-menu" id="export-menu">
+      <button class="refresh-btn export-btn" id="export-toggle-btn" type="button" aria-haspopup="true" aria-expanded="false">ייצא ▾</button>
+      <div class="export-menu-panel" id="export-menu-panel" role="menu" aria-label="אפשרויות יצוא">
+        <button class="export-menu-item" type="button" data-export-action="llm-prompt" role="menuitem">העתק Prompt מוכן ל-LLM</button>
+        <button class="export-menu-item" type="button" data-export-action="file" role="menuitem">ייצוא לקובץ Markdown</button>
+        <button class="export-menu-item" type="button" data-export-action="clipboard" role="menuitem">העתקה לקליפבורד</button>
+      </div>
     </div>
-  </header>
+    <button class="refresh-btn" id="refresh-btn" onclick="loadAll()">↻ רענן</button>
+  </div>
+</div>
 
-  <main class="wrap">
-    <section class="card">
-      <div id="dashboard-status-badge" class="status" style="display:none;">בודק הרשאה...</div>
-      <h1>דשבורד מאובטח</h1>
-      <p>העמוד נפתח רק לאחר הזנת סיסמה מאושרת ממסד הנתונים.</p>
-    </section>
-  </main>
+<div class="version-scope" id="version-scope">
+  <div class="scope-group">
+    <span class="version-scope-label">פילוח גרסה:</span>
+    <div class="version-tabs" id="version-tabs">
+      <button class="version-tab active" data-version="all" onclick="setVersionFilter('all')">כל הגרסאות</button>
+    </div>
+  </div>
+  <div class="scope-group">
+    <span class="version-scope-label">פילוח מדינה:</span>
+    <div class="version-tabs" id="country-tabs">
+      <button class="version-tab active" data-country="all" onclick="setCountryFilter('all')">כל המדינות</button>
+    </div>
+  </div>
+  <div class="scope-group">
+    <span class="version-scope-label">פילוח תאריך:</span>
+    <div class="version-tabs" id="date-tabs">
+      <button class="version-tab active" data-period="all" onclick="setDateFilter('all')">כל התקופה</button>
+    </div>
+    <div class="date-range-inline" id="custom-date-range">
+      <input type="date" id="date-from" aria-label="תאריך התחלה">
+      <span class="version-scope-label">עד</span>
+      <input type="date" id="date-to" aria-label="תאריך סיום">
+      <button class="date-apply-btn" onclick="applyCustomDateRange()">החל טווח</button>
+    </div>
+  </div>
+  <div class="scope-group">
+    <span class="version-scope-label">פילוח מערכת:</span>
+    <div class="version-tabs" id="os-tabs">
+      <button class="version-tab active" data-os="all" onclick="setOSFilter('all')">כל המערכות</button>
+    </div>
+  </div>
+</div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
-  <script src="/dashboard/js/config.js"></script>
-  <script src="/dashboard/js/auth.js"></script>
+<!-- ── TABS ─────────────────────────────────────────────────────────────── -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="overview">🏠 סקירה</button>
+  <button class="tab-btn" data-tab="users">👤 משתמשים</button>
+  <button class="tab-btn" data-tab="alarms">🔔 התראות</button>
+  <button class="tab-btn" data-tab="revenue">💰 הכנסות</button>
+  <button class="tab-btn" data-tab="features">📊 תכונות</button>
+  <button class="tab-btn" data-tab="versions">📦 לפי גרסה</button>
+  <button class="tab-btn" data-tab="weekdays">📅 ימות השבוע</button>
+  <button class="tab-btn" data-tab="behavior">🔗 התנהגות</button>
+  <button class="tab-btn" data-tab="stores">🏬 חנויות</button>
+  <button class="tab-btn" data-tab="explorer">🔍 חקירה חופשית</button>
+</nav>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 1 — סקירה כללית
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-overview" class="tab-content active">
+
+  <!-- KPI cards -->
+  <div class="grid" style="margin-bottom:20px">
+    <div class="card">
+      <h2>👤 משתמשים</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">פעילים היום</div><div class="value" id="kpi-dau">—</div></div>
+        <div class="kpi"><div class="label">פעילים (30 יום)</div><div class="value" id="kpi-mau">—</div></div>
+        <div class="kpi"><div class="label">נאמנות יומית %</div><div class="value" id="kpi-stickiness">—</div><div class="sub">פעילים היום / חודש</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🔔 התראות (30 יום)</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">הופעלו</div><div class="value" id="kpi-enabled">—</div><div class="sub" id="kpi-enabled-scope"></div></div>
+        <div class="kpi"><div class="label">צלצלו (sessions)</div><div class="value" id="kpi-triggered">—</div></div>
+        <div class="kpi"><div class="label">% הצלחה (גס)</div><div class="value" id="kpi-success-rate">—</div><div class="sub">triggered / סה"כ sessions</div></div>
+        <div class="kpi highlight"><div class="label">✅ True Success Rate</div><div class="value" id="kpi-session-success">—</div><div class="sub">נסיעות אמיתיות · ללא רעש + soft success</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>📊 סיום התראה (30 יום)</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">כובו אחרי צלצול</div><div class="value" id="kpi-dismissed">—</div><div class="sub">✅<span id="kpi-dismissed-scope"></span></div></div>
+        <div class="kpi"><div class="label">כובו ידנית</div><div class="value" id="kpi-toggled-off">—</div><div class="sub">👤 לפני שצלצל<span id="kpi-toggled-off-scope"></span></div></div>
+        <div class="kpi"><div class="label">פג זמן (sessions)</div><div class="value" id="kpi-timeout">—</div><div class="sub">⏰ תוצאת session</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>💰 הכנסות</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">30 יום אחרונים</div><div class="value" id="kpi-last30-rev">—</div></div>
+        <div class="kpi"><div class="label">סה"כ (נתוני אמת)</div><div class="value" id="kpi-total-rev">—</div></div>
+        <div class="kpi"><div class="label">הכנסה למשתמש</div><div class="value" id="kpi-arpu">—</div><div class="sub">הכנסה / פעילים חודשי</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🗺️ תכונות (30 יום)</h2>
+      <div class="kpi-row">
+        <div class="kpi"><div class="label">% מסלולים</div><div class="value" id="kpi-routes-pct">—</div></div>
+        <div class="kpi"><div class="label">% החלפת צלצול</div><div class="value" id="kpi-ringtone-pct">—</div></div>
+        <div class="kpi"><div class="label">המרה (רוכשים/MAU)</div><div class="value" id="kpi-conv-rate">—</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>🎯 התראה ראשונה (30 יום)</h2>
+      <div id="first-alarm-kpi" class="kpi-row"><div class="loading">טוען...</div></div>
+    </div>
+  </div>
+
+  <!-- Quick charts -->
+  <div class="grid">
+    <div class="card wide">
+      <h2>משתמשים יומיים — 30 יום</h2>
+      <p class="chart-desc">כמה מכשירים ייחודיים פתחו את האפליקציה בכל יום. <strong>מה לחפש:</strong> ירידה פתאומית = בעיית crash או הסרות, צמיחה עקבית = טוב.</p>
+      <canvas id="chart-dau" height="70"></canvas>
+    </div>
+    <div class="card wide">
+      <h2>משתמשים חדשים ביום — 30 יום</h2>
+      <p class="chart-desc">מכשירים שנראו לראשונה — מדד הצמיחה הגולמי. <strong>מה לחפש:</strong> האם קצב הצמיחה עולה, יורד, או קבוע?</p>
+      <canvas id="chart-new-users" height="70"></canvas>
+    </div>
+    <div class="card wide">
+      <h2>📈 שיעור הצלחת התראות — מגמה יומית (30 יום)</h2>
+      <p class="chart-desc"><strong>המדד הכי חשוב:</strong> מה אחוז ההתראות שהמשתמש הגיע ליעד וקיבל צלצול? <span class="insight">🎯 מעל 70% = האפליקציה עובדת טוב · מתחת ל-50% = בעיה קריטית.</span> מחושב מתוך <strong>נסיעות אמיתיות בלבד</strong> (ללא הדלקה/כיבוי מהיר של הפעמון וללא "כבר בפנים"). עמודות = נתון יומי · קו = ממוצע נע 7 ימים.</p>
+      <canvas id="chart-success-trend" height="80"></canvas>
+    </div>
+    <div class="card wide">
+      <h2>🏗️ משפך שימוש — מהתקנה עד הצלחה (30 יום)</h2>
+      <p class="chart-desc">מסע המשתמש החדש: <strong>פעיל → אישר הרשאת מיקום ברקע → יצר יעד ראשון → הפעיל התראה → קיבל צלצול בזמן אמת</strong>. הפער הגדול ביותר בין שלבים = נקודת הנשירה שכדאי לתקן. <span class="insight">⚠️ שלב ההרשאה נמדד רק במכשירים בגרסה ששולחת אירוע הרשאה (≈מ-1.2.0) — בקוהורט ישן הוא עשוי להיראות נמוך מהאמת.</span></p>
+      <div id="funnel-overview" style="margin-top:8px"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 2 — משתמשים
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-users" class="tab-content">
+  <div class="grid">
+
+    <div class="card">
+      <h2>📈 שימור משתמשים</h2>
+      <p class="chart-desc">מתוך כל מי שהתקין בחודש האחרון, כמה % חזרו <strong>תוך יום / תוך שבוע / תוך חודש</strong>? <strong>מה לחפש:</strong> שימור תוך שבוע מעל 20% = טוב. תוך חודש מעל 10% = מצוין.</p>
+      <div id="retention-kpis" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <canvas id="chart-retention" height="160"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>😴 משתמשים לא פעילים — מעקב נטישה</h2>
+      <p class="chart-desc">כל מכשיר שנראה אי-פעם, מקוטלג לפי <strong>כמה זמן עבר מאז הפעילות האחרונה</strong> שלו. <strong>מה לחפש:</strong> ככל שהעמודות האדומות גבוהות יותר — יותר משתמשים נטשו. <span class="insight">🟢 0–2 ימים = פעילים · 🔵 3–7 = מצטננים · 🟠 8–14 = בסיכון נטישה · 🔴 15+ = נטשו.</span></p>
+      <div id="inactive-kpis" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <canvas id="chart-inactive-users" height="160"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📲 התפלגות כניסות לאפליקציה (30 יום)</h2>
+      <p class="chart-desc">כמה פעמים כל מכשיר פתח את האפליקציה בפועל. <strong>מה לחפש:</strong> אם רוב המשתמשים הם בכניסה יחידה — עדיין אין הרגל שימוש. <span class="insight">Power users (20+ 🔥) = המשתמשים המעורבים ביותר.</span></p>
+      <div id="app-open-freq-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-app-open-freq" height="160"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>⏱️ מהתקנה עד התראה ראשונה</h2>
+      <p class="chart-desc">כמה ימים לקח למשתמש חדש מההתקנה עד שהפעיל התראה לראשונה? <strong>מה לחפש:</strong> רוב המשתמשים אמורים להפעיל ביום ההתקנה. אם הרבה לוקחים יותר מ-7 ימים — תהליך הקליטה בעייתי.</p>
+      <canvas id="chart-time-to-alarm" height="180"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>📱 גרסאות פעילות</h2>
+      <p class="chart-desc">איזו גרסה מותקנת אצל הרוב? <strong>מה לחפש:</strong> אם רוב המשתמשים בגרסה ישנה — הגרסה החדשה יש בעיה (crash? שינוי שגרם ל-uninstall?).</p>
+      <canvas id="chart-versions" height="160"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>🌐 שימוש לפי שפה (30 יום)</h2>
+      <p class="chart-desc">חלוקת המשתמשים הפעילים לפי שפת ממשק המכשיר. <strong>מה לחפש:</strong> אילו שפות מובילות בכלל, ואיך זה משתנה כשמפעילים פילוח מדינה למעלה.</p>
+      <canvas id="chart-languages" height="160"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>🏭 יצרני מכשירים (30 יום)</h2>
+      <p class="chart-desc">איזה יצרן נפוץ בין המשתמשים? <strong>מה לחפש:</strong> זה קובע אילו יצרנים חשוב לבדוק בגרף שיעור ההצלחה למטה.</p>
+      <canvas id="chart-manufacturers" height="160"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📱 שיעור הצלחה לפי יצרן מכשיר</h2>
+      <p class="chart-desc">באיזה יצרן ההתראות <strong>פחות מצליחות</strong>? Xiaomi/Huawei אגרסיביים יותר ברקע וסוגרים תהליכים. <span class="insight">בעיה קריטית אם נמוך מ-50%.</span> ירוק = מעל 70%, צהוב = 50–70%, אדום = מתחת ל-50%.</p>
+      <canvas id="chart-mfr-success" height="120"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🤖🍎 שיעור הצלחה לפי פלטפורמה — Android מול Apple</h2>
+      <p class="chart-desc">האם ההתראות מצליחות יותר ב-iPhone או באנדרואיד? אנדרואיד נוטה לסגור תהליכי רקע אגרסיבית יותר. <span class="insight">השוואה הוגנת — מתוך נסיעות אמיתיות בלבד, צלצול בזמן אמת.</span></p>
+      <div id="platform-success-kpis" class="kpi-row"><div class="loading">טוען...</div></div>
+      <canvas id="chart-platform-success" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🗺️ מפת חום — יעדים</h2>
+      <div class="map-tabs">
+        <button class="map-tab active" onclick="switchMapTab('public')">📍 מיקומים ציבוריים</button>
+        <button class="map-tab" onclick="switchMapTab('grid')">👤 יעדי משתמשים <span class="badge yellow" id="grid-badge">בפיתוח</span></button>
+      </div>
+      <div class="map-wrap" id="wrap-public"><div id="map-public"></div></div>
+      <div class="map-wrap" id="wrap-grid" style="display:none"><div id="map-grid"></div></div>
+    </div>
+
+    <div class="card wide">
+      <h2>📅 MAU חודשי — משתמשים פעילים לפי חודש</h2>
+      <p class="chart-desc">כמה מכשירים ייחודיים היו פעילים בכל חודש. <strong>מה לחפש:</strong> צמיחה עקבית = טוב. ירידה חודשים רצופים = בעיה. החודש הנוכחי תמיד נראה נמוך כי עדיין לא הסתיים.</p>
+      <canvas id="chart-mau-monthly" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📈 משתמשים מצטברים — צמיחה כוללת</h2>
+      <p class="chart-desc">סך כל המכשירים שהריצו את האפליקציה אי פעם, לפי חודש. <strong>מה לחפש:</strong> קצב עלייה מואץ = ויראלי. השטחה = האפליקציה לא מגיעה למשתמשים חדשים.</p>
+      <canvas id="chart-cumulative-users" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🗂️ Cohort Retention — שימור לפי חודש הצטרפות</h2>
+      <p class="chart-desc">כל שורה = קוהורט (חודש שבו הגיעו לראשונה). עמודות = D1 / D7 / D14 / D30. <strong>מה לחפש:</strong> האם קוהורטים חדשים יותר נאמנים מהישנים? אחוז גבוה יותר = שיפור ב-onboarding. <span class="insight">צבע ירוק = מעל 20% · צהוב = 10–20% · אדום = מתחת ל-10%.</span></p>
+      <div id="cohort-table-wrap" style="overflow-x:auto;margin-top:8px"><div class="loading">טוען...</div></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 3 — התראות
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-alarms" class="tab-content">
+  <div class="grid">
+
+    <div class="card">
+      <h2>🔔 פאנל תוצאות (30 יום)</h2>
+      <p class="chart-desc">כמה פעמים כל אירוע קרה ב-30 יום. <strong>מה לחפש:</strong> &quot;צלצלו&quot; אמורה להיות גדולה. אם &quot;כובו ידנית&quot; גדולה בהרבה — משתמשים מבטלים לפני שהגיעו. &quot;פג זמן&quot; גדול = בעיה בזיהוי מיקום.</p>
+      <canvas id="chart-funnel" height="160"></canvas>
+    </div>
+
+    <div class="card">
+      <h2>⏰ שעות שיא — כמות הפעלות</h2>
+      <p class="chart-desc">באיזו שעה משתמשים מפעילים התראות? צבעים: 🟢 בוקר · 🔵 ערב · ⚫ לילה. <strong>מה לחפש:</strong> שעות לילה צפויות להיות נמוכות — אם גבוהות, ייתכן Doze mode בעייתי.</p>
+      <canvas id="chart-hours" height="160"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🕐 שיעור הצלחה לפי שעה — האם Doze mode פוגע בלילה?</h2>
+      <p class="chart-desc">הגרף מציג <strong>פירוק לפי מקור תוצאה</strong> בכל שעה: הצלחה ברקע, הצלחה בפתיחת אפליקציה, מקור לא ידוע, וכשל שקט ודאי. <strong>מה לחפש:</strong> <span class="insight">עלייה ב-silent/unknown בלילה מצביעה על Doze או חוסר טלמטריה.</span></p>
+      <div id="success-by-hour-kpis" class="kpi-row" style="margin-bottom:12px"></div>
+      <canvas id="chart-success-by-hour" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>👑 Free vs. Paid — מעורבות לפי סטטוס מנוי (30 יום)</h2>
+      <p class="chart-desc">האם מנויי פרימיום מפעילים יותר התראות ומצליחים יותר? <strong>מה לחפש:</strong> פער גדול בהצלחה = הפרימיום מביא ערך אמיתי. אחוז הצלחה נמוך גם בפרימיום = בעיה טכנית.</p>
+      <div id="paid-vs-free-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-paid-vs-free" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📈 שיעור הצלחה יומי — 30 יום</h2>
+      <p class="chart-desc"><strong>המדד הכי חשוב:</strong> האם האפליקציה משתפרת או מתדרדרת? <span class="insight">🎯 מעל 70% = תקין · מתחת ל-50% = בעיה קריטית.</span> ירידה חדה = באג בגרסה חדשה. עמודות = נתון יומי · קו = ממוצע נע 7 ימים.</p>
+      <canvas id="chart-success-trend-alarms" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🧩 פירוק אמינות לפי גרסה — למה התראה נכשלה?</h2>
+      <p class="chart-desc">לא רק "% הצלחה" אלא <strong>מה קרה בכל נסיעה</strong>, מוערם ל-100% לכל גרסה. <span class="insight">🟢 צלצל בזמן אמת · 🟠 נתפס מאוחר = רקע קפא/נהרג (זינוק = רגרסיה ב-Android 12+) · 🔴 כשל שקט = מיס אמיתי · 🟣 אפליקציה נהרגה = לא ידוע · ⚪ אחר.</span> <strong>מה לחפש:</strong> אם בגרסה חדשה הכתום/אדום גדל — באג רקע שהוכנס בגרסה הזו. מתוך נסיעות אמיתיות בלבד, 5+ נסיעות לגרסה. <span style="color:#64748b">הערה: סשן <code>app_killed</code> שנמשך 12h+ הוא סשן <strong>נטוש/נהרג</strong> (הופעל ומעולם לא נסע, או שה-OS הרג את התהליך — נסגר ע"י ה-cron של 24h ללא נתוני GPS) ולכן מסווג כ"לא ידוע" (🟣), לא כמיס אמיתי ולא כהצלחה.</span></p>
+      <canvas id="chart-reliability-breakdown" height="120"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>⏱️ שיהוי הדק — כמה זמן מחציית הרדיוס עד הצלצול</h2>
+      <p class="chart-desc">אחרי שהמשתמש נכנס לרדיוס שבחר — כמה שניות עברו עד שההתראה צלצלה בפועל? מחושב מ-<code>overshoot_m ÷ מהירות</code> בנסיעות שצלצלו בזמן אמת. <span class="insight">🎯 אחוזונים, לא ממוצע: P90/P95 חושפים את הזנב הארוך. שיהוי גבוה = קצב דגימה איטי מדי או רדיוס דיוק שצריך כיול.</span> <span class="badge yellow">נתונים מגרסה חדשה — ייתכן ריק</span></p>
+      <div id="trigger-latency-kpis" class="kpi-row" style="margin-bottom:12px"></div>
+      <canvas id="chart-trigger-latency" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🛰️ איכות אות GPS — רדיוס דיוק בהפעלות התראה</h2>
+      <p class="chart-desc">פילוח <strong>רדיוס-הדיוק במטרים</strong> (חציון לכל הפעלה) של אות ה-GPS בזמן מעקב. <span class="insight">🎯 ככל שהרדיוס קטן יותר — האות מדויק יותר וההתראה אמינה יותר. רדיוס גדול (100m+) = אות חלש (תוך מבנים/עיר צפופה) ועלול לגרום לצלצול מוקדם/מאוחר.</span> מספר בלבד — ללא קואורדינטות. <span class="badge yellow">נתונים מגרסה חדשה — ייתכן ריק</span></p>
+      <div id="gps-accuracy-kpis" class="kpi-row" style="margin-bottom:12px"></div>
+      <canvas id="chart-gps-accuracy" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>💓 הישרדות מעקב הרקע — האם מערכת ההפעלה הורגת את המעקב?</h2>
+      <p class="chart-desc">לכל הפעלה: <strong>ההפער הארוך ביותר בשניות</strong> בין עדכוני GPS ברצף. <span class="insight">🟢 ללא הפער משמעותי = הרקע שרד את כל הנסיעה · 🔴 הפער ארוך (8 דק'+) = Android/OEM השהה או הרג את המעקב (Doze/אופטימיזציית סוללה) → סיכון ל"צלצול מאוחר". זינוק = רגרסיה ביציבות הרקע.</span> משך בלבד — ללא מיקום. <span class="badge yellow">נתונים מגרסה חדשה — ייתכן ריק</span></p>
+      <div id="bg-survival-kpis" class="kpi-row" style="margin-bottom:12px"></div>
+      <canvas id="chart-bg-survival" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔕 ביטולי שווא סמוך להגעה — מגמה יומית</h2>
+      <p class="chart-desc">אחוז הנסיעות האמיתיות שבהן המשתמש <strong>כיבה ידנית</strong> את ההתראה כשהיה כבר קרוב ליעד (מרחק ≤ פי-2 מהרדיוס, לפני שצלצלה). <span class="insight">⚠️ זינוק = ייתכן שהאפליקציה זוללת סוללה והמשתמשים סוגרים אותה ברגע שמתעוררים, או בעיית UX. לא כשל טכני — אות אזהרה התנהגותי.</span></p>
+      <canvas id="chart-early-cancel" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🎯 מרחק נסיעה מול רדיוס — איך משתמשים מכיילים</h2>
+      <p class="chart-desc">כל נקודה = נסיעה שצלצלה. ציר X = מרחק נסיעה משוער (מהירות × זמן), ציר Y = הרדיוס שהמשתמש בחר. <span class="insight">💡 אם מתגלה דפוס (נסיעות ארוכות → רדיוס גדול) נוכל להמליץ על רדיוס דינמי כברירת מחדל מרגע בחירת היעד.</span> <span class="badge yellow">נתונים מגרסה חדשה — ייתכן ריק</span></p>
+      <canvas id="chart-distance-radius" height="110"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔔 תוצאות הפעלת התראה — 30 יום <span class="badge green">פעיל מ-13.5.2026</span></h2>
+      <div id="first-alarm-kpi-alarms" style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:16px"></div>
+      <table id="table-sessions">
+        <thead><tr><th>תוצאה</th><th>כמות</th><th>%</th></tr></thead>
+        <tbody id="tbody-sessions"><tr><td colspan="3" class="loading">טוען...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card wide">
+      <h2>⏱️ כמה זמן מהפעלה עד סיום — לפי תוצאה</h2>
+      <p class="chart-desc">כמה זמן עוברת התראה עד שהיא נסגרת, לפי סיבת הסגירה. <strong>מה לחפש:</strong> "צלצל" בדרך כלל = נסיעה ממושכת. "בוטל" מהיר = המשתמש היה כבר ביעד. פג זמן מעל 10 דקות = בעיה בזיהוי מיקום.</p>
+      <canvas id="chart-duration" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📊 תדירות שימוש — כמה התראות מפעיל כל משתמש? (30 יום)</h2>
+      <p class="chart-desc">כמה sessions הפעיל כל מכשיר. <strong>מה לחפש:</strong> אם רוב המשתמשים עם session יחיד — בעיית שימור. <span class="insight">Power users (20+ 🔥) = ליבת המנויים הפוטנציאליים.</span></p>
+      <div id="alarm-freq-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-alarm-freq" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>⚠️ איתחולי רקע — כמה פעמים Android עצר מעקב מיקום (30 יום)</h2>
+      <p class="chart-desc">איתחולים מוצגים גם בכמות וגם <strong>מנורמל ל-100 הפעלות התראה</strong> בכל יום. <strong>מה לחפש:</strong> עלייה ב-<code>watchdog/100 enabled</code> מעידה על רגרסיית אמינות, גם אם מספר המשתמשים גדל.</p>
+      <div id="watchdog-kpis" class="kpi-row" style="margin-bottom:12px"></div>
+      <canvas id="chart-watchdog" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🆕 שיעור הצלחה — התראה ראשונה לעומת חוזרת (לפי שבוע)</h2>
+      <p class="chart-desc">האם משתמשים חדשים מצליחים פחות בהתראה הראשונה שלהם? <strong>מה לחפש:</strong> פער גדול בין הקווים = בעיה ב-Onboarding (המשתמש לא מבין איך זה עובד). פער קטן = חוויה טובה מההתחלה.</p>
+      <div id="first-vs-repeat-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-first-vs-repeat-success" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔕 כשלים שקטים — מה קרה להתראה? (30 יום)</h2>
+      <p class="chart-desc">
+        מתוך כל ה-sessions שהופעלו: כמה <strong>צלצלו אוטומטית ברקע</strong>?
+        כמה <strong>צלצלו רק כי המשתמש פתח את האפליקציה</strong>?
+        כמה <strong>לא צלצלו כלל</strong>?
+        <span class="insight">ℹ️ <code>trigger_source</code> נאסף החל מ-~29.5.2026 (גרסאות 1.2.x). sessions ישנים יותר מוצגים כ"מקור לא ידוע" —
+        ראה את ה-KPI "Known source" למטה למעקב אחר שיעור הסיווג. <strong>🔴 ודאי שקט = app_killed + open_stale</strong>.</span>
+      </p>
+      <div id="reliability-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-reliability" height="90"></canvas>
+      <div id="trigger-source-quality-kpis" class="kpi-row" style="margin-top:14px;margin-bottom:12px"></div>
+      <div id="trigger-source-alert" style="display:none;margin:8px 0 10px;padding:8px 10px;border-radius:8px;font-size:0.78rem"></div>
+      <canvas id="chart-trigger-source-quality" height="72"></canvas>
+
+      <div id="reliability-detail" style="display:none;margin-top:20px">
+        <div style="height:1px;background:#1e293b;margin-bottom:16px"></div>
+        <h3 style="font-size:0.8rem;color:#64748b;margin:0 0 10px;text-transform:uppercase;letter-spacing:0.05em">🔬 פירוט כשלים שקטים (app_killed + open_stale)</h3>
+        <p style="font-size:0.72rem;color:#475569;margin:0 0 16px">
+          · <strong>משך</strong>: עבור app_killed — הזמן שעבר עד שהמשתמש פתח שוב את האפליקציה (לא משך הנסיעה עצמה).
+          · <strong>הרשאות</strong>: נאספות החל מה-build הבא — יופיעו בקרוב.
+        </p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px">
+          <div>
+            <h4 style="font-size:0.72rem;color:#94a3b8;margin:0 0 8px">⏱ משך עד פתיחה מחדש (app_killed)</h4>
+            <canvas id="chart-kill-duration" height="150"></canvas>
+          </div>
+          <div>
+            <h4 style="font-size:0.72rem;color:#94a3b8;margin:0 0 8px">📱 גרסאות — % כשל מנורמל</h4>
+            <canvas id="chart-kill-versions" height="150"></canvas>
+          </div>
+          <div>
+            <h4 style="font-size:0.72rem;color:#94a3b8;margin:0 0 8px">🏗 יצרנים — % כשל מנורמל</h4>
+            <canvas id="chart-kill-manufacturers" height="150"></canvas>
+          </div>
+        </div>
+        <div id="reliability-permissions" style="margin-top:20px;display:none">
+          <div style="height:1px;background:#1e293b;margin-bottom:14px"></div>
+          <h4 style="font-size:0.75rem;color:#94a3b8;margin:0 0 10px">🔑 הרשאות חסרות — כשלים שקטים (sessions עם נתוני הרשאות)</h4>
+          <p style="font-size:0.7rem;color:#475569;margin:0 0 12px">פרימיום = overlay + dnd_access רלוונטיים. ללא פרימיום = bg_location + battery_exempt בלבד.</p>
+          <div id="permissions-kpis" class="kpi-row"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h2>📡 משפך "מתקרב ליעד" — כמה notification הפכה לצלצול? (30 יום)</h2>
+      <p class="chart-desc">המשפך מוצג לפי <strong>רמות ודאות</strong> מתוך <code>alarm_sessions</code>: הצלחה ודאית ברקע, הצלחה במקור לא ידוע, כשל שקט ודאי, ולא מסווג. <strong>מה לחפש:</strong> <span class="insight">אם "מקור לא ידוע" גבוה — בעיית טלמטריה. אם "כשל שקט ודאי" עולה — בעיית אמינות ברקע.</span></p>
+      <div id="approaching-funnel-bars" style="margin-top:12px"><div class="loading">טוען...</div></div>
+    </div>
+
+  </div>
+</div>
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-revenue" class="tab-content">
+
+  <div id="revenue-error">
+    ⚠️ revenue_events טעון הרשאת SELECT — הרץ migration
+    <code>20260515300000_revenue_events_dashboard_policy.sql</code> ב-Supabase SQL Editor
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h2>💰 מדדי הכנסות</h2>
+    <div class="kpi-row">
+      <div class="kpi"><div class="label">סה"כ הכנסות</div><div class="value" id="rev-total">—</div><div class="sub">נתוני אמת</div></div>
+      <div class="kpi"><div class="label">30 יום אחרונים</div><div class="value" id="rev-last30">—</div></div>
+      <div class="kpi"><div class="label">רוכשים ייחודיים</div><div class="value" id="kpi-buyers">—</div></div>
+      <div class="kpi"><div class="label">המרה (רוכשים / פעילים)</div><div class="value" id="rev-conv">—</div></div>
+      <div class="kpi"><div class="label">הכנסה למשתמש (30 יום)</div><div class="value" id="rev-arpu">—</div><div class="sub">הכנסה / פעילים חודשי</div></div>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>📈 הכנסה מצטברת (שבועות)</h2>
+      <p class="chart-desc">סכום כל ההכנסות מתחילת הפעילות. <strong>מה לחפש:</strong> הגרף תמיד צריך לעלות. שטוח = חודש חלש.</p>
+      <canvas id="chart-rev-cumulative" height="160"></canvas>
+    </div>
+    <div class="card">
+      <h2>📅 הכנסה יומית — 30 יום (לפי סוג)</h2>
+      <p class="chart-desc">כמה הכנסה נכנסת כל יום, מפוצל לפי סוג עסקה. <strong>מה לחפש:</strong> אם חידושים גדלים וראשונות יורדות — ייתכן ש-Google Play הגביל רכישות חדשות.</p>
+      <canvas id="chart-rev-daily" height="160"></canvas>
+    </div>
+    <div class="card">
+      <h2>📦 פילוח מוצרים (לפי הכנסה)</h2>
+      <canvas id="chart-products" height="160"></canvas>
+    </div>
+    <div class="card">
+      <h2>🔁 ראשונות vs. חידושים (לפי חודש)</h2>
+      <canvas id="chart-renewal-ratio" height="160"></canvas>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:20px">
+    <div class="card">
+      <h2>📉 Churn — ביטולים לעומת מנויים חדשים (לפי חודש)</h2>
+      <p class="chart-desc">עמודות ירוקות = מנויים חדשים · עמודות אדומות = ביטולים / פג תוקף. <span class="insight">אם אדום גדול מירוק — הבסיס מתכווץ.</span></p>
+      <canvas id="chart-churn" height="160"></canvas>
+    </div>
+    <div class="card">
+      <h2>📊 ARPU חודשי — הכנסה ממוצעת למשתמש</h2>
+      <p class="chart-desc">הכנסה חודשית מחולקת ב-MAU של אותו חודש. <strong>מה לחפש:</strong> עלייה = הפרימיום צובר משתמשים. ירידה = צמיחה של אי-רוכשים.</p>
+      <canvas id="chart-arpu-trend" height="160"></canvas>
+    </div>
+  </div>
+
+  <div class="card wide" style="margin-top:20px">
+    <h2>🛒 משפך המרה — שדרוג ותמיכה (30 יום)</h2>
+    <p class="chart-desc">
+      כמה משתמשים הגיעו לעמוד הרכישה/התמיכה, וכמה אשכרה עשו שם משהו.
+      <strong>מה לחפש:</strong> אחוז המרה נמוך מ-5% = כנראה ה-paywall לא משכנע מספיק.
+    </p>
+    <div id="conversion-funnel-bars" style="margin-top:12px"><div class="loading">טוען...</div></div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 5 — תכונות
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-features" class="tab-content">
+  <div class="grid">
+
+    <div class="card wide">
+      <h2>Top Events — 30 יום</h2>
+      <table id="table-events">
+        <thead><tr><th>Event</th><th>סה"כ</th><th>ממוצע יומי</th></tr></thead>
+        <tbody id="tbody-events"><tr><td colspan="3" class="loading">טוען...</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card wide">
+      <h2>🗺️ מסלולים vs. מיקומים — אימוץ לאורך 30 יום</h2>
+      <div class="kpi-row" style="margin-bottom:16px">
+        <div class="kpi"><div class="label">% מסלולים (7 ימים אחרונים)</div><div class="value" id="kpi-route-recent">—</div></div>
+        <div class="kpi"><div class="label">% מסלולים (תחילת תקופה)</div><div class="value" id="kpi-route-early">—</div></div>
+        <div class="kpi"><div class="label">מגמה</div><div class="value" id="kpi-route-trend">—</div></div>
+      </div>
+      <canvas id="chart-routes-trend" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📊 עומק שימוש — פעילות vs. הצלחה (30 יום)</h2>
+      <p class="chart-desc">אחוז מהמכשירים שקיבלו צלצול לפחות פעם, לפי מספר sessions (30 יום). <strong>מה לחפש:</strong> האם מי שמשתמש יותר מצליח יותר? אם כן — הבעיה היא בהיכרות עם האפליקציה.</p>
+      <canvas id="chart-engagement-depth" height="100"></canvas>
+      <div style="font-size:0.75rem;color:#475569;margin-top:10px">
+        💡 לניתוח קשר ישיר עם רכישה — נדרש מיפוי <code>device_id_anon ↔ rc_user_id</code>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h2>🎯 שיעור הצלחה — מסלול לעומת מיקום</h2>
+      <div id="kpi-route-success-row" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-route-vs-loc-success" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔔 שימור הפעלה אוטומטית — כמה משתמשים כיבו את ההתראה?</h2>
+      <p class="chart-desc">כשיוצרים יעד חדש, ההתראה <strong>מופעלת אוטומטית</strong> (כשהמשתמש מחוץ לרדיוס). <strong>כמה כיבו אותה לאחר מכן?</strong> <span class="insight">יחס כיבוי נמוך = המשתמשים מרוצים מהברירת המחדל · יחס גבוה = אולי ברירת מחדל לא נכונה.</span> שים לב: <em>כיבויים</em> כוללים גם לחיצות חוזרות על אותו מיקום.</p>
+      <div id="kpi-alarm-retention" class="kpi-row" style="margin-bottom:16px"></div>
+      <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+        <div style="flex:0 0 240px"><canvas id="chart-alarm-retention-donut" height="240"></canvas></div>
+        <div style="flex:1;min-width:240px"><canvas id="chart-alarm-retention-bar" height="160"></canvas></div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h2>🚦 משפך יצירה — אחוז השלמה (30 יום)</h2>
+      <p class="chart-desc">כמה מהמשתמשים שפתחו טופס יצירת יעד/מסלול <strong>בסוף שמרו</strong>? <span class="insight">נטישה גבוהה מ-60% = בעיית UX בטופס היצירה.</span></p>
+      <div id="creation-funnel-bars" style="margin-top:8px"></div>
+    </div>
+
+    <div class="card wide">
+      <h2>🎁⭐ מתנה ודירוג — חשיפה והתנהגות (30 יום)</h2>
+      <p class="chart-desc">האם המשתמשים באמת מגיעים למסכי <strong>מתנה</strong> ו<strong>דירוג</strong>, ומה הם עושים שם? <strong>מה לחפש:</strong> הרבה חשיפות אבל מעט תגובה = מסר חלש; מעט מעבר לפידבק = נוסח "לא מרוצה" לא ברור.</p>
+      <div id="gift-rating-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-gift-rating-trend" height="90"></canvas>
+      <div style="margin-top:18px"></div>
+      <canvas id="chart-gift-rating-funnel" height="120"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📡 GPS Speed Null — תדירות GPS חלש (30 יום)</h2>
+      <p class="chart-desc"><code>gps.speed_null</code> יורה כשה-GPS מחזיר מהירות null — מעיד על GPS לא אמין ברקע. <strong>מה לחפש:</strong> ריכוז גבוה ביום מסוים = גרסה שפגעה ב-GPS. נפוץ ב-Samsung/Xiaomi שמגבילים GPS ברקע.</p>
+      <div id="gps-null-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-gps-null" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🧭 GPS Update Gap — זיהוי קפיצות בעדכוני רקע (30 יום)</h2>
+      <p class="chart-desc"><code>gps.update_gap_detected</code> יורה כשיש פער חריג בין callbacks של GPS ברקע. <strong>מה לחפש:</strong> עלייה עקבית מצביעה על הגבלת רקע אגרסיבית (Doze/Battery Saver) או רגרסיה בלולאת המעקב.</p>
+      <div id="gps-gap-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <div id="gps-gap-alert" style="display:none;margin:8px 0 10px;padding:8px 10px;border-radius:8px;font-size:0.78rem"></div>
+      <canvas id="chart-gps-gap" height="80"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 6 — חקירה חופשית
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-explorer" class="tab-content">
+
+  <p class="explorer-intro">
+    בחר <strong>מדד</strong> (מה למדוד) ו<strong>פילוח</strong> (לפי מה לפרק) כדי לגלות תבניות.<br>
+    לדוגמה: הכנסות לפי שעה ביום · הפעלות התראה לפי יום בשבוע · פעילים לפי גרסה · יצירת מיקומים לפי יום בחודש
+  </p>
+
+  <div class="explorer-controls">
+    <div class="ctrl-group">
+      <label>📏 מדד — מה למדוד</label>
+      <select id="exp-metric" onchange="updateExplorerUI()">
+        <option value="alarm_count">הפעלות התראה (כמות)</option>
+        <option value="alarm_success">% הצלחה</option>
+        <option value="dau">משתמשים פעילים יומי</option>
+        <option value="new_users">משתמשים חדשים</option>
+        <option value="revenue">הכנסות (₪)</option>
+        <option value="location_created">יצירת מיקומים</option>
+        <option value="route_on">הפעלת מסלולים</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>📐 פילוח — לפי מה לפרק</label>
+      <select id="exp-dim">
+        <option value="hour">שעה ביום (0–23)</option>
+        <option value="dow">יום בשבוע (א–ז)</option>
+        <option value="dom">יום בחודש (1–31)</option>
+        <option value="month">חודש (YYYY-MM)</option>
+        <option value="version">גרסת אפליקציה</option>
+        <option value="manufacturer">יצרן מכשיר</option>
+        <option value="outcome">תוצאת התראה</option>
+      </select>
+    </div>
+
+    <div class="ctrl-group">
+      <label>📅 תקופה</label>
+      <select id="exp-period">
+        <option value="7">7 ימים</option>
+        <option value="30" selected>30 ימים</option>
+        <option value="90">90 ימים</option>
+        <option value="365">שנה</option>
+        <option value="9999">כל הזמן</option>
+      </select>
+    </div>
+
+    <button class="run-btn" id="exp-run-btn" onclick="runExplorer()">הצג גרף ▶</button>
+  </div>
+
+  <div class="exp-desc" id="exp-desc">
+    בחר מדד + פילוח ולחץ "הצג גרף" כדי לראות את הנתונים.
+  </div>
+
+  <div class="exp-result" id="exp-result">
+    <div class="exp-empty" id="exp-empty">⬆️ בחר פילוח ולחץ הצג גרף</div>
+    <canvas id="chart-explorer" style="display:none;width:100%"></canvas>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 7 — לפי גרסה (השוואת גרסאות באחוזים)
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-versions" class="tab-content">
+
+  <div class="card" style="margin-bottom:20px">
+    <h2>📦 השוואת גרסאות — באחוזים</h2>
+    <p class="chart-desc">
+      מאחר וכמות המשתמשים משתנה בין גרסה לגרסה, <strong>אחוזים</strong> הם המדד להשוואה הוגנת — לא כמויות גולמיות.
+      <span class="insight">🎯 חפש גרסה שבה % ההצלחה בזמן-אמת קופץ מעלה או % הכשל השקט יורד — זו הגרסה שתיקנה משהו.</span>
+      טבלה זו מתעלמת מפילוח הגרסה שבראש העמוד (תמיד מציגה את כל הגרסאות זו מול זו), אך מכבדת את פילוח המדינה.
+    </p>
+  </div>
+
+  <div class="grid">
+    <div class="card wide">
+      <h2>טבלת השוואה — כל הגרסאות</h2>
+      <p class="chart-desc">כל שורה = גרסה (חדשה למעלה). העמודות באחוזים מאפשרות השוואה גם כשמספר המשתמשים שונה מאוד. <span class="insight">📐 העמודה <strong>"מנורמל"</strong> מנטרלת את הרכב המכשירים — build קצר שרץ רק על Pixel "ינצח" מלאכותית בעמודה הגולמית, אבל המנורמל משווה לכל יצרן לפי שיעור ההצלחה הבסיסי שלו. ⚠️ = מדגם מוטה (יצרן יחיד או <30 sessions) — הסתמך על המנורמל.</span></p>
+      <div style="overflow-x:auto">
+        <table id="table-version-compare">
+          <thead><tr>
+            <th>גרסה</th>
+            <th>מכשירים</th>
+            <th>Sessions</th>
+            <th>✅ הצלחה real-time</th>
+            <th>📐 מנורמל</th>
+            <th>🟡 צלצל מאוחר</th>
+            <th>🔴 כשל שקט</th>
+            <th>⏰ פג זמן</th>
+            <th>👤 בוטל</th>
+            <th>Sessions/מכשיר</th>
+          </tr></thead>
+          <tbody id="tbody-version-compare"><tr><td colspan="10" class="loading">טוען...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h2>✅ % הצלחה בזמן-אמת לפי גרסה</h2>
+      <p class="chart-desc">המדד החשוב ביותר. <span class="insight">עלייה בין גרסאות = שיפור אמיתי באמינות הצלצול.</span> רק גרסאות עם מספיק sessions מוצגות. <strong>📐 הקו הכחול</strong> = הצלחה <strong>מנורמלת להרכב היצרנים</strong> — אם העמודה הגולמית גבוהה אבל הקו נמוך, ההצלחה נבעה ממכשירים "קלים" (Pixel) ולא משיפור בקוד.</p>
+      <canvas id="chart-version-success" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📊 פירוק תוצאות לפי גרסה (% מכל ה-sessions)</h2>
+      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100%. <span class="insight">חפש גרסה שבה הירוק (הצלחה) גדל על חשבון האדום (כשל שקט).</span></p>
+      <canvas id="chart-version-breakdown" height="120"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔴 % כשל שקט לפי גרסה (app_killed + לא נסגר)</h2>
+      <p class="chart-desc">אחוז ה-sessions שנכשלו בשקט (האפליקציה נהרגה / מעקב תקוע). <span class="insight">ירידה בין גרסאות = תיקון יציבות הצליח.</span></p>
+      <canvas id="chart-version-silent" height="90"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB 8 — ימות השבוע
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-weekdays" class="tab-content">
+
+  <div class="card" style="margin-bottom:20px">
+    <h2>📅 ניתוח לפי ימות השבוע</h2>
+    <p class="chart-desc">
+      תבניות שבועיות — האם המשתמשים פעילים יותר בימי חול? האם ההצלחה יורדת בסופ"ש?
+      <span class="insight">📈 מדדי האחוז (% הצלחה, % כשל) הם המדד להשוואה בין הימים — לא הכמויות, שמושפעות ממספר המשתמשים המשתנה.</span>
+      טאב זה מכבד את פילוח הגרסה והמדינה שבראש העמוד.
+    </p>
+  </div>
+
+  <div class="grid">
+    <div class="card wide">
+      <h2>✅ % הצלחה בזמן-אמת לפי יום בשבוע</h2>
+      <p class="chart-desc">אחוז ה-sessions שצלצלו בזמן אמת, מפולח ליום בשבוע. <span class="insight">ירידה עקבית ביום מסוים = אולי דפוס נסיעה שונה (סופ"ש) או בעיה תלוית-יום.</span></p>
+      <div id="weekday-success-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-weekday-success" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔔 הפעלות התראה לפי יום בשבוע</h2>
+      <p class="chart-desc">סך ה-sessions שהופעלו בכל יום בשבוע (מצטבר על פני התקופה). <strong>מה לחפש:</strong> אילו ימים עמוסים יותר? זה מלמד מתי המשתמשים נוסעים.</p>
+      <canvas id="chart-weekday-sessions" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>👤 משתמשים פעילים — ממוצע ליום בשבוע</h2>
+      <p class="chart-desc">ממוצע המכשירים הייחודיים הפעילים בכל יום בשבוע (מנוטרל ממספר הופעות היום בתקופה — לכן הוגן להשוואה). <strong>מה לחפש:</strong> ירידה חדה בשבת/שישי = קהל דתי/שומר שבת.</p>
+      <canvas id="chart-weekday-dau" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📊 פירוק תוצאות לפי יום בשבוע (% מכל ה-sessions)</h2>
+      <p class="chart-desc">עמודות מוערמות — כל יום ל-100%. <span class="insight">חפש יום שבו הכשל השקט (אדום) גבוה במיוחד.</span></p>
+      <canvas id="chart-weekday-breakdown" height="120"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB — התנהגות (per-device co-occurrence + breadth)
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-behavior" class="tab-content">
+
+  <div class="tab-intro">
+    <div class="tab-intro-icon">🔗</div>
+    <div>
+      <h2>ניתוח התנהגות per-user</h2>
+      <p>
+        מבוסס על <code>device_feature_events</code> — כל פעולה משויכת ל-<code>device_id_anon</code> אנונימי.
+        מאפשר לבודד התנהגות לפי משתמש ולהסיק <strong>תלויות בין פיצ'רים</strong>.
+        <span class="insight">📈 הנתונים מצטברים מהגרסה שבה הופעל ה-tracking המאוחד (<code>track_event</code>) ואילך — ייתכן שדל בהתחלה.</span>
+        טאב זה מכבד את פילוח הגרסה והמדינה שבראש העמוד.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid">
+    <div class="card wide">
+      <h2>📊 אימוץ פיצ'רים — אחוז המשתמשים שהשתמשו בכל פיצ'ר (30 יום)</h2>
+      <p class="chart-desc">
+        כל עמודה = אחוז המכשירים הפעילים שהשתמשו בפיצ'ר לפחות פעם אחת (reach).
+        <span class="insight">מה לומדים: פיצ'רים בראש = ה-core שכולם נוגעים בו; פיצ'רים בתחתית = אימוץ נמוך — או שהם מוסתרים/לא מובנים, או שאין בהם צורך. זה הסיגנל הישיר ל<strong>אימוץ</strong>.</span>
+      </p>
+      <div id="feature-adoption-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-feature-adoption" height="120"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🎯 שימוש חוזר ביעדים — ספרייה שמורה מול חד-פעמי (30 יום)</h2>
+      <p class="chart-desc">
+        איך משתמשים מנהלים יעדים: <strong>שמירה לספרייה</strong> ושימוש חוזר, מול יצירה <strong>חד-פעמית</strong> בכל נסיעה.
+        <span class="insight">מה לומדים: יחס שימוש-חוזר גבוה ו-% גבוה של "ספריית יעדים" = המשתמשים הפכו את האפליקציה לכלי יומיומי (סיגנל <strong>Product-Market Fit</strong>). הרבה "חד-פעמי בלבד" = שימוש מזדמן וסיכון נטישה.</span>
+      </p>
+      <div id="destination-reuse-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-destination-reuse" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🧩 רוחב שימוש — כמה פיצ'רים שונים לכל משתמש (30 יום)</h2>
+      <p class="chart-desc">התפלגות מספר סוגי האירועים הייחודיים שכל מכשיר הפעיל. <strong>מה לחפש:</strong> הרבה משתמשים עם פיצ'ר אחד בלבד = אימוץ רדוד; זנב ארוך של רוחב גבוה = משתמשי-עומק.</p>
+      <div id="behavior-breadth-kpis" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-behavior-breadth" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔁 דביקות פיצ'רים — האם חוזרים אליהם? (30 יום)</h2>
+      <p class="chart-desc">
+        לכל פיצ'ר: כמה משתמשים אימצו אותו, ממוצע שימושים לכל משתמש, ואחוז ה<strong>חוזרים</strong> (השתמשו יותר מפעם אחת).
+        <span class="insight">מה לומדים: פיצ'ר עם אימוץ גבוה אבל אחוז חוזרים נמוך = שימושיות חלשה — ניסו פעם ולא חזרו. אחוז חוזרים גבוה = הפיצ'ר באמת עובד ומספק ערך. זה הסיגנל ל<strong>שימושיות</strong>.</span>
+      </p>
+      <div id="feature-stickiness" style="overflow-x:auto;margin-top:8px">
+        <div class="loading">טוען...</div>
+      </div>
+    </div>
+
+    <div class="card wide">
+      <h2>🔗 מטריצת תלות בין פיצ'רים — P(עמודה | שורה)</h2>
+      <p class="chart-desc">
+        כל תא = ההסתברות שמשתמש שהפעיל את פיצ'ר ה<strong>שורה</strong> הפעיל גם את פיצ'ר ה<strong>עמודה</strong>.
+        <span class="insight">ערך גבוה = הפיצ'רים "נוסעים יחד" (תלות/gateway); ערך נמוך באלכסון-נגדי = פיצ'ר מתעלמים ממנו.</span>
+        מוצגים הפיצ'רים המובילים לפי מספר המכשירים שהפעילו אותם (אירועי מערכת/רעש מסוננים).
+      </p>
+      <div id="behavior-cooccurrence" style="overflow-x:auto;margin-top:8px">
+        <div class="loading">טוען...</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════════════════════
+     TAB — חנויות (Google Play / App Store — מקור אמת אחד)
+══════════════════════════════════════════════════════════════════════ -->
+<div id="tab-stores" class="tab-content">
+
+  <div class="card" style="margin-bottom:20px">
+    <h2>🏬 נתוני חנויות — מקור אמת אחד</h2>
+    <p class="chart-desc">
+      נתונים שנמשכים מ-<strong>Google Play</strong> (וב-עתיד App Store) ע"י הסקריפט
+      <code>scripts/loadStoreMetrics.js</code> ונשמרים ב-<code>store_metrics</code> — כדי שלא תצטרך לפתוח את ה-Console.
+      <span class="insight">📈 מדדי <code>rate</code> (crash/ANR/wakeups) הם אחוז מתוך המשתמשים — נמוך = טוב.
+      התקנות/הסרות ודירוגים מגיעים מדוחות ה-GCS.</span>
+      הטאב אינו מושפע מפילוח גרסה/מדינה (הנתונים אגרגטיביים מהחנות).
+    </p>
+    <div id="stores-empty" style="display:none;color:#f59e0b;font-size:0.82rem;padding:10px;background:#292007;border-radius:6px;border:1px solid #713f12;margin-top:10px"></div>
+  </div>
+
+  <div class="card" style="margin-bottom:20px">
+    <h2>📌 מצב נוכחי</h2>
+    <div class="kpi-row" id="stores-kpis"><div class="loading">טוען...</div></div>
+  </div>
+
+  <div class="grid">
+    <div class="card wide">
+      <h2>💥 שיעור קריסות (Crash rate) — יומי</h2>
+      <p class="chart-desc">אחוז המשתמשים שחוו קריסה. <span class="insight">🎯 מתחת ל-1% תקין · מעל 2% = בעיה. קפיצה ביום מסוים = גרסה תקולה.</span></p>
+      <canvas id="chart-store-crash" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🧊 שיעור ANR (אפליקציה תקועה) — יומי</h2>
+      <p class="chart-desc">אחוז המשתמשים שחוו ANR (Application Not Responding). <span class="insight">מתחת ל-0.5% תקין. עלייה = חסימת thread ראשי.</span></p>
+      <canvas id="chart-store-anr" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔋 Excessive wakeups — יקיצות עודפות (יומי)</h2>
+      <p class="chart-desc">אחוז המכשירים שמעירים את המעבד בתדירות גבוהה מדי. <span class="insight">קריטי לנו — קשור ישירות ל-OEM battery killers שסוגרים את ה-foreground service.</span></p>
+      <canvas id="chart-store-wakeup" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>🔒 Stuck wakelocks — נעילות רקע תקועות (יומי)</h2>
+      <p class="chart-desc">אחוז המכשירים עם wakelock שלא שוחרר ברקע. <span class="insight">עלייה מצביעה על דליפת wakelock בלולאת המעקב — בדוק wakeLockService.</span></p>
+      <canvas id="chart-store-wakelock" height="80"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>📥 התקנות מול הסרות — יומי</h2>
+      <p class="chart-desc">מכשירים חדשים מול הסרות בכל יום (מתוך דוחות ה-GCS). <span class="insight">אם הסרות מתקרבות להתקנות — צמיחה נטו אפסית.</span> דורש <code>GOOGLE_PLAY_REPORTS_BUCKET</code>.</p>
+      <canvas id="chart-store-installs" height="90"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>⭐ דירוג ממוצע — מגמה</h2>
+      <p class="chart-desc">דירוג יומי ממוצע (מהדוחות) ודירוג ביקורות אחרונות (מ-API). <strong>מה לחפש:</strong> ירידה אחרי release = גרסה שפגעה בחוויה.</p>
+      <canvas id="chart-store-rating" height="90"></canvas>
+    </div>
+  </div>
+
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/helpers.js"></script>
+<script src="js/loaders.js"></script>
+<script src="js/engagement.js"></script>
+<script src="js/alarms.js"></script>
+<script src="js/behavior.js"></script>
+<script src="js/revenue.js"></script>
+<script src="js/trends.js"></script>
+<script src="js/export.js"></script>
+<script src="js/init.js"></script>
 </body>
 </html>
