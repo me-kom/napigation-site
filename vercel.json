@@ -6,8 +6,13 @@
     { "source": "/dashboard/auth/", "destination": "/dashboard/auth.html" },
     { "source": "/dashboard/js/(.*)", "destination": "/dashboard/js/$1" },
     { "source": "/dashboard/styles.css", "destination": "/dashboard/styles.css" },
+    { "source": "/referral", "destination": "/referral/index.html" },
+    { "source": "/referral/", "destination": "/referral/index.html" },
+    { "source": "/referral/(.*)", "destination": "/referral/index.html" },
     { "source": "/js/(.*)", "destination": "/dashboard/js/$1" },
     { "source": "/styles.css", "destination": "/dashboard/styles.css" },
+    { "source": "/index-he.html", "destination": "/index-he.html" },
+    { "source": "/he/", "destination": "/index-he.html" },
     { "source": "/", "destination": "/index.html" }
   ]
 }

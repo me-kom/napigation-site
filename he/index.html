@@ -471,15 +471,99 @@
     .footer-links a:hover { color: #fff; }
 
     /* ── Responsive ── */
-    @media (max-width: 768px) {
-      .navbar { padding: 0 16px; }
-      .navbar-links > a { display: none; }
-      .nav-controls { gap: 8px; }
-      .seg button { padding: 6px 10px; font-size: 0.78rem; }
-      .hero { padding: 60px 20px 80px; }
+    @media (max-width: 1024px) {
       section { padding: 60px 20px; }
+      .plans-grid { gap: 20px; }
+      .plan-card { padding: 32px 24px; }
+    }
+    @media (max-width: 768px) {
+      .navbar { padding: 0 16px; height: 56px; }
+      .navbar-logo { font-size: 1.1rem; }
+      .navbar-logo img { width: 24px; height: 24px; }
+      .navbar-links > a { display: none; }
+      .nav-controls { gap: 4px; }
+      .seg button, .seg a { padding: 5px 10px; font-size: 0.75rem; }
+      .hero { padding: 50px 16px 60px; }
+      .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 16px; }
+      .hero p { font-size: 1rem; margin: 0 auto 20px; }
+      .hero-badge { font-size: 0.8rem; padding: 5px 14px; margin-bottom: 24px; }
+      .hero-fact { font-size: 0.9rem; padding: 12px 16px; margin: -10px auto 24px; }
+      .hero-buttons { gap: 12px; }
+      .btn-primary, .btn-secondary { padding: 12px 24px; font-size: 0.95rem; }
+      .hero-note { font-size: 0.8rem; margin-top: 20px; }
+      section { padding: 50px 16px; }
+      .section-title { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 40px; }
+      .section-label { font-size: 0.8rem; margin-bottom: 10px; }
+      .steps { gap: 20px; }
+      .step { padding: 30px 16px; }
+      .step-number { width: 48px; height: 48px; font-size: 1.3rem; }
+      .step h3 { font-size: 1.05rem; }
+      .step p { font-size: 0.9rem; }
+      .adv-grid { gap: 20px; }
+      .adv-card { padding: 24px; border-right: 3px solid var(--accent); }
+      [lang="en"] .adv-card { border-left: 3px solid var(--accent); }
+      .adv-card h3 { font-size: 1rem; }
+      .adv-card p { font-size: 0.9rem; }
+      .features-grid { gap: 20px; }
+      .feature-card { padding: 24px 20px; }
+      .feature-card h3 { font-size: 1rem; }
+      .feature-card p { font-size: 0.9rem; }
+      .plans-grid { grid-template-columns: 1fr; }
+      .plan-card { padding: 30px 20px; }
       .plan-card.featured { transform: scale(1); }
-      .adv-card { padding: 24px; }
+      .plan-name { font-size: 1.1rem; }
+      .plan-features li { font-size: 0.9rem; padding: 8px 0; }
+      .faq-item { padding: 18px 20px; }
+      .faq-q { font-size: 1rem; }
+      .faq-a { font-size: 0.9rem; }
+      .store-btn { padding: 12px 24px; font-size: 0.95rem; }
+      #download .section-title { margin-bottom: 12px; }
+      #download .sub { font-size: 1rem; margin-bottom: 30px; }
+      .store-buttons { gap: 12px; }
+      .contact-email { padding: 12px 24px; font-size: 0.95rem; }
+      footer { padding: 30px 16px; font-size: 0.85rem; }
+      .footer-links { gap: 16px; }
+    }
+    @media (max-width: 480px) {
+      .navbar { padding: 0 12px; height: 52px; }
+      .navbar-logo { font-size: 1rem; gap: 6px; }
+      .navbar-logo img { width: 22px; height: 22px; }
+      .seg button, .seg a { padding: 4px 8px; font-size: 0.7rem; }
+      .hero { padding: 40px 12px 50px; }
+      .hero h1 { font-size: clamp(1.5rem, 3.5vw, 2.2rem); line-height: 1.1; margin-bottom: 12px; }
+      .hero p { font-size: 0.9rem; margin: 0 auto 16px; line-height: 1.5; }
+      .hero-badge { font-size: 0.75rem; padding: 4px 12px; margin-bottom: 20px; }
+      .hero-fact { font-size: 0.85rem; padding: 10px 12px; margin: -8px auto 20px; }
+      .hero-buttons { gap: 8px; flex-direction: column; }
+      .btn-primary, .btn-secondary { width: 100%; padding: 11px 20px; font-size: 0.9rem; }
+      .hero-note { font-size: 0.75rem; margin-top: 16px; }
+      section { padding: 40px 12px; }
+      .section-title { font-size: clamp(1.3rem, 2.8vw, 1.8rem); margin-bottom: 32px; }
+      .section-inner { width: 100%; }
+      .steps { gap: 16px; }
+      .step { padding: 24px 12px; }
+      .step-number { width: 44px; height: 44px; font-size: 1.2rem; }
+      .step h3 { font-size: 1rem; }
+      .step p { font-size: 0.85rem; }
+      .adv-card { padding: 20px; border-right: 3px solid var(--accent); }
+      .adv-icon { font-size: 2rem; }
+      .adv-card h3 { font-size: 0.95rem; }
+      .feature-card { padding: 20px 16px; }
+      .feature-icon { font-size: 1.8rem; }
+      .plan-card { padding: 24px 16px; }
+      .plan-name { font-size: 1rem; }
+      .plan-features li { font-size: 0.85rem; padding: 6px 0; }
+      .faq-item { padding: 16px 12px; }
+      .faq-q { font-size: 0.95rem; }
+      .faq-a { font-size: 0.85rem; max-height: 350px; }
+      #download { padding: 40px 12px; }
+      #download .section-title { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+      #download .sub { font-size: 0.95rem; margin-bottom: 24px; }
+      .store-btn { padding: 10px 16px; font-size: 0.9rem; }
+      .store-icon { font-size: 1.2rem; }
+      #contact .section-title { font-size: clamp(1.2rem, 2.5vw, 1.6rem); }
+      .contact-email { padding: 10px 20px; font-size: 0.9rem; }
+      footer { padding: 24px 12px; font-size: 0.8rem; }
     }
   </style>
 </head>
@@ -500,10 +584,6 @@
     <a href="#download" class="he-content">הורדה</a>
     <a href="#download" class="en-content">Download</a>
     <div class="nav-controls">
-      <div class="seg" role="group" aria-label="Language">
-        <a href="./" hreflang="he" class="active" aria-current="page">עברית</a>
-        <a href="../" hreflang="en">English</a>
-      </div>
       <div class="seg" role="group" aria-label="בחירת פלטפורמה / Platform">
         <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">Android</button>
         <button type="button" data-platform="ios" onclick="setPlatform('ios')">iOS</button>
