@@ -264,34 +264,36 @@
     .step h3 { font-size: 1.15rem; font-weight: 700; margin-bottom: 12px; color: var(--primary); }
     .step p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
-    /* ── Advantages (The SEO/AI Block) ── */
+    /* ── User-first value summary (secondary detail block) ── */
     #advantage {
-      background: linear-gradient(180deg, var(--bg) 0%, var(--white) 100%);
+      background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%);
+      padding-top: 40px;
     }
     .adv-intro {
       text-align: center;
-      max-width: 760px;
-      margin: -20px auto 48px;
+      max-width: 620px;
+      margin: -12px auto 32px;
       color: var(--text-light);
-      font-size: 1.1rem;
+      font-size: 0.98rem;
+      line-height: 1.6;
     }
     .adv-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
     }
     .adv-card {
       background: var(--white);
       border-radius: var(--radius);
-      padding: 32px;
+      padding: 24px 20px;
       border: 1px solid var(--border);
-      border-right: 4px solid var(--accent); /* RTL native */
-      box-shadow: var(--shadow);
+      border-right: 4px solid var(--accent);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
     }
     [lang="en"] .adv-card { border-right: 1px solid var(--border); border-left: 4px solid var(--accent); }
     .adv-icon { font-size: 2.2rem; margin-bottom: 16px; }
-    .adv-card h3 { font-size: 1.1rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
-    .adv-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
+    .adv-card h3 { font-size: 1.05rem; font-weight: 700; color: var(--primary); margin-bottom: 10px; }
+    .adv-card p { font-size: 0.9rem; color: var(--text-light); line-height: 1.6; }
 
     /* ── Features ── */
     #features { background: var(--bg); }
@@ -313,51 +315,92 @@
     .feature-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
     /* ── Plans ── */
-    #plans { background: var(--white); }
-    .plans-grid {
+    #plans { background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%); }
+    .compare-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 24px;
-      max-width: 1100px;
+      max-width: 980px;
       margin: 0 auto;
     }
-    .plan-card {
+    .compare-card {
       border-radius: var(--radius);
-      padding: 40px 32px;
+      padding: 32px 28px;
       border: 1px solid var(--border);
       background: var(--bg);
-      position: relative;
       display: flex;
       flex-direction: column;
+      min-height: 100%;
     }
-    .plan-card.featured {
+    .compare-card.featured {
       background: var(--white);
       border: 2px solid var(--accent);
       box-shadow: 0 8px 30px rgba(67,97,238,0.12);
-      transform: scale(1.02);
     }
-    .plan-badge {
-      position: absolute;
-      top: -14px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: var(--accent);
-      color: #fff;
-      font-size: 0.8rem;
-      font-weight: 700;
-      padding: 4px 16px;
-      border-radius: 20px;
-      letter-spacing: 0.5px;
-      white-space: nowrap;
+    .compare-header {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
     }
-    [lang="en"] .plan-badge { transform: translateX(-50%); }
-    .plan-name { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 14px; }
-    .plan-desc { font-size: 0.9rem; color: var(--text-light); margin-bottom: 24px; }
-    .plan-features { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-    .plan-features li {
+    .compare-pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      border-radius: 999px;
+      padding: 6px 12px;
+      text-transform: uppercase;
+    }
+    .compare-pill.free {
+      background: rgba(67, 97, 238, 0.1);
+      color: var(--primary);
+    }
+    .compare-pill.premium {
+      background: rgba(245, 158, 11, 0.12);
+      color: #92400e;
+    }
+    .compare-card h3 {
+      margin: 0;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .compare-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex-grow: 1;
+    }
+    .compare-list li {
+      position: relative;
       font-size: 0.95rem;
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
+      color: var(--text-light);
+      line-height: 1.6;
+      padding-right: 22px;
+    }
+    .compare-list li::before {
+      content: "✓";
+      position: absolute;
+      right: 0;
+      top: 0;
+      color: var(--accent);
+      font-weight: 800;
+    }
+    .compare-note {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+      font-size: 0.84rem;
+      color: var(--text-light);
+      line-height: 1.5;
+    }
       color: var(--text);
       display: flex;
       gap: 12px;
@@ -499,20 +542,19 @@
       .step-number { width: 48px; height: 48px; font-size: 1.3rem; }
       .step h3 { font-size: 1.05rem; }
       .step p { font-size: 0.9rem; }
-      .adv-grid { gap: 20px; }
-      .adv-card { padding: 24px; border-right: 3px solid var(--accent); }
+      .adv-grid { gap: 16px; }
+      .adv-card { padding: 20px 18px; border-right: 3px solid var(--accent); }
       [lang="en"] .adv-card { border-left: 3px solid var(--accent); }
       .adv-card h3 { font-size: 1rem; }
-      .adv-card p { font-size: 0.9rem; }
+      .adv-card p { font-size: 0.88rem; }
       .features-grid { gap: 20px; }
       .feature-card { padding: 24px 20px; }
       .feature-card h3 { font-size: 1rem; }
       .feature-card p { font-size: 0.9rem; }
-      .plans-grid { grid-template-columns: 1fr; }
-      .plan-card { padding: 30px 20px; }
-      .plan-card.featured { transform: scale(1); }
-      .plan-name { font-size: 1.1rem; }
-      .plan-features li { font-size: 0.9rem; padding: 8px 0; }
+      .compare-grid { grid-template-columns: 1fr; }
+      .compare-card { padding: 24px 20px; }
+      .compare-card h3 { font-size: 1.05rem; }
+      .compare-list li { font-size: 0.9rem; }
       .faq-item { padding: 18px 20px; }
       .faq-q { font-size: 1rem; }
       .faq-a { font-size: 0.9rem; }
@@ -550,9 +592,11 @@
       .adv-card h3 { font-size: 0.95rem; }
       .feature-card { padding: 20px 16px; }
       .feature-icon { font-size: 1.8rem; }
-      .plan-card { padding: 24px 16px; }
-      .plan-name { font-size: 1rem; }
-      .plan-features li { font-size: 0.85rem; padding: 6px 0; }
+      .compare-card { padding: 22px 16px; }
+      .compare-header { margin-bottom: 14px; }
+      .compare-list { gap: 10px; }
+      .compare-list li { font-size: 0.85rem; }
+      .compare-note { font-size: 0.8rem; }
       .faq-item { padding: 16px 12px; }
       .faq-q { font-size: 0.95rem; }
       .faq-a { font-size: 0.85rem; max-height: 350px; }
@@ -659,49 +703,6 @@
   </div>
 </section>
 
-<!-- The New Standard (Competitive Advantage) -->
-<section id="advantage">
-  <div class="section-inner">
-    <p class="section-label he-content">למה מי-קום</p>
-    <p class="section-label en-content">Why Napigation</p>
-    <h2 class="section-title he-content">פחות רעש, יותר ביטחון בנסיעה</h2>
-    <h2 class="section-title en-content">Built for Riders, Not for Noise</h2>
-    <p class="adv-intro he-content">
-      במקום עוד אפליקציה עמוסת מסכים והבטחות, מי-קום מתמקדת בדבר אחד: לעזור לכם לרדת בזמן, בלי להעמיס על הנסיעה.
-    </p>
-    <p class="adv-intro en-content">
-      Napigation focuses on one job: helping you get off at the right stop without turning the whole ride into a navigation session.
-    </p>
-    
-    <div class="adv-grid">
-      <div class="adv-card">
-        <h3 class="he-content">ללא פרסומות וללא הסחות דעת</h3>
-        <h3 class="en-content">No Ads, No Distractions</h3>
-        <p class="he-content">אפשר להגדיר התראה במהירות ולהמשיך בנסיעה, בלי חלונות קופצים ובלי עומס מיותר על המסך.</p>
-        <p class="en-content">Set an alert quickly and move on with your trip, without pop-ups or extra clutter.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">פרטיות בשפה ברורה</h3>
-        <h3 class="en-content">Privacy, Clearly Explained</h3>
-        <p class="he-content">המיקום שלכם מעובד על המכשיר. אין צורך בהרשמה, והמידע הרגיש לא נשמר אצלנו בענן.</p>
-        <p class="en-content">Your location is processed on your device. No sign-up is required, and sensitive location data is not stored in our cloud.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">התראה שקשה לפספס</h3>
-        <h3 class="en-content">An Alert You Are Likely to Notice</h3>
-        <p class="he-content">מי-קום נבנתה כדי להתריע גם כשלא מסתכלים על המסך, עם דגש על צליל ורטט בזמן הנכון.</p>
-        <p class="en-content">Napigation is designed to alert you even when you are not watching the screen, with sound and vibration at the right moment.</p>
-      </div>
-      <div class="adv-card">
-        <h3 class="he-content">גרסה חינמית שבאמת שימושית</h3>
-        <h3 class="en-content">A Free Version That Is Actually Useful</h3>
-        <p class="he-content">יכולות הליבה זמינות כבר מההתחלה, ושדרוגים מיועדים למי שצריך יותר גמישות בניהול יעדים ומסלולים.</p>
-        <p class="en-content">The core experience is available from the start, while paid plans are for riders who want more flexibility with saved places and routes.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- Features -->
 <section id="features">
   <div class="section-inner">
@@ -736,81 +737,112 @@
 <section id="plans">
   <div class="section-inner">
     <div class="he-content">
-      <p class="section-label">תמחור שקוף</p>
-      <h2 class="section-title">חינם לשימוש יומיומי, פרימיום למי שצריך יותר</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <p class="plan-name">גרסת הבסיס</p>
-          <p class="plan-desc">כל מה שצריך כדי להתחיל להשתמש באפליקציה בצורה נוחה וברורה.</p>
-          <ul class="plan-features">
-            <li>ללא פרסומות לחלוטין</li>
-            <li>עבודה יציבה ברקע</li>
-            <li>עקיפת מצב שקט אוטומטית</li>
+      <p class="section-label">מה תקבלו</p>
+      <h2 class="section-title">הגרסה החינמית כבר נותנת את הבסיס; הפרימיום פותח שליטה, מסלולים ושמירת מקומות בלי מגבלות.</h2>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-header">
+            <span class="compare-pill free">חינם</span>
+            <h3>גרסת הבסיס</h3>
+          </div>
+          <ul class="compare-list">
+            <li>מעקב ברקע יציב</li>
+            <li>התראה בזמן אמת בלי פרסומות</li>
             <li>עד 5 מיקומים שמורים</li>
+            <li>עקיפת מצב שקט אוטומטית</li>
             <li>עיבוד מיקום מקומי ופרטי</li>
           </ul>
         </div>
-        <div class="plan-card featured">
-          <span class="plan-badge">מומלץ לנוסעים קבועים</span>
-          <p class="plan-name">פרימיום חודשי</p>
-          <p class="plan-desc">למשתמשים קבועים שרוצים יותר מקומות שמורים, יותר מסלולים ויותר אפשרויות שליטה.</p>
-          <ul class="plan-features">
-            <li>שמירת מיקומים ללא הגבלה</li>
-            <li>יצירת מסלולים ללא הגבלה</li>
+        <div class="compare-card featured">
+          <div class="compare-header">
+            <span class="compare-pill premium">פרימיום</span>
+            <h3>למי שצריך יותר גמישות</h3>
+          </div>
+          <ul class="compare-list">
+            <li>מיקום, מסלולים ויעדים ללא הגבלה</li>
             <li>סגנון התראה "שיחה נכנסת"</li>
-            <li>מגן שינה — חוסם הפרעות בזמן מעקב (Android)</li>
-            <li>ניווט חיצוני בלחיצה — פתיחת אפליקציית הניווט בלחיצת כפתור</li>
-            <li>יעדים חד-פעמיים — נמחקים אוטומטית בהגעה ליעד</li>
+            <li>מגן שינה בזמן מעקב (Android)</li>
+            <li>ניווט חיצוני בלחיצה אחת</li>
+            <li>יעדים חד-פעמיים שממוחזקים אוטומטית</li>
           </ul>
-        </div>
-        <div class="plan-card">
-          <p class="plan-name">פרימיום לכל החיים</p>
-          <p class="plan-desc">תשלום חד-פעמי למי שמעדיף גישה מלאה בלי חידוש חודשי.</p>
-          <ul class="plan-features">
-            <li>פתיחה מלאה של כל ההגבלות</li>
-            <li>רישיון לכל החיים בחשבון</li>
-            <li>ללא חידוש או מנוי חוזר</li>
-          </ul>
+          <div class="compare-note">אפשרות לכל החיים: תשלום חד-פעמי, ללא חידוש חודשי.</div>
         </div>
       </div>
     </div>
     <div class="en-content">
-      <p class="section-label">Transparent Pricing</p>
-      <h2 class="section-title">Free for everyday use, premium when you need more</h2>
-      <div class="plans-grid">
-        <div class="plan-card">
-          <p class="plan-name">Base Tier</p>
-          <p class="plan-desc">Everything you need to start using the app comfortably.</p>
-          <ul class="plan-features">
-            <li>100% Ad-Free Experience</li>
-            <li>Stable background execution</li>
-            <li>Auto-override for silent mode</li>
+      <p class="section-label">What You Get</p>
+      <h2 class="section-title">The free version already covers the essentials; premium unlocks the flexibility you need for regular trips.</h2>
+      <div class="compare-grid">
+        <div class="compare-card">
+          <div class="compare-header">
+            <span class="compare-pill free">Free</span>
+            <h3>Core Version</h3>
+          </div>
+          <ul class="compare-list">
+            <li>Stable background tracking</li>
+            <li>Real-time alerts without ads</li>
             <li>Up to 5 saved locations</li>
-            <li>Private, on-device processing</li>
+            <li>Automatic silent-mode override</li>
+            <li>Private, on-device location processing</li>
           </ul>
         </div>
-        <div class="plan-card featured">
-          <span class="plan-badge">Recommended for commuters</span>
-          <p class="plan-name">Premium Monthly</p>
-          <p class="plan-desc">For regular riders who want more saved places, more routes, and more control.</p>
-          <ul class="plan-features">
-            <li>Unlimited saved locations</li>
-            <li>Unlimited route creation</li>
-            <li>"Incoming Call" alarm style</li>
-            <li>Sleep Guard — blocks interruptions while tracking (Android)</li>
-            <li>One-Tap External Navigation — open your navigation app with a single tap</li>
-            <li>One-Time Destinations — auto-deleted upon arrival</li>
+        <div class="compare-card featured">
+          <div class="compare-header">
+            <span class="compare-pill premium">Premium</span>
+            <h3>For more control</h3>
+          </div>
+          <ul class="compare-list">
+            <li>Unlimited places, routes, and destinations</li>
+            <li>"Incoming call" alert style</li>
+            <li>Sleep Guard while tracking (Android)</li>
+            <li>One-tap external navigation</li>
+            <li>One-time destinations auto-cleaned after arrival</li>
           </ul>
+          <div class="compare-note">Lifetime option: one-time payment, no recurring renewal.</div>
         </div>
-        <div class="plan-card">
-          <p class="plan-name">Lifetime Access</p>
-          <p class="plan-desc">One payment for full access, without monthly renewal.</p>
-          <ul class="plan-features">
-            <li>Complete unlock of all limits</li>
-            <li>Lifetime account license</li>
-            <li>No recurring subscriptions</li>
-          </ul>
-        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- The New Standard (Secondary detail for search and AI) -->
+<section id="advantage">
+  <div class="section-inner">
+    <p class="section-label he-content">פרטים נוספים</p>
+    <p class="section-label en-content">More Detail</p>
+    <h2 class="section-title he-content">מה מייחד את הכלי, ומה הנסיבות שבהן הוא הכי שימושי</h2>
+    <h2 class="section-title en-content">What Makes It Different, and When It Helps Most</h2>
+    <p class="adv-intro he-content">
+      אלה פרטים חשובים לניתוח, חיפוש בגוגל ועמודי מידע, אבל לא מה שמשתמש מחפש קודם. הם נשארים מאחור כדי לשמור על חוויית שימוש נקייה וממוקדת.
+    </p>
+    <p class="adv-intro en-content">
+      These are useful supporting details for search, indexing, and discovery, but they are not the primary decision-making information a rider needs on first arrival.
+    </p>
+    
+    <div class="adv-grid">
+      <div class="adv-card">
+        <h3 class="he-content">ללא פרסומות וללא הסחות דעת</h3>
+        <h3 class="en-content">No Ads, No Distractions</h3>
+        <p class="he-content">אפשר להגדיר התראה במהירות ולהמשיך בנסיעה, בלי חלונות קופצים ובלי עומס מיותר על המסך.</p>
+        <p class="en-content">Set an alert quickly and move on with your trip, without pop-ups or extra clutter.</p>
+      </div>
+      <div class="adv-card">
+        <h3 class="he-content">פרטיות בשפה ברורה</h3>
+        <h3 class="en-content">Privacy, Clearly Explained</h3>
+        <p class="he-content">המיקום שלכם מעובד על המכשיר. אין צורך בהרשמה, והמידע הרגיש לא נשמר אצלנו בענן.</p>
+        <p class="en-content">Your location is processed on your device. No sign-up is required, and sensitive location data is not stored in our cloud.</p>
+      </div>
+      <div class="adv-card">
+        <h3 class="he-content">התראה שקשה לפספס</h3>
+        <h3 class="en-content">An Alert You Are Likely to Notice</h3>
+        <p class="he-content">מי-קום נבנתה כדי להתריע גם כשלא מסתכלים על המסך, עם דגש על צליל ורטט בזמן הנכון.</p>
+        <p class="en-content">Napigation is designed to alert you even when you are not watching the screen, with sound and vibration at the right moment.</p>
+      </div>
+      <div class="adv-card">
+        <h3 class="he-content">גרסה חינמית שבאמת שימושית</h3>
+        <h3 class="en-content">A Free Version That Is Actually Useful</h3>
+        <p class="he-content">יכולות הליבה זמינות כבר מההתחלה, ושדרוגים מיועדים למי שצריך יותר גמישות בניהול יעדים ומסלולים.</p>
+        <p class="en-content">The core experience is available from the start, while paid plans are for riders who want more flexibility with saved places and routes.</p>
       </div>
     </div>
   </div>
