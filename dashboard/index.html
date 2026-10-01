@@ -530,7 +530,14 @@
     </div>
 
     <div class="card wide">
-      <h2>🔔 שימור הפעלה אוטומטית — כמה משתמשים כיבו את ההתראה?</h2>
+      <h2>�️ מרחק טריגר — מסלול לעומת הפעלה ישירה</h2>
+      <p class="chart-desc">כמה רחוק מהיעד הצלצלו כאשר הטריגר נפל. ערך גבוה יותר = התראה צלצלה מוקדם יותר.</p>
+      <div id="kpi-trigger-distance-row" class="kpi-row" style="margin-bottom:16px"></div>
+      <canvas id="chart-route-trigger-distance" height="100"></canvas>
+    </div>
+
+    <div class="card wide">
+      <h2>�🔔 שימור הפעלה אוטומטית — כמה משתמשים כיבו את ההתראה?</h2>
       <p class="chart-desc">כשיוצרים יעד חדש, ההתראה <strong>מופעלת אוטומטית</strong> (כשהמשתמש מחוץ לרדיוס). <strong>כמה כיבו אותה לאחר מכן?</strong> <span class="insight">יחס כיבוי נמוך = המשתמשים מרוצים מהברירת המחדל · יחס גבוה = אולי ברירת מחדל לא נכונה.</span> שים לב: <em>כיבויים</em> כוללים גם לחיצות חוזרות על אותו מיקום.</p>
       <div id="kpi-alarm-retention" class="kpi-row" style="margin-bottom:16px"></div>
       <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
