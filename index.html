@@ -444,8 +444,12 @@
       .hero { padding: 50px 16px 60px; }
       .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 16px; }
       .hero p { font-size: 1rem; }
-      .compare-grid { grid-template-columns: 1fr; }
+      .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .faq-item { padding: 20px 18px; }
+    }
+    @media (max-width: 480px) {
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn-primary { width: min(100%, 320px); justify-content: center; }
     }
   </style>
 </head>
@@ -457,7 +461,6 @@
       <a href="#advantage">Why Napigation</a>
       <a href="#plans">Plans</a>
       <a href="#faq">FAQ</a>
-      <a href="#download">Download</a>
       <div class="nav-controls">
         <div class="seg" role="group" aria-label="Platform selector">
           <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">Android</button>
@@ -578,16 +581,16 @@
       <h2 class="section-title">What makes it different, and when it helps most</h2>
       <div class="adv-grid">
         <div class="adv-card">
-          <h3>No ads, no distractions</h3>
-          <p>Set an alert quickly and keep moving without pop-ups or extra clutter on the screen.</p>
+          <h3>No ads</h3>
+          <p>Napigation keeps the experience focused: no ad banners, no ad interruptions, and no extra clutter while you are trying to catch your stop.</p>
         </div>
         <div class="adv-card">
           <h3>Privacy in plain language</h3>
           <p>Your location is processed on your device. No sign-up is required, and sensitive location data is not stored in the cloud.</p>
         </div>
         <div class="adv-card">
-          <h3>An alert you are likely to notice</h3>
-          <p>Napigation is designed to alert you even when you are not watching the screen, with sound and vibration at the right moment.</p>
+          <h3>Reliable alerts when it matters</h3>
+          <p>Napigation is built to keep working even when the app is in the background, the phone is silent or on vibrate, the volume is low, or the OS is aggressively managing resources.</p>
         </div>
         <div class="adv-card">
           <h3>A free version that is actually useful</h3>
@@ -635,32 +638,6 @@
           <div class="faq-a">The Android app is available now on Google Play. The iOS version is in active development and beta testing, and will be released soon on the App Store.</div>
         </div>
       </div>
-    </div>
-  </section>
-
-  <section id="download">
-    <div class="section-inner">
-      <h2 class="section-title">Ready for your next ride</h2>
-      <p class="sub android-content">The Android version is available now on Google Play.</p>
-      <p class="sub ios-content">The iOS version is still on the way. Until then, the Android version is available now.</p>
-      <div class="store-buttons">
-        <a class="store-btn android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-          <span class="store-icon">▶</span> Google Play
-        </a>
-        <span class="store-btn disabled ios-content" aria-disabled="true">
-          <span class="store-icon">iOS</span>
-          App Store — Coming Soon
-        </span>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="section-inner">
-      <p class="section-label">Technical support</p>
-      <h2 class="section-title">Questions, support, or bug reports</h2>
-      <p>Contact us for support, bug reports, or suggestions.</p>
-      <a class="contact-email" href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a>
     </div>
   </section>
 

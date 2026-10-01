@@ -434,56 +434,6 @@
     }
     .faq-item.open .faq-a { max-height: 400px; padding-top: 16px; }
 
-    /* ── Download ── */
-    #download {
-      background: linear-gradient(135deg, var(--accent) 0%, #3451d1 100%);
-      text-align: center;
-      color: #fff;
-    }
-    #download .section-title { color: #fff; margin-bottom: 16px; }
-    #download .sub { color: rgba(255,255,255,0.9); margin-bottom: 40px; font-size: 1.1rem; }
-    .store-buttons { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; }
-    .store-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
-      padding: 16px 32px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 1rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      gap: 12px;
-      transition: background 0.2s, transform 0.1s;
-    }
-    .store-btn:hover:not(.disabled) { background: rgba(255,255,255,0.2); transform: translateY(-2px); }
-    .store-btn.disabled { 
-      opacity: 0.6; 
-      cursor: default; 
-      pointer-events: none; 
-      background: transparent;
-    }
-    .store-icon { font-size: 1.4rem; }
-
-    /* ── Contact ── */
-    #contact { background: var(--white); text-align: center; }
-    #contact .section-title { margin-bottom: 16px; }
-    #contact p { color: var(--text-light); margin-bottom: 32px; font-size: 1.05rem; }
-    .contact-email {
-      display: inline-block;
-      background: var(--primary);
-      border-radius: 50px;
-      padding: 14px 36px;
-      color: #fff;
-      text-decoration: none;
-      font-weight: 600;
-      font-size: 1.05rem;
-      box-shadow: 0 4px 15px rgba(26,26,46,0.2);
-      transition: background 0.2s, transform 0.1s;
-    }
-    .contact-email:hover { background: #2a2a4a; transform: translateY(-2px); }
-
     /* ── Footer ── */
     footer {
       background: var(--primary);
@@ -541,7 +491,7 @@
       .feature-card { padding: 24px 20px; }
       .feature-card h3 { font-size: 1rem; }
       .feature-card p { font-size: 0.9rem; }
-      .compare-grid { grid-template-columns: 1fr; }
+      .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .compare-card { padding: 24px 20px; }
       .compare-card h3 { font-size: 1.05rem; }
       .compare-list li { font-size: 0.9rem; }
@@ -557,6 +507,8 @@
       .footer-links { gap: 16px; }
     }
     @media (max-width: 480px) {
+      .hero-buttons { flex-direction: column; align-items: center; }
+      .btn-primary, .btn-secondary { width: min(100%, 320px); justify-content: center; }
       .navbar { padding: 0 12px; height: 52px; }
       .navbar-logo { font-size: 1rem; gap: 6px; }
       .navbar-logo img { width: 22px; height: 22px; }
@@ -611,7 +563,6 @@
     <a href="#advantage">היתרון הטכנולוגי</a>
     <a href="#plans">תוכניות</a>
     <a href="#faq">שאלות נפוצות</a>
-    <a href="#download">הורדה</a>
     <div class="nav-controls">
       <div class="seg" role="group" aria-label="בחירת פלטפורמה">
         <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">Android</button>
@@ -737,16 +688,16 @@
     <h2 class="section-title">מה מייחד את הכלי, ומה הנסיבות שבהן הוא הכי שימושי</h2>
     <div class="adv-grid">
       <div class="adv-card">
-        <h3>ללא פרסומות וללא הסחות דעת</h3>
-        <p>אפשר להגדיר התראה במהירות ולהמשיך בנסיעה, בלי חלונות קופצים ובלי עומס מיותר על המסך.</p>
+        <h3>ללא פרסומות</h3>
+        <p>החווייה נשארת ממוקדת: אין באנרים, אין הפרעות פרסומת, ואין עומס מיותר על המסך בזמן שאתה מנסה לשמור על היעד.</p>
       </div>
       <div class="adv-card">
         <h3>פרטיות בשפה ברורה</h3>
         <p>המיקום שלכם מעובד על המכשיר. אין צורך בהרשמה, והמידע הרגיש לא נשמר אצלנו בענן.</p>
       </div>
       <div class="adv-card">
-        <h3>התראה שקשה לפספס</h3>
-        <p>מי-קום נבנתה כדי להתריע גם כשלא מסתכלים על המסך, עם דגש על צליל ורטט בזמן הנכון.</p>
+        <h3>התראה אמינה גם ברקע</h3>
+        <p>מי-קום נבנית כדי להמשיך לעבוד גם כשהאפליקציה ברקע, כשהטלפון במצב שקט או רטט, כשהווליום 0, במצב "נא לא להפריע" או כשמערכת ההפעלה מנהלת את המשאבים.</p>
       </div>
       <div class="adv-card">
         <h3>גרסה חינמית שבאמת שימושית</h3>
@@ -796,34 +747,6 @@
         <div class="faq-a">אפליקציית ה-Android זמינה כעת להורדה ב-Google Play. גרסת ה-iOS נמצאת בפיתוח מתקדם ובבדיקות בטא, ותשוחרר בקרוב ל-App Store. ניתן לבחור פלטפורמה בראש העמוד כדי לראות את סטטוס הזמינות.</div>
       </div>
     </div>
-  </div>
-</section>
-
-<!-- Download -->
-<section id="download">
-  <div class="section-inner">
-    <h2 class="section-title">אפשר להתחיל כבר בנסיעה הבאה</h2>
-    <p class="sub android-content">גרסת Android זמינה עכשיו להורדה ב-Google Play.</p>
-    <p class="sub ios-content">גרסת iOS עדיין בהכנה. עד אז אפשר להשתמש בגרסת Android.</p>
-    <div class="store-buttons">
-      <a class="store-btn android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-        <span class="store-icon">▶</span> Google Play
-      </a>
-      <span class="store-btn disabled ios-content" aria-disabled="true">
-        <span class="store-icon">iOS</span>
-        App Store — בקרוב
-      </span>
-    </div>
-  </div>
-</section>
-
-<!-- Contact -->
-<section id="contact">
-  <div class="section-inner">
-    <p class="section-label">תמיכה טכנית</p>
-    <h2 class="section-title">שאלות, תמיכה או דיווח על בעיה</h2>
-    <p>אפשר לכתוב לנו לגבי תמיכה, בעיות בשימוש או הצעות לשיפור.</p>
-    <a class="contact-email" href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a>
   </div>
 </section>
 
