@@ -11,6 +11,7 @@ async function loadAlarmSessions(sb, since30) {
   let technicalKills = 0;
   let abandonedKills = 0;
   let firstTotal = 0, firstTriggered = 0;
+  let firstCancelled = 0, firstTimeout = 0, firstKilled = 0;
   const now = Date.now();
   const staleByVersion = {};
   const trigSrcCounts = {};
@@ -92,6 +93,9 @@ async function loadAlarmSessions(sb, since30) {
       // Use the reclassified key (real-time 'triggered' only — excludes 'triggered_late')
       // so first-alarm success matches the headline definition.
       if (key === 'triggered') firstTriggered++;
+      if (key === 'user_cancelled') firstCancelled++;
+      if (key === 'timeout') firstTimeout++;
+      if (key === 'app_killed_technical' || key === 'app_killed_abandoned' || key === 'open_stale') firstKilled++;
     }
   });
 
@@ -106,6 +110,8 @@ async function loadAlarmSessions(sb, since30) {
     ['סה"כ ראשונות', firstTotal],
     ['צלצלו (ראשונות)', firstTriggered],
     ['% הצלחה (ראשונות)', pct(firstTriggered, firstTotal)],
+    ['בוטלו (ראשונות)', firstCancelled],
+    ['timeout/kill (ראשונות)', firstTimeout + firstKilled],
   ].map(([label, val]) => `
     <div class="kpi">
       <div class="label">${label}</div>
@@ -583,11 +589,15 @@ async function loadAlarmSessions(sb, since30) {
 // ─── Retention ────────────────────────────────────────────────────────────
 async function loadRetention(sb) {
   const since60 = DATA_START_DATE;
-  const { data, error } = await fetchOsScopedRows(() => sb
-    .from('device_daily_active')
-    .select('device_id_anon, event_date')
-    .gte('event_date', since60)
-    .order('event_date', { ascending: true }));
+  const [{ data, error }, firstRunRes, firstAlarmRes] = await Promise.all([
+    fetchOsScopedRows(() => sb
+      .from('device_daily_active')
+      .select('device_id_anon, event_date')
+      .gte('event_date', since60)
+      .order('event_date', { ascending: true })),
+    rpcDeviceFeatureEvents(sb, since60, 'app.first_run_completed', 200000),
+    rpcAlarmSessions(sb, since60 + 'T00:00:00Z', 100000),
+  ]);
 
   if (error || !data?.length) return;
 
@@ -603,6 +613,29 @@ async function loadRetention(sb) {
     const d = new Date(dateStr);
     d.setDate(d.getDate() + n);
     return d.toISOString().slice(0, 10);
+  }
+
+  function daysBetween(fromDay, toDay) {
+    return Math.max(0, Math.floor((new Date(toDay) - new Date(fromDay)) / 86400000));
+  }
+
+  function returnedAfterAnchor(anchorEntries) {
+    const today = new Date().toISOString().slice(0, 10);
+    const eligible = anchorEntries.filter(([, day]) => day <= dateNDaysAgo(1));
+    if (!eligible.length) return { rate: null, sample: 0 };
+
+    const returned = eligible.filter(([dev, day]) => {
+      const maxDays = Math.min(30, daysBetween(day, today));
+      for (let offset = 1; offset <= maxDays; offset++) {
+        if (activeDays.has(`${dev}|${addDays(day, offset)}`)) return true;
+      }
+      return false;
+    }).length;
+
+    return {
+      rate: Math.round((returned / eligible.length) * 100),
+      sample: eligible.length,
+    };
   }
 
   // D1 ו-D7 — אותו קוהורט (התקינו לפחות 8 ימים לפני), כדי שיהיו ישירות ניתנים להשוואה
@@ -623,10 +656,32 @@ async function loadRetention(sb) {
         Array.from({length:30},(_,i)=>i+1).some(d => activeDays.has(`${dev}|${addDays(first,d)}`))).length / cohortD30.length * 100)
     : null;
 
+  const firstRunCompleted = {};
+  (firstRunRes.data || []).forEach(r => {
+    if (!r.device_id_anon || !r.event_date) return;
+    if (!firstRunCompleted[r.device_id_anon] || r.event_date < firstRunCompleted[r.device_id_anon]) {
+      firstRunCompleted[r.device_id_anon] = r.event_date;
+    }
+  });
+
+  const firstAlarmByDevice = {};
+  (firstAlarmRes.data || []).forEach(r => {
+    if (!r.device_id_anon || !r.is_first_alarm || !r.started_at) return;
+    const day = r.started_at.slice(0, 10);
+    if (!firstAlarmByDevice[r.device_id_anon] || day < firstAlarmByDevice[r.device_id_anon]) {
+      firstAlarmByDevice[r.device_id_anon] = day;
+    }
+  });
+
+  const returnAfterFirstRun = returnedAfterAnchor(Object.entries(firstRunCompleted));
+  const returnAfterFirstAlarm = returnedAfterAnchor(Object.entries(firstAlarmByDevice));
+
   document.getElementById('retention-kpis').innerHTML = [
     ['תוך יום',   retD1,  cohortD7.length],
     ['תוך שבוע',  retD7,  cohortD7.length],
     ['תוך חודש',  retD30, cohortD30.length],
+    ['חזרו אחרי first run', returnAfterFirstRun.rate, returnAfterFirstRun.sample],
+    ['חזרו אחרי first alarm', returnAfterFirstAlarm.rate, returnAfterFirstAlarm.sample],
   ].map(([label, rate, n]) =>
     `<div class="kpi"><div class="label">${label}</div><div class="value">${rate!==null?rate+'%':'—'}</div><div class="sub">${n ? n+' משתמשים' : 'אין מספיק נתונים'}</div></div>`
   ).join('');
