@@ -431,5 +431,73 @@ async function loadEngagementDepth(sb, since30) {
       }
     }
   });
+
+  const routeTriggerDistances = [];
+  const directTriggerDistances = [];
+  data.forEach(r => {
+    if (!isRealtimeTriggered(r)) return;
+    const distanceKm = Number(r.props?.distance_km);
+    if (!Number.isFinite(distanceKm) || distanceKm < 0) return;
+    if (r.is_route || r.props?.is_route || r.props?.location_type === 'route') {
+      routeTriggerDistances.push(distanceKm);
+    } else {
+      directTriggerDistances.push(distanceKm);
+    }
+  });
+
+  function median(values) {
+    if (!values.length) return null;
+    const sorted = [...values].sort((a, b) => a - b);
+    const mid = Math.floor(sorted.length / 2);
+    return sorted.length % 2 === 0
+      ? (sorted[mid - 1] + sorted[mid]) / 2
+      : sorted[mid];
+  }
+
+  const routeMedianKm = median(routeTriggerDistances);
+  const directMedianKm = median(directTriggerDistances);
+  const triggerKpi = document.getElementById('kpi-trigger-distance-row');
+  if (triggerKpi) {
+    const deltaKm = routeMedianKm != null && directMedianKm != null ? routeMedianKm - directMedianKm : null;
+    triggerKpi.innerHTML = [
+      ['🗺️ מסלול', routeMedianKm, '#6366f1'],
+      ['📍 ישיר', directMedianKm, '#3b82f6'],
+      ['הפרש', deltaKm != null ? `${deltaKm >= 0 ? '+' : ''}${deltaKm.toFixed(2)} ק"מ` : '—', deltaKm != null && deltaKm >= 0 ? '#10b981' : '#f59e0b'],
+    ].map(([label, value, color]) => `
+      <div class="kpi">
+        <div class="label">${label}</div>
+        <div class="value" style="font-size:1.25rem;color:${color}">${value == null ? '—' : `${Number(value).toFixed(2)} ק"מ`}</div>
+        <div class="sub">median trigger distance</div>
+      </div>
+    `).join('');
+  }
+
+  renderChart('chart-route-trigger-distance', {
+    type: 'bar',
+    data: {
+      labels: ['📍 ישיר', '🗺️ מסלול'],
+      datasets: [{
+        label: 'מרחק מטריגר (ק"מ)',
+        data: [
+          directMedianKm == null ? null : directMedianKm,
+          routeMedianKm == null ? null : routeMedianKm,
+        ],
+        backgroundColor: ['#3b82f6', '#6366f1'],
+        borderRadius: 6,
+      }],
+    },
+    options: {
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },
+        y: {
+          position: 'right',
+          ticks: { color: '#64748b', callback: v => v + ' ק"מ' },
+          grid: { color: '#1a1f30' },
+          beginAtZero: false,
+        },
+      },
+    },
+  });
 }
 
