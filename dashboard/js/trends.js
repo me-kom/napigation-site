@@ -91,7 +91,7 @@ const DIM_INFO = {
 
 const METRIC_INFO = {
   alarm_count:     { label: 'הפעלות התראה',    table: 'alarm_sessions', noTimestamp: false },
-  alarm_success:   { label: '% הצלחה',          table: 'alarm_sessions', isPercent: true, noTimestamp: false },
+  alarm_success:   { label: 'True Success Rate', table: 'alarm_sessions', isPercent: true, noTimestamp: false },
   dau:             { label: 'משתמשים פעילים',   table: 'device_daily_active', dateOnly: true },
   new_users:       { label: 'משתמשים חדשים',    table: 'device_daily_active', dateOnly: true },
   revenue:         { label: 'הכנסות (₪)',        table: 'revenue_events', noTimestamp: false },
@@ -251,13 +251,9 @@ async function explorerAlarms(sb, since, metric, dim) {
   data.forEach(row => {
     const key = getDimKey(row, dim, 'started_at');
     if (key === null) return;
-    if (!groups[key]) groups[key] = { total: 0, realTotal: 0, triggered: 0 };
+    if (!groups[key]) groups[key] = { total: 0, sessions: [] };
     groups[key].total++; // all activations — used by alarm_count
-    // % הצלחה denominator = real trips only (excludes toggle noise), so it matches the headline.
-    if (isRealTripSession(row)) {
-      groups[key].realTotal++;
-      if (isRealtimeTriggered(row)) groups[key].triggered++;
-    }
+    groups[key].sessions.push(row);
   });
 
   const keys = sortKeys(Object.keys(groups), dim);
@@ -273,10 +269,10 @@ async function explorerAlarms(sb, since, metric, dim) {
   } else {
     return {
       labels: keys.map(k => dimKeyToLabel(k, dim)),
-      values: keys.map(k => groups[k].realTotal > 0 ? Math.round(groups[k].triggered / groups[k].realTotal * 100) : 0),
-      metricLabel: '% הצלחה',
+      values: keys.map(k => summarizeTrueSuccess(groups[k].sessions).rate ?? 0),
+      metricLabel: 'True Success Rate',
       color: '#10b981',
-      description: `אחוז הצלחה לפי ${DIM_INFO[dim].label} — מתוך נסיעות אמיתיות (ללא הדלקה/כיבוי מהיר וכבר-בפנים), מ-${since})`,
+      description: `True Success Rate לפי ${DIM_INFO[dim].label} — הצלחה מאומתת בזמן אמת או soft success, מתוך real-trip sessions, מ-${since}`,
     };
   }
 }
@@ -430,12 +426,8 @@ async function loadSuccessRateTrend(sb, since30) {
   data.forEach(r => {
     const d = (r.started_at || '').slice(0, 10);
     if (!d) return;
-    // Denominator = real trips only — neutral noise (<2m cancels / already-inside) is excluded,
-    // but soft-success sessions are still counted as a successful trip rather than a failure.
-    if (!isRealTripSession(r)) return;
-    if (!byDate[d]) byDate[d] = { total: 0, triggered: 0 };
-    byDate[d].total += 1;
-    if (isTrueSuccessSession(r)) byDate[d].triggered += 1;
+    if (!byDate[d]) byDate[d] = [];
+    byDate[d].push(r);
   });
 
   const labels = Object.keys(byDate).sort();
@@ -446,19 +438,18 @@ async function loadSuccessRateTrend(sb, since30) {
   }
 
   // מינימום 1 session כדי לחשב אחוז
-  const rates = labels.map(d =>
-    byDate[d].total >= 1 ? Math.round(byDate[d].triggered / byDate[d].total * 100) : null
-  );
+  const dailySummary = Object.fromEntries(labels.map(d => [d, summarizeTrueSuccess(byDate[d])]));
+  const rates = labels.map(d => dailySummary[d].rate);
 
   // 7-day trailing moving average — ממוצע משוקלל: סך ההצלחות חלקי סך הנסיעות בחלון
   // (ולא ממוצע אחוזי הימים) כדי שיום עם נסיעה בודדת לא יעוות את הקו. מינימום 2 ימים עם נתונים.
   const ma7 = labels.map((_, i) => {
     const window = labels.slice(Math.max(0, i - 6), i + 1);
-    const daysWithData = window.filter(d => byDate[d].total >= 1).length;
+    const daysWithData = window.filter(d => dailySummary[d].realTrips >= 1).length;
     if (daysWithData < 2) return null;
-    const totSum = window.reduce((s, d) => s + byDate[d].total, 0);
-    const trigSum = window.reduce((s, d) => s + byDate[d].triggered, 0);
-    return totSum >= 1 ? Math.round(trigSum / totSum * 100) : null;
+    const totSum = window.reduce((s, d) => s + dailySummary[d].realTrips, 0);
+    const successSum = window.reduce((s, d) => s + dailySummary[d].successes, 0);
+    return totSum >= 1 ? Math.round(successSum / totSum * 100) : null;
   });
 
   const cfg = () => ({
@@ -468,7 +459,7 @@ async function loadSuccessRateTrend(sb, since30) {
       datasets: [
         {
           type: 'bar',
-          label: '% יומי',
+          label: 'True Success Rate',
           data: rates,
           backgroundColor: rates.map(v => v === null ? 'transparent' : 'rgba(100,116,139,0.35)'),
           borderRadius: 2,
@@ -499,9 +490,9 @@ async function loadSuccessRateTrend(sb, since30) {
             label: ctx => {
               const d = labels[ctx.dataIndex];
               const v = ctx.parsed.y;
-              if (ctx.dataset.label === '% יומי') {
+              if (ctx.dataset.label === 'True Success Rate') {
                 return v !== null
-                  ? ` יומי: ${v}% (${byDate[d]?.triggered ?? ''}/${byDate[d]?.total ?? ''})`
+                  ? ` יומי: ${v}% (${dailySummary[d].successes}/${dailySummary[d].realTrips} real trips)`
                   : ' אין מספיק נתונים';
               }
               return v !== null ? ` ממוצע 7 ימים: ${v}%` : ' אין מספיק נתונים';
@@ -546,24 +537,23 @@ async function loadManufacturerSuccess(sb, since30) {
   sessRes.data.forEach(r => {
     const mfr = mfrMap[r.device_id_anon];
     if (!mfr) return;
-    // Denominator = real trips only (excludes toggle noise) — keeps OEM rates honest & comparable.
-    if (!isRealTripSession(r)) return;
-    if (!stats[mfr]) stats[mfr] = { total: 0, triggered: 0 };
-    stats[mfr].total++;
-    // Real-time success only — a late catch means the OEM killed the live ring, so it must NOT
-    // count as success here (otherwise OEM battery-kill problems get masked).
-    if (isRealtimeTriggered(r)) stats[mfr].triggered++;
+    if (!stats[mfr]) stats[mfr] = { sessions: [] };
+    stats[mfr].sessions.push(r);
   });
 
   // Filter: at least 5 sessions
   const filtered = Object.entries(stats)
-    .filter(([, v]) => v.total >= 5)
-    .map(([mfr, v]) => ({ mfr, rate: Math.round(v.triggered / v.total * 100), n: v.total }))
-    .sort((a, b) => b.rate - a.rate);
+    .map(([mfr, v]) => ({
+      mfr,
+      trueSuccess: summarizeTrueSuccess(v.sessions),
+      ring: summarizeRealtimeRingRate(v.sessions),
+    }))
+    .filter(d => d.trueSuccess.realTrips >= 5)
+    .sort((a, b) => b.trueSuccess.rate - a.trueSuccess.rate);
 
   if (!filtered.length) return;
 
-  const colors = filtered.map(d => d.rate >= 70 ? '#10b981' : d.rate >= 50 ? '#f59e0b' : '#ef4444');
+  const colors = filtered.map(d => d.trueSuccess.rate >= 70 ? '#10b981' : d.trueSuccess.rate >= 50 ? '#f59e0b' : '#ef4444');
 
   const canvas = document.getElementById('chart-mfr-success');
   if (!canvas) return;
@@ -571,19 +561,17 @@ async function loadManufacturerSuccess(sb, since30) {
   renderChart('chart-mfr-success', {
     type: 'bar',
     data: {
-      labels: filtered.map(d => `${d.mfr} (n=${d.n})`),
-      datasets: [{
-        label: '% הצלחה',
-        data: filtered.map(d => d.rate),
-        backgroundColor: colors,
-        borderRadius: 4,
-      }]
+      labels: filtered.map(d => `${d.mfr} (n=${d.trueSuccess.realTrips})`),
+      datasets: [
+        { label: 'True Success Rate', data: filtered.map(d => d.trueSuccess.rate), backgroundColor: colors, borderRadius: 4 },
+        { label: 'real-time ring rate', data: filtered.map(d => d.ring.rate), backgroundColor: '#38bdf8', borderRadius: 4 },
+      ]
     },
     options: {
       indexAxis: 'y',
       plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.x}% (${filtered[ctx.dataIndex].n} sessions)` } },
+        legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.x}% (${filtered[ctx.dataIndex].trueSuccess.realTrips} real trips)` } },
       },
       scales: {
         x: {
@@ -622,43 +610,43 @@ async function loadPlatformSuccess(sb, since30) {
   });
 
   const stats = {
-    android: { total: 0, triggered: 0, devices: new Set() },
-    apple:   { total: 0, triggered: 0, devices: new Set() },
+    android: { sessions: [], devices: new Set() },
+    apple:   { sessions: [], devices: new Set() },
   };
   sessRes.data.forEach(r => {
     const p = platMap[r.device_id_anon];
     if (p !== 'android' && p !== 'apple') return;
     stats[p].devices.add(r.device_id_anon);
-    // Denominator = real trips only — matches the headline definition.
-    if (!isRealTripSession(r)) return;
-    stats[p].total++;
-    if (isRealtimeTriggered(r)) stats[p].triggered++;
+    stats[p].sessions.push(r);
   });
 
   const META = {
     android: { label: '🤖 Android' },
     apple:   { label: '🍎 Apple' },
   };
-  const rate = (s) => (s.total > 0 ? Math.round(s.triggered / s.total * 100) : null);
+  Object.values(stats).forEach(s => {
+    s.trueSuccess = summarizeTrueSuccess(s.sessions);
+    s.ring = summarizeRealtimeRingRate(s.sessions);
+  });
   const rateColor = (r) => (r === null ? '#94a3b8' : r >= 70 ? '#10b981' : r >= 50 ? '#f59e0b' : '#ef4444');
 
   if (kpiEl) {
-    const hasAny = stats.android.total > 0 || stats.apple.total > 0;
+    const hasAny = stats.android.trueSuccess.realTrips > 0 || stats.apple.trueSuccess.realTrips > 0;
     kpiEl.innerHTML = hasAny
       ? ['android', 'apple'].map(p => {
           const s = stats[p];
-          const r = rate(s);
+          const r = s.trueSuccess.rate;
           return `
             <div class="kpi">
-              <div class="label">${META[p].label}</div>
+              <div class="label">${META[p].label} — True Success Rate</div>
               <div class="value" style="font-size:1.5rem;color:${rateColor(r)}">${r === null ? '—' : r + '%'}</div>
-              <div class="sub">${s.total} נסיעות · ${s.devices.size} מכשירים</div>
+              <div class="sub">real-time ring rate ${s.ring.rate ?? '—'}% · ${s.trueSuccess.realTrips} real trips · ${s.devices.size} מכשירים</div>
             </div>`;
         }).join('')
       : '<div style="color:#475569;font-size:0.82rem">אין נתונים עדיין</div>';
   }
 
-  const order = ['android', 'apple'].filter(p => stats[p].total > 0);
+  const order = ['android', 'apple'].filter(p => stats[p].trueSuccess.realTrips > 0);
   if (!order.length) {
     showEmptyState('chart-platform-success', 'אין מספיק נתונים עדיין');
     return;
@@ -667,23 +655,21 @@ async function loadPlatformSuccess(sb, since30) {
   renderChart('chart-platform-success', {
     type: 'bar',
     data: {
-      labels: order.map(p => `${META[p].label} (n=${stats[p].total})`),
-      datasets: [{
-        label: '% הצלחה (real-time)',
-        data: order.map(p => rate(stats[p])),
-        backgroundColor: order.map(p => rateColor(rate(stats[p]))),
-        borderRadius: 6,
-        barPercentage: 0.5,
-      }]
+      labels: order.map(p => `${META[p].label} (n=${stats[p].trueSuccess.realTrips})`),
+      datasets: [
+        { label: 'True Success Rate', data: order.map(p => stats[p].trueSuccess.rate), backgroundColor: '#10b981', borderRadius: 6 },
+        { label: 'real-time ring rate', data: order.map(p => stats[p].ring.rate), backgroundColor: '#38bdf8', borderRadius: 6 },
+      ]
     },
     options: {
       plugins: {
-        legend: { display: false },
+        legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
         tooltip: {
           callbacks: {
             label: ctx => {
               const s = stats[order[ctx.dataIndex]];
-              return ` ${ctx.parsed.y}% (${s.triggered}/${s.total} נסיעות)`;
+              const summary = ctx.datasetIndex === 0 ? s.trueSuccess : s.ring;
+              return ` ${ctx.dataset.label}: ${ctx.parsed.y}% (${summary.successes}/${summary.realTrips} real trips)`;
             }
           }
         },
@@ -713,7 +699,9 @@ async function loadPlatformSuccess(sb, since30) {
 // RELIABILITY_SILENT_OUTCOMES + isAbandonedStaleSession live in helpers.js (single source of truth).
 function classifyReliability(r) {
   if (isRealtimeTriggered(r)) return 'realtime';
-  if (r.outcome === 'triggered') return 'late';        // triggered but not real-time → caught late
+  if (isSoftSuccessSession(r)) return 'soft_success';
+  if (isLateTriggered(r)) return 'late';
+  if (r.outcome === 'triggered') return 'unverified';
   if (isAbandonedStaleSession(r)) return 'killed';     // 24h-cron abandoned/killed — outcome unknown
   if (RELIABILITY_SILENT_OUTCOMES.has(r.outcome)) return 'silent';
   return 'other';
@@ -726,12 +714,12 @@ async function loadReliabilityBreakdown(sb, since30) {
     return;
   }
 
-  // version → { realtime, late, silent, killed, other, total }
+  // version → { realtime, soft_success, late, unverified, silent, killed, other, total }
   const byVer = {};
   data.forEach(r => {
     if (!isRealTripSession(r)) return;  // exclude toggle noise from the reliability denominator
     const v = r.app_version || 'unknown';
-    if (!byVer[v]) byVer[v] = { realtime: 0, late: 0, silent: 0, killed: 0, other: 0, total: 0 };
+    if (!byVer[v]) byVer[v] = { realtime: 0, soft_success: 0, late: 0, unverified: 0, silent: 0, killed: 0, other: 0, total: 0 };
     byVer[v][classifyReliability(r)]++;
     byVer[v].total++;
   });
@@ -749,7 +737,9 @@ async function loadReliabilityBreakdown(sb, since30) {
 
   const CATS = [
     { key: 'realtime', label: 'צלצל בזמן אמת', color: '#10b981' },
+    { key: 'soft_success', label: 'Soft success (בוטל רחוק)', color: '#34d399' },
     { key: 'late',     label: 'נתפס מאוחר (רקע קפא)', color: '#f59e0b' },
+    { key: 'unverified', label: 'צלצל — מקור לא מאומת', color: '#a3e635' },
     { key: 'silent',   label: 'כשל שקט (מיס)', color: '#ef4444' },
     { key: 'killed',   label: '🧟 זומבי / נטוש (לא כשל נסיעה)', color: '#a855f7' },
     { key: 'other',    label: 'אחר (timeout/ביטול)', color: '#64748b' },
@@ -1375,19 +1365,21 @@ async function loadFirstVsRepeatSuccess(sb, since30) {
   // Overall KPIs
   const firstAll  = data.filter(r => r.is_first_alarm);
   const repAll    = data.filter(r => !r.is_first_alarm);
-  const firstRate = firstAll.length ? Math.round(firstAll.filter(isRealtimeTriggered).length / firstAll.length * 100) : null;
-  const repRate   = repAll.length   ? Math.round(repAll.filter(isRealtimeTriggered).length   / repAll.length   * 100) : null;
+  const firstSummary = summarizeTrueSuccess(firstAll);
+  const repSummary = summarizeTrueSuccess(repAll);
+  const firstRing = summarizeRealtimeRingRate(firstAll);
+  const repRing = summarizeRealtimeRingRate(repAll);
 
   const kpiEl = document.getElementById('first-vs-repeat-kpis');
   if (kpiEl && (firstAll.length || repAll.length)) {
     kpiEl.innerHTML = [
-      ['🆕 ראשונה', firstRate, firstAll.length],
-      ['🔁 חוזרת',  repRate,   repAll.length],
-    ].map(([label, rate, n]) => `
+      ['🆕 ראשונה', firstSummary, firstRing],
+      ['🔁 חוזרת', repSummary, repRing],
+    ].map(([label, success, ring]) => `
       <div class="kpi">
-        <div class="label">${label}</div>
-        <div class="value" style="font-size:1.4rem">${rate !== null ? rate + '%' : '—'}</div>
-        <div class="sub">${n} sessions</div>
+        <div class="label">${label} — True Success Rate</div>
+        <div class="value" style="font-size:1.4rem">${success.rate !== null ? success.rate + '%' : '—'}</div>
+        <div class="sub">real-time ring rate ${ring.rate ?? '—'}% · ${success.realTrips} real trips</div>
       </div>
     `).join('');
   }
@@ -1399,21 +1391,29 @@ async function loadFirstVsRepeatSuccess(sb, since30) {
     const ws = new Date(d);
     ws.setDate(d.getDate() - d.getDay());
     const wk = ws.toISOString().slice(0, 10);
-    if (!byWeek[wk]) byWeek[wk] = { fTotal: 0, fTrig: 0, rTotal: 0, rTrig: 0 };
-    if (r.is_first_alarm) {
-      byWeek[wk].fTotal++;
-      if (isRealtimeTriggered(r)) byWeek[wk].fTrig++;
-    } else {
-      byWeek[wk].rTotal++;
-      if (isRealtimeTriggered(r)) byWeek[wk].rTrig++;
-    }
+    if (!byWeek[wk]) byWeek[wk] = { first: [], repeat: [] };
+    byWeek[wk][r.is_first_alarm ? 'first' : 'repeat'].push(r);
   });
 
   const labels = Object.keys(byWeek).sort();
   if (labels.length < 2) return;
 
-  const firstRates = labels.map(w => byWeek[w].fTotal >= 3 ? Math.round(byWeek[w].fTrig / byWeek[w].fTotal * 100) : null);
-  const repRates   = labels.map(w => byWeek[w].rTotal >= 3 ? Math.round(byWeek[w].rTrig / byWeek[w].rTotal * 100) : null);
+  const firstRates = labels.map(w => {
+    const summary = summarizeTrueSuccess(byWeek[w].first);
+    return summary.realTrips >= 3 ? summary.rate : null;
+  });
+  const repRates = labels.map(w => {
+    const summary = summarizeTrueSuccess(byWeek[w].repeat);
+    return summary.realTrips >= 3 ? summary.rate : null;
+  });
+  const firstRingRates = labels.map(w => {
+    const summary = summarizeRealtimeRingRate(byWeek[w].first);
+    return summary.realTrips >= 3 ? summary.rate : null;
+  });
+  const repRingRates = labels.map(w => {
+    const summary = summarizeRealtimeRingRate(byWeek[w].repeat);
+    return summary.realTrips >= 3 ? summary.rate : null;
+  });
 
   renderChart('chart-first-vs-repeat-success', {
     type: 'line',
@@ -1421,19 +1421,21 @@ async function loadFirstVsRepeatSuccess(sb, since30) {
       labels: labels.map(d => d.slice(5)),
       datasets: [
         {
-          label: '🆕 התראה ראשונה',
+          label: '🆕 First True Success Rate',
           data: firstRates,
           borderColor: '#f59e0b',
           backgroundColor: 'rgba(245,158,11,0.08)',
           fill: true, tension: 0.3, pointRadius: 5, spanGaps: true,
         },
         {
-          label: '🔁 התראות חוזרות',
+          label: '🔁 Repeat True Success Rate',
           data: repRates,
           borderColor: '#3b82f6',
           backgroundColor: 'rgba(59,130,246,0.05)',
           fill: true, tension: 0.3, pointRadius: 5, spanGaps: true,
         },
+        { label: '🆕 First real-time ring rate', data: firstRingRates, borderColor: '#fbbf24', borderDash: [5, 4], fill: false, tension: 0.3, pointRadius: 3, spanGaps: true },
+        { label: '🔁 Repeat real-time ring rate', data: repRingRates, borderColor: '#7dd3fc', borderDash: [5, 4], fill: false, tension: 0.3, pointRadius: 3, spanGaps: true },
       ]
     },
     options: {

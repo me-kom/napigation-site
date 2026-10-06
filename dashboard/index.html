@@ -66,6 +66,18 @@
   </div>
 </div>
 
+<div class="card" style="margin:18px 0 6px">
+  <h2>📘 מילון מושגים לדשבורד</h2>
+  <div class="kpi-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
+    <div class="kpi"><div class="label">Session / real trip</div><div class="value">נסיעת התראה</div><div class="sub">מוציאים neutral noise: ביטול קצר מאוד ו-already_inside_radius.</div></div>
+    <div class="kpi"><div class="label">True Success Rate</div><div class="value">(RT מוכר + soft success) / real trips</div><div class="sub">late catch ו-trigger source חסר, unknown או לא מוכר אינם הצלחה מוכחת.</div></div>
+    <div class="kpi"><div class="label">real-time ring rate</div><div class="value">RT מוכר / real trips</div><div class="sub">מדד צלצול טכני, נפרד מ-True Success; אינו מוכיח מיקום או תזמון נכונים.</div></div>
+    <div class="kpi"><div class="label">Soft success</div><div class="value">ביטול תקף רחוק מהיעד</div><div class="sub">נספר כהצלחה אך לא כצלצול real-time.</div></div>
+    <div class="kpi"><div class="label">Trigger rate</div><div class="value">triggered / כל sessions</div><div class="sub">ספירת trigger גולמית, לא מדד הצלחה.</div></div>
+    <div class="kpi"><div class="label">Device reach</div><div class="value">מכשירים עם צלצול / מכשירים</div><div class="sub">יחידת הניתוח היא מכשיר, לא session.</div></div>
+  </div>
+</div>
+
 <!-- ── TABS ─────────────────────────────────────────────────────────────── -->
 <nav class="tab-nav">
   <button class="tab-btn active" data-tab="overview">🏠 סקירה</button>
@@ -101,7 +113,7 @@
       <div class="kpi-row">
         <div class="kpi"><div class="label">הופעלו</div><div class="value" id="kpi-enabled">—</div><div class="sub" id="kpi-enabled-scope"></div></div>
         <div class="kpi"><div class="label">צלצלו (sessions)</div><div class="value" id="kpi-triggered">—</div></div>
-        <div class="kpi"><div class="label">% הצלחה (גס)</div><div class="value" id="kpi-success-rate">—</div><div class="sub">triggered / סה"כ sessions</div></div>
+        <div class="kpi"><div class="label">Trigger rate</div><div class="value" id="kpi-success-rate">—</div><div class="sub">triggered / כל ה-sessions; אינו שיעור הצלחה</div></div>
         <div class="kpi highlight"><div class="label">✅ True Success Rate</div><div class="value" id="kpi-session-success">—</div><div class="sub">נסיעות אמיתיות · ללא רעש + soft success</div></div>
       </div>
     </div>
@@ -152,8 +164,8 @@
       <canvas id="chart-new-users" height="70"></canvas>
     </div>
     <div class="card wide">
-      <h2>📈 שיעור הצלחת התראות — מגמה יומית (30 יום)</h2>
-      <p class="chart-desc"><strong>המדד הכי חשוב:</strong> מה אחוז ההתראות שהמשתמש הגיע ליעד וקיבל צלצול? <span class="insight">🎯 מעל 70% = האפליקציה עובדת טוב · מתחת ל-50% = בעיה קריטית.</span> מחושב מתוך <strong>נסיעות אמיתיות בלבד</strong> (ללא הדלקה/כיבוי מהיר של הפעמון וללא "כבר בפנים"). עמודות = נתון יומי · קו = ממוצע נע 7 ימים.</p>
+      <h2>📈 True Success Rate — מגמה יומית (30 יום)</h2>
+      <p class="chart-desc">(מקור real-time מוכר + soft success) מתוך <strong>real-trip sessions</strong>; late catch ומקור לא מאומת אינם הצלחה. זהו proxy תפעולי ואינו מוכיח מיקום או תזמון נכון. עמודות = נתון יומי · קו = ממוצע נע משוקלל של עד 7 ימים עם נתונים.</p>
       <canvas id="chart-success-trend" height="80"></canvas>
     </div>
     <div class="card wide">
@@ -217,14 +229,14 @@
     </div>
 
     <div class="card wide">
-      <h2>📱 שיעור הצלחה לפי יצרן מכשיר</h2>
-      <p class="chart-desc">באיזה יצרן ההתראות <strong>פחות מצליחות</strong>? Xiaomi/Huawei אגרסיביים יותר ברקע וסוגרים תהליכים. <span class="insight">בעיה קריטית אם נמוך מ-50%.</span> ירוק = מעל 70%, צהוב = 50–70%, אדום = מתחת ל-50%.</p>
+      <h2>📱 True Success ו-real-time ring rate לפי יצרן</h2>
+      <p class="chart-desc">השוואת True Success Rate ושיעור צלצול בזמן אמת מתוך real-trip sessions לפי יצרן. פער ביניהם מצביע על צלצולים מאוחרים, ביטולי soft success או מקורות לא מאומתים.</p>
       <canvas id="chart-mfr-success" height="120"></canvas>
     </div>
 
     <div class="card wide">
-      <h2>🤖🍎 שיעור הצלחה לפי פלטפורמה — Android מול Apple</h2>
-      <p class="chart-desc">האם ההתראות מצליחות יותר ב-iPhone או באנדרואיד? אנדרואיד נוטה לסגור תהליכי רקע אגרסיבית יותר. <span class="insight">השוואה הוגנת — מתוך נסיעות אמיתיות בלבד, צלצול בזמן אמת.</span></p>
+      <h2>🤖🍎 True Success ו-real-time ring rate לפי פלטפורמה</h2>
+      <p class="chart-desc">השוואת True Success Rate ושיעור צלצול בזמן אמת לפי פלטפורמה; שני המדדים משתמשים באותו מכנה של real-trip sessions.</p>
       <div id="platform-success-kpis" class="kpi-row"><div class="loading">טוען...</div></div>
       <canvas id="chart-platform-success" height="90"></canvas>
     </div>
@@ -279,21 +291,21 @@
     </div>
 
     <div class="card wide">
-      <h2>🕐 שיעור הצלחה לפי שעה — האם Doze mode פוגע בלילה?</h2>
-      <p class="chart-desc">הגרף מציג <strong>פירוק לפי מקור תוצאה</strong> בכל שעה: הצלחה ברקע, הצלחה בפתיחת אפליקציה, מקור לא ידוע, וכשל שקט ודאי. <strong>מה לחפש:</strong> <span class="insight">עלייה ב-silent/unknown בלילה מצביעה על Doze או חוסר טלמטריה.</span></p>
+      <h2>🕐 פירוק תוצאות לפי שעת הפעלה</h2>
+      <p class="chart-desc">הגרף מציג <strong>מספר sessions לפי תוצאה</strong> בכל שעה: צלצול real-time, late catch, מקור לא מאומת וכשל שקט ודאי. <strong>מה לחפש:</strong> <span class="insight">עלייה ב-silent/unknown בלילה מצביעה על Doze או חוסר טלמטריה. זהו פירוק ספירות, לא success rate.</span></p>
       <div id="success-by-hour-kpis" class="kpi-row" style="margin-bottom:12px"></div>
       <canvas id="chart-success-by-hour" height="100"></canvas>
     </div>
 
     <div class="card wide">
       <h2>👑 Free vs. Paid — מעורבות לפי סטטוס מנוי (30 יום)</h2>
-      <p class="chart-desc">האם מנויי פרימיום מפעילים יותר התראות ומצליחים יותר? <strong>מה לחפש:</strong> פער גדול בהצלחה = הפרימיום מביא ערך אמיתי. אחוז הצלחה נמוך גם בפרימיום = בעיה טכנית.</p>
+      <p class="chart-desc">השוואת True Success ו-real-time ring rate בין free ל-paid, לצד sessions ממוצעים למכשיר.</p>
       <div id="paid-vs-free-kpis" class="kpi-row" style="margin-bottom:16px"></div>
       <canvas id="chart-paid-vs-free" height="100"></canvas>
     </div>
 
     <div class="card wide">
-      <h2>📈 שיעור הצלחה יומי — 30 יום</h2>
+      <h2>📈 True Success Rate יומי — 30 יום</h2>
       <p class="chart-desc"><strong>המדד הכי חשוב:</strong> האם האפליקציה משתפרת או מתדרדרת? <span class="insight">🎯 מעל 70% = תקין · מתחת ל-50% = בעיה קריטית.</span> ירידה חדה = באג בגרסה חדשה. עמודות = נתון יומי · קו = ממוצע נע 7 ימים.</p>
       <canvas id="chart-success-trend-alarms" height="80"></canvas>
     </div>
@@ -367,7 +379,7 @@
     </div>
 
     <div class="card wide">
-      <h2>🆕 שיעור הצלחה — התראה ראשונה לעומת חוזרת (לפי שבוע)</h2>
+      <h2>🆕 True Success ו-real-time ring rate — ראשונה לעומת חוזרת</h2>
       <p class="chart-desc">האם משתמשים חדשים מצליחים פחות בהתראה הראשונה שלהם? <strong>מה לחפש:</strong> פער גדול בין הקווים = בעיה ב-Onboarding (המשתמש לא מבין איך זה עובד). פער קטן = חוויה טובה מההתחלה.</p>
       <div id="first-vs-repeat-kpis" class="kpi-row" style="margin-bottom:16px"></div>
       <canvas id="chart-first-vs-repeat-success" height="100"></canvas>
@@ -515,8 +527,8 @@
     </div>
 
     <div class="card wide">
-      <h2>📊 עומק שימוש — פעילות vs. הצלחה (30 יום)</h2>
-      <p class="chart-desc">אחוז מהמכשירים שקיבלו צלצול לפחות פעם, לפי מספר sessions (30 יום). <strong>מה לחפש:</strong> האם מי שמשתמש יותר מצליח יותר? אם כן — הבעיה היא בהיכרות עם האפליקציה.</p>
+      <h2>📊 עומק שימוש — Device Reach לפי תדירות sessions (30 יום)</h2>
+      <p class="chart-desc">אחוז המכשירים בכל bucket עם לפחות צלצול real-time אחד, מתוך המכשירים באותו bucket. זהו device reach, לא שיעור הצלחה לנסיעה.</p>
       <canvas id="chart-engagement-depth" height="100"></canvas>
       <div style="font-size:0.75rem;color:#475569;margin-top:10px">
         💡 לניתוח קשר ישיר עם רכישה — נדרש מיפוי <code>device_id_anon ↔ rc_user_id</code>
@@ -524,7 +536,8 @@
     </div>
 
     <div class="card wide">
-      <h2>🎯 שיעור הצלחה — מסלול לעומת מיקום</h2>
+      <h2>🎯 Device Reach — מסלול לעומת מיקום</h2>
+      <p class="chart-desc">אחוז המכשירים בכל קבוצה עם לפחות צלצול real-time מוכר אחד מתוך real-trip sessions. זהו reach לפי מכשיר, לא True Success Rate לפי נסיעה.</p>
       <div id="kpi-route-success-row" class="kpi-row" style="margin-bottom:16px"></div>
       <canvas id="chart-route-vs-loc-success" height="100"></canvas>
     </div>
@@ -594,7 +607,7 @@
       <label>📏 מדד — מה למדוד</label>
       <select id="exp-metric" onchange="updateExplorerUI()">
         <option value="alarm_count">הפעלות התראה (כמות)</option>
-        <option value="alarm_success">% הצלחה</option>
+        <option value="alarm_success">True Success Rate</option>
         <option value="dau">משתמשים פעילים יומי</option>
         <option value="new_users">משתמשים חדשים</option>
         <option value="revenue">הכנסות (₪)</option>
@@ -665,7 +678,8 @@
             <th>גרסה</th>
             <th>מכשירים</th>
             <th>Sessions</th>
-            <th>✅ הצלחה real-time</th>
+            <th>📡 real-time ring rate</th>
+            <th>✅ True Success Rate</th>
             <th>📐 מנורמל</th>
             <th>🟡 צלצל מאוחר</th>
             <th>🔴 כשל שקט</th>
@@ -679,14 +693,14 @@
     </div>
 
     <div class="card wide">
-      <h2>✅ % הצלחה בזמן-אמת לפי גרסה</h2>
-      <p class="chart-desc">המדד החשוב ביותר. <span class="insight">עלייה בין גרסאות = שיפור אמיתי באמינות הצלצול.</span> רק גרסאות עם מספיק sessions מוצגות. <strong>📐 הקו הכחול</strong> = הצלחה <strong>מנורמלת להרכב היצרנים</strong> — אם העמודה הגולמית גבוהה אבל הקו נמוך, ההצלחה נבעה ממכשירים "קלים" (Pixel) ולא משיפור בקוד.</p>
+      <h2>✅ True Success ו-real-time ring rate לפי גרסה</h2>
+      <p class="chart-desc">מוצגים שני מדדים נפרדים, שניהם מתוך real-trip sessions. הקו המנורמל הוא real-time ring rate מתוקנן להרכב היצרנים.</p>
       <canvas id="chart-version-success" height="90"></canvas>
     </div>
 
     <div class="card wide">
       <h2>📊 פירוק תוצאות לפי גרסה (% מכל ה-sessions)</h2>
-      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100%. <span class="insight">חפש גרסה שבה הירוק (הצלחה) גדל על חשבון האדום (כשל שקט).</span></p>
+      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100% מה-real-trip sessions, כולל soft success ומקור trigger לא מאומת.</p>
       <canvas id="chart-version-breakdown" height="120"></canvas>
     </div>
 
@@ -707,16 +721,16 @@
   <div class="card" style="margin-bottom:20px">
     <h2>📅 ניתוח לפי ימות השבוע</h2>
     <p class="chart-desc">
-      תבניות שבועיות — האם המשתמשים פעילים יותר בימי חול? האם ההצלחה יורדת בסופ"ש?
-      <span class="insight">📈 מדדי האחוז (% הצלחה, % כשל) הם המדד להשוואה בין הימים — לא הכמויות, שמושפעות ממספר המשתמשים המשתנה.</span>
+      תבניות שבועיות — האם המשתמשים פעילים יותר בימי חול? האם True Success או שיעור הצלצול בזמן אמת משתנים בסופ"ש?
+      <span class="insight">📈 להשוואה בין הימים, בדוק את True Success Rate או real-time ring rate; שניהם משתמשים ב-real-trip sessions כמכנה.</span>
       טאב זה מכבד את פילוח הגרסה והמדינה שבראש העמוד.
     </p>
   </div>
 
   <div class="grid">
     <div class="card wide">
-      <h2>✅ % הצלחה בזמן-אמת לפי יום בשבוע</h2>
-      <p class="chart-desc">אחוז ה-sessions שצלצלו בזמן אמת, מפולח ליום בשבוע. <span class="insight">ירידה עקבית ביום מסוים = אולי דפוס נסיעה שונה (סופ"ש) או בעיה תלוית-יום.</span></p>
+      <h2>✅ True Success ו-real-time ring rate לפי יום בשבוע</h2>
+      <p class="chart-desc">שני השיעורים משתמשים ב-real-trip sessions כמכנה; True Success כולל soft success, ו-real-time ring rate כולל רק מקור RT מוכר.</p>
       <div id="weekday-success-kpis" class="kpi-row" style="margin-bottom:16px"></div>
       <canvas id="chart-weekday-success" height="80"></canvas>
     </div>

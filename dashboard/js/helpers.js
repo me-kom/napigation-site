@@ -4,7 +4,7 @@ function pct(a, b) {
   return Math.round((a / b) * 100) + '%';
 }
 
-// Single source of truth for "success": the alarm rang automatically in real-time.
+// Single source of truth for trigger-source classification.
 // Counts as success: background (GPS proximity loop), geofence (native OS safety-net),
 // native_sampling, and foreground_check. foreground_check is a REAL-TIME success: the background
 // pipeline detected arrival, saved a pending alarm and fired a fullScreenIntent that opened the
@@ -14,11 +14,18 @@ function pct(a, b) {
 // the attribution race (fixed at source in useLocationMonitor + end_alarm_session, 13.7.2026).
 // Still LATE (real-time path failed): notification_open (user tapped a notification) and
 // eta_fallback (timed safety-net fired because GPS/geofence never triggered).
-// Use this everywhere "% הצלחה" is reported so all figures agree with the headline KPI.
-function isRealtimeTriggered(r) {
-  if (!r || r.outcome !== 'triggered') return false;
+// Use this only for the real-time ring-rate metric; True Success also includes soft success.
+const REALTIME_TRIGGER_SOURCES = new Set(['background', 'geofence', 'native_sampling', 'foreground_check']);
+const LATE_TRIGGER_SOURCES = new Set(['notification_open', 'eta_fallback']);
+function classifyTriggerSource(r) {
+  if (!r || r.outcome !== 'triggered') return 'unknown';
   const ts = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
-  return ts !== 'notification_open' && ts !== 'eta_fallback';
+  if (REALTIME_TRIGGER_SOURCES.has(ts)) return 'realtime';
+  if (LATE_TRIGGER_SOURCES.has(ts)) return 'late';
+  return 'unknown';
+}
+function isRealtimeTriggered(r) {
+  return classifyTriggerSource(r) === 'realtime';
 }
 
 // Single source of truth for success-rate filtering.
@@ -86,19 +93,29 @@ function isHardFailureSession(r) {
   return false;
 }
 function isLateTriggered(r) {
-  if (!r || r.outcome !== 'triggered') return false;
-  const ts = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
-  return ts === 'notification_open' || ts === 'eta_fallback';
+  return classifyTriggerSource(r) === 'late';
 }
 function isTrueSuccessSession(r) {
-  if (!r) return false;
-  if (isSoftSuccessSession(r)) return true;
-  if (isRealtimeTriggered(r) || isLateTriggered(r)) return true;
-  return false;
+  return isRealTripSession(r) && (isSoftSuccessSession(r) || isRealtimeTriggered(r));
 }
 // True when the session is a genuine navigation attempt — use to filter success-rate denominators.
 function isRealTripSession(r) {
   return !!r && !isNeutralNoiseSession(r);
+}
+function summarizeSessionRate(sessions, qualifies) {
+  const realTrips = (sessions || []).filter(isRealTripSession);
+  const successes = realTrips.filter(qualifies).length;
+  return {
+    successes,
+    realTrips: realTrips.length,
+    rate: realTrips.length > 0 ? Math.round(successes / realTrips.length * 100) : null,
+  };
+}
+function summarizeTrueSuccess(sessions) {
+  return summarizeSessionRate(sessions, isTrueSuccessSession);
+}
+function summarizeRealtimeRingRate(sessions) {
+  return summarizeSessionRate(sessions, isRealtimeTriggered);
 }
 
 // Single source of truth for "silent miss" outcomes — the alarm never rang in real-time.
@@ -146,6 +163,11 @@ function devicePlatform(manufacturer, androidVersion) {
 function applyOSFilter(rows) {
   if (!FILTERED_DEVICE_IDS || ACTIVE_OS_FILTER === 'all') return rows;
   return rows.filter(r => FILTERED_DEVICE_IDS.has(r.device_id_anon));
+}
+
+function filterSessionsByEndDate(rows, endDate) {
+  if (!endDate) return rows;
+  return rows.filter(r => typeof r.started_at === 'string' && r.started_at.slice(0, 10) <= endDate);
 }
 
 // True when any scope filter that requires per-device data is active.
@@ -214,10 +236,12 @@ async function rpcAlarmSessions(sb, sinceIso, limit = 100000) {
     p_country_code: countryCode,
   });
   
-  // Apply client-side OS filtering
+  // RPC supports a start date only; apply the remaining dashboard scope consistently.
   if (result.data && FILTERED_DEVICE_IDS) {
     result.data = applyOSFilter(result.data);
   }
+  const { endDate } = getDateRange();
+  if (result.data && endDate) result.data = filterSessionsByEndDate(result.data, endDate);
   
   return result;
 }
@@ -386,13 +410,18 @@ if (typeof document !== 'undefined') {
 if (typeof module !== 'undefined' && module.exports) {
   module.exports = {
     pct,
+    classifyTriggerSource,
     isRealtimeTriggered,
     isNeutralNoiseSession,
     isSoftSuccessSession,
     isHardFailureSession,
     isTrueSuccessSession,
     isRealTripSession,
+    summarizeSessionRate,
+    summarizeTrueSuccess,
+    summarizeRealtimeRingRate,
     isLateTriggered,
+    filterSessionsByEndDate,
     hasMovementEvidence,
     isAbandonedStaleSession,
     classifyAppKilledSession,

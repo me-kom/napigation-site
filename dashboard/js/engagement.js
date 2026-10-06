@@ -543,6 +543,9 @@ async function loadFeatureEvents(sb, since30) {
       });
 
       const totalSessions = sessData.length;
+      const realTripSessions = sessData.filter(isRealTripSession);
+      const trueSuccessSummary = summarizeTrueSuccess(realTripSessions);
+      const ringSummary = summarizeRealtimeRingRate(realTripSessions);
       // Real-time certain success = rang automatically without the user having to act.
       //   background = GPS proximity loop · geofence = native OS geofence safety-net (both ring live) ·
       //   native_sampling = native dynamic GPS sampling · foreground_check = background rang +
@@ -554,18 +557,18 @@ async function loadFeatureEvents(sb, since30) {
       const trigFg = trigSrcCounts['foreground_check'] || 0;
       const trigNotifOpen = trigSrcCounts['notification_open'] || 0;
       const trigEta = trigSrcCounts['eta_fallback'] || 0;
-      const trigUnknown = trigSrcCounts['unknown'] || 0;
-      const realtimeCertain = trigBg + trigGeo + trigNative + trigFg;
+      const trigUnknown = realTripSessions.filter(r => r.outcome === 'triggered' && classifyTriggerSource(r) === 'unknown').length;
+      const realtimeCertain = realTripSessions.filter(isRealtimeTriggered).length;
       // Late catch = the alarm DID alert, but only after the real-time path failed —
       //   the user tapped a notification (notification_open) or the timed ETA fallback fired.
-      const lateCatch = trigNotifOpen + trigEta;
-      const silentCertain = (counts['app_killed'] || 0) + (counts['open_stale'] || 0);
-      const unclassified = Math.max(0, totalSessions - (realtimeCertain + lateCatch + trigUnknown + silentCertain));
+      const lateCatch = realTripSessions.filter(isLateTriggered).length;
+      const silentCertain = realTripSessions.filter(r => ['app_killed', 'stale_tracking', 'open_stale'].includes(r.outcome)).length;
+      const unclassified = Math.max(0, trueSuccessSummary.realTrips - trueSuccessSummary.successes - lateCatch - trigUnknown - silentCertain);
 
-      const certainSuccessRate = Math.round((realtimeCertain / totalSessions) * 100);
-      const lateRate = Math.round((lateCatch / totalSessions) * 100);
-      const silentRate = Math.round((silentCertain / totalSessions) * 100);
-      const unknownRate = Math.round((trigUnknown / totalSessions) * 100);
+      const certainSuccessRate = ringSummary.rate || 0;
+      const lateRate = trueSuccessSummary.realTrips ? Math.round((lateCatch / trueSuccessSummary.realTrips) * 100) : 0;
+      const silentRate = trueSuccessSummary.realTrips ? Math.round((silentCertain / trueSuccessSummary.realTrips) * 100) : 0;
+      const unknownRate = trueSuccessSummary.realTrips ? Math.round((trigUnknown / trueSuccessSummary.realTrips) * 100) : 0;
 
       const silentColor = silentRate >= 20 ? '#ef4444' : silentRate >= 12 ? '#f59e0b' : '#10b981';
       const unknownColor = unknownRate >= 30 ? '#ef4444' : unknownRate >= 15 ? '#f59e0b' : '#10b981';
@@ -581,21 +584,25 @@ async function loadFeatureEvents(sb, since30) {
       }
 
       approachingEl.innerHTML = `
-        ${fRow('🔔 sessions הופעלו (30 יום)', totalSessions, totalSessions, '#334155')}
-        ${fRow('🟢 ודאי הצליח בזמן-אמת (GPS + geofence)', realtimeCertain, totalSessions, '#10b981')}
-        ${fRow('🟡 נתפס מאוחר (פתיחה / ETA)', lateCatch, totalSessions, '#eab308')}
-        ${fRow('🟡 הצליח — מקור לא ידוע (קדם-מכשור)', trigUnknown, totalSessions, '#4ade80')}
-        ${fRow('🔴 כשל שקט ודאי', silentCertain, totalSessions, '#ef4444')}
-        ${fRow('⚪ ביטול / אחר', unclassified, totalSessions, '#64748b')}
+        ${fRow('🔔 כל ה-sessions (כולל neutral)', totalSessions, totalSessions, '#334155')}
+        ${fRow('🧭 Real-trip sessions (מכנה)', trueSuccessSummary.realTrips, trueSuccessSummary.realTrips, '#64748b')}
+        ${fRow('✅ True Success Rate', trueSuccessSummary.successes, trueSuccessSummary.realTrips, '#10b981')}
+        ${fRow('📡 real-time ring rate', realtimeCertain, trueSuccessSummary.realTrips, '#38bdf8')}
+        ${fRow('🟡 Late catch', lateCatch, trueSuccessSummary.realTrips, '#eab308')}
+        ${fRow('❓ Trigger source לא מאומת', trigUnknown, trueSuccessSummary.realTrips, '#a3e635')}
+        ${fRow('🔴 כשל שקט ודאי', silentCertain, trueSuccessSummary.realTrips, '#ef4444')}
+        ${fRow('⚪ אחר', unclassified, trueSuccessSummary.realTrips, '#64748b')}
         <div style="margin-top:12px;font-size:0.82rem">
-          ודאי הצלחה בזמן-אמת: <strong style="color:#10b981">${certainSuccessRate}%</strong>
-          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${realtimeCertain.toLocaleString()} / ${totalSessions.toLocaleString()})</span>
+          True Success Rate: <strong style="color:#10b981">${trueSuccessSummary.rate ?? '—'}%</strong>
+          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${trueSuccessSummary.successes.toLocaleString()} / ${trueSuccessSummary.realTrips.toLocaleString()} real trips)</span>
+          · real-time ring rate: <strong style="color:#38bdf8">${certainSuccessRate}%</strong>
+          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${realtimeCertain.toLocaleString()} / ${trueSuccessSummary.realTrips.toLocaleString()} real trips)</span>
           · נתפס מאוחר: <strong style="color:#eab308">${lateRate}%</strong>
-          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${lateCatch.toLocaleString()} / ${totalSessions.toLocaleString()})</span>
+          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${lateCatch.toLocaleString()} / ${trueSuccessSummary.realTrips.toLocaleString()} real trips)</span>
           · כשל שקט ודאי: <strong style="color:${silentColor}">${silentRate}%</strong>
-          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${silentCertain.toLocaleString()} / ${totalSessions.toLocaleString()})</span>
+          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${silentCertain.toLocaleString()} / ${trueSuccessSummary.realTrips.toLocaleString()} real trips)</span>
           · מקור לא ידוע: <strong style="color:${unknownColor}">${unknownRate}%</strong>
-          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${trigUnknown.toLocaleString()} / ${totalSessions.toLocaleString()})</span>
+          <span style="color:#475569;font-size:0.72rem;margin-right:8px">(${trigUnknown.toLocaleString()} / ${trueSuccessSummary.realTrips.toLocaleString()} real trips)</span>
         </div>
         <div style="margin-top:6px;font-size:0.72rem;color:#64748b">
           📡 context בלבד: approaching_sent=${approachingSent.toLocaleString()} · alarm.enabled=${alarmEnabled.toLocaleString()}
@@ -654,10 +661,9 @@ function classifySessionOutcome(r, nowMs) {
     key = 'already_inside_radius';
   }
   if (key === 'triggered') {
-    const ts = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
-    if (ts === 'notification_open' || ts === 'eta_fallback') {
-      key = 'triggered_late';
-    }
+    const triggerClass = classifyTriggerSource(r);
+    if (triggerClass === 'late') key = 'triggered_late';
+    else if (triggerClass === 'unknown') key = 'triggered_unverified';
   }
   return key;
 }
@@ -666,14 +672,16 @@ async function loadVersionComparison(sb, since30) {
   // השוואת גרסאות מתעלמת מפילוח הגרסה (תמיד כל הגרסאות) אך מכבדת פילוח מדינה.
   const baseClient = createBaseClient();
   const { countryCode } = getDashboardScopeParams();
+  const { endDate } = getDateRange();
   const sinceIso = since30 + 'T00:00:00Z';
 
-  const { data: sessions, error: sErr } = await baseClient.rpc('dashboard_alarm_sessions_read', {
+  const { data: rawSessions, error: sErr } = await baseClient.rpc('dashboard_alarm_sessions_read', {
     p_since: sinceIso,
     p_limit: 100000,
     p_app_version: null,
     p_country_code: countryCode,
   });
+  const sessions = filterSessionsByEndDate(applyOSFilter(rawSessions || []), endDate);
 
   // מכשירים פעילים לכל גרסה (הגרסה האחרונה שנראתה לכל מכשיר)
   const { data: deviceRows } = await fetchAllRows(() => {
@@ -682,13 +690,17 @@ async function loadVersionComparison(sb, since30) {
       .select('device_id_anon, app_version, event_date, manufacturer')
       .gte('event_date', since30)
       .order('event_date', { ascending: true });
+    if (endDate) q = q.lte('event_date', endDate);
     if (countryCode) q = q.eq('country_code', countryCode);
     return q;
   });
 
   const deviceVersion = {};
   const deviceMfr = {}; // device_id_anon -> manufacturer (lowercased; ליבת הנירמול)
-  (deviceRows || []).forEach(r => {
+  const scopedDeviceRows = FILTERED_DEVICE_IDS
+    ? (deviceRows || []).filter(r => FILTERED_DEVICE_IDS.has(r.device_id_anon))
+    : (deviceRows || []);
+  scopedDeviceRows.forEach(r => {
     if (r.app_version) deviceVersion[r.device_id_anon] = r.app_version;
     const m = (r.manufacturer || '').toString().trim().toLowerCase();
     if (m) deviceMfr[r.device_id_anon] = m;
@@ -698,7 +710,7 @@ async function loadVersionComparison(sb, since30) {
 
   const tbody = document.getElementById('tbody-version-compare');
   if (sErr) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="10" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="11" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
     return;
   }
 
@@ -709,7 +721,7 @@ async function loadVersionComparison(sb, since30) {
   const byVersion = {};
   const ensure = (v) => byVersion[v] || (byVersion[v] = {
     total: 0, triggered: 0, late: 0, silent: 0, timeout: 0, cancelled: 0,
-    devices: new Set(), mfrTotals: {}, mfrSet: new Set(),
+    sessions: [], devices: new Set(), mfrTotals: {}, mfrSet: new Set(),
   });
   (sessions || []).forEach(r => {
     // Real trips only — exclude toggle noise so every per-version rate matches the headline.
@@ -717,6 +729,7 @@ async function loadVersionComparison(sb, since30) {
     const v = r.app_version || 'לא ידוע';
     const b = ensure(v);
     b.total++;
+    b.sessions.push(r);
     b.devices.add(r.device_id_anon);
     const mk = mfrKey(r.device_id_anon);
     b.mfrTotals[mk] = (b.mfrTotals[mk] || 0) + 1;
@@ -769,7 +782,7 @@ async function loadVersionComparison(sb, since30) {
   const fmtPct = (n) => (n === null ? '—' : n + '%');
 
   if (!versions.length || versions.every(v => byVersion[v].total === 0 && !devicesByVersion[v])) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="10" style="color:#475569">אין נתונים עדיין</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="color:#475569">אין נתונים עדיין</td></tr>';
     showEmptyState('chart-version-success', 'אין נתונים עדיין');
     showEmptyState('chart-version-breakdown', 'אין נתונים עדיין');
     showEmptyState('chart-version-silent', 'אין נתונים עדיין');
@@ -781,7 +794,9 @@ async function loadVersionComparison(sb, since30) {
     tbody.innerHTML = versions.map(v => {
       const b = byVersion[v];
       const devices = devicesByVersion[v] || b.devices.size || 0;
-      const succ = pctNum(b.triggered, b.total);
+      const ring = summarizeRealtimeRingRate(b.sessions);
+      const succ = ring.rate;
+      const trueSuccess = summarizeTrueSuccess(b.sessions);
       const succColor = succ === null ? '#64748b' : succ >= 70 ? '#10b981' : succ >= 50 ? '#f59e0b' : '#ef4444';
       const silentPct = pctNum(b.silent, b.total);
       const silentColor = silentPct === null ? '#64748b' : silentPct >= 18 ? '#ef4444' : silentPct >= 10 ? '#f59e0b' : '#10b981';
@@ -799,6 +814,7 @@ async function loadVersionComparison(sb, since30) {
         <td>${devices.toLocaleString()}</td>
         <td>${b.total.toLocaleString()}</td>
         <td style="color:${succColor};font-weight:600">${fmtPct(succ)}</td>
+        <td>${fmtPct(trueSuccess.rate)}</td>
         <td style="color:${adjColor}" title="${escHtml(adjTitle)}">${adj === null ? '—' : adj + '%'}</td>
         <td>${fmtPct(pctNum(b.late, b.total))}</td>
         <td style="color:${silentColor}">${fmtPct(silentPct)}</td>
@@ -823,7 +839,8 @@ async function loadVersionComparison(sb, since30) {
     return;
   }
 
-  const successData = chartVersions.map(v => pctNum(byVersion[v].triggered, byVersion[v].total));
+  const successData = chartVersions.map(v => summarizeRealtimeRingRate(byVersion[v].sessions).rate);
+  const trueSuccessData = chartVersions.map(v => summarizeTrueSuccess(byVersion[v].sessions).rate);
   const adjustedData = chartVersions.map(v => adjustedSuccess(byVersion[v]));
   const lateData = chartVersions.map(v => pctNum(byVersion[v].late, byVersion[v].total));
   const silentData = chartVersions.map(v => pctNum(byVersion[v].silent, byVersion[v].total));
@@ -840,15 +857,23 @@ async function loadVersionComparison(sb, since30) {
       datasets: [
         {
           type: 'bar',
-          label: '% הצלחה גולמי',
+          label: 'real-time ring rate',
           data: successData,
           backgroundColor: successData.map(p => p === null ? '#475569' : p >= 70 ? '#10b981' : p >= 50 ? '#f59e0b' : '#ef4444'),
           borderRadius: 4,
           order: 2,
         },
         {
+          type: 'bar',
+          label: 'True Success Rate',
+          data: trueSuccessData,
+          backgroundColor: trueSuccessData.map(p => p === null ? '#475569' : p >= 70 ? '#34d399' : p >= 50 ? '#fbbf24' : '#fb7185'),
+          borderRadius: 4,
+          order: 2,
+        },
+        {
           type: 'line',
-          label: '📐 מנורמל להרכב יצרנים',
+          label: '📐 real-time ring rate מנורמל להרכב יצרנים',
           data: adjustedData,
           borderColor: '#38bdf8',
           backgroundColor: '#38bdf8',
@@ -878,7 +903,7 @@ async function loadVersionComparison(sb, since30) {
     data: {
       labels,
       datasets: [
-        { label: '✅ הצלחה real-time', data: successData, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
+        { label: '📡 real-time ring rate', data: successData, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
         { label: '🟡 צלצל מאוחר', data: lateData, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 2, stack: 's' },
         { label: '🔴 כשל שקט', data: silentData, backgroundColor: 'rgba(239,68,68,0.82)', borderRadius: 2, stack: 's' },
         { label: '⚪ אחר (בוטל/פג זמן/וכו)', data: otherData, backgroundColor: 'rgba(100,116,139,0.7)', borderRadius: 2, stack: 's' },
@@ -929,30 +954,27 @@ async function loadDayOfWeek(sb, since30) {
 
   const now = Date.now();
   // אגרגציה ל-7 ימי שבוע (0=ראשון)
-  const dow = Array.from({ length: 7 }, () => ({ total: 0, triggered: 0, late: 0, silent: 0, other: 0 }));
+  const dow = Array.from({ length: 7 }, () => ({ sessions: [] }));
   if (!sErr) {
     (sessions || []).forEach(r => {
       const d = new Date(r.started_at);
       if (isNaN(d)) return;
-      // Real trips only — exclude toggle noise so daily success rates match the headline.
-      if (!isRealTripSession(r)) return;
       const idx = d.getDay();
       const b = dow[idx];
-      b.total++;
-      const key = classifySessionOutcome(r, now);
-      if (key === 'triggered') b.triggered++;
-      else if (key === 'triggered_late') b.late++;
-      else if (key === 'app_killed' || key === 'open_stale') b.silent++;
-      else b.other++;
+      b.sessions.push(r);
     });
   }
 
-  const pctNum = (a, b) => (b > 0 ? Math.round((a / b) * 100) : null);
-  const successPct = dow.map(b => pctNum(b.triggered, b.total));
-  const latePct = dow.map(b => pctNum(b.late, b.total));
-  const silentPct = dow.map(b => pctNum(b.silent, b.total));
-  const otherPct = dow.map(b => pctNum(b.other, b.total));
-  const totalSessions = dow.reduce((s, b) => s + b.total, 0);
+  const summary = dow.map(b => summarizeTrueSuccess(b.sessions));
+  const ringSummary = dow.map(b => summarizeRealtimeRingRate(b.sessions));
+  const successPct = summary.map(s => s.rate);
+  const ringPct = ringSummary.map(s => s.rate);
+  const latePct = dow.map(b => summarizeSessionRate(b.sessions, isLateTriggered).rate);
+  const silentPct = dow.map(b => summarizeSessionRate(b.sessions, r => ['app_killed', 'stale_tracking', 'open_stale'].includes(r.outcome)).rate);
+  const otherPct = dow.map(b => summarizeSessionRate(b.sessions, r =>
+    !isTrueSuccessSession(r) && !isLateTriggered(r) && !['app_killed', 'stale_tracking', 'open_stale'].includes(r.outcome)
+  ).rate);
+  const totalSessions = summary.reduce((s, b) => s + b.realTrips, 0);
 
   // ── KPIs: היום הטוב/הגרוע ביותר בהצלחה ──
   const kpiEl = document.getElementById('weekday-success-kpis');
@@ -961,16 +983,16 @@ async function loadDayOfWeek(sb, since30) {
       kpiEl.innerHTML = '<div style="color:#475569;font-size:0.82rem">אין נתונים עדיין</div>';
     } else {
       const ranked = dow
-        .map((b, i) => ({ i, total: b.total, succ: pctNum(b.triggered, b.total) }))
+        .map((b, i) => ({ i, total: summary[i].realTrips, succ: summary[i].rate }))
         .filter(x => x.total >= 5 && x.succ !== null);
       const best = ranked.reduce((a, x) => (a === null || x.succ > a.succ ? x : a), null);
       const worst = ranked.reduce((a, x) => (a === null || x.succ < a.succ ? x : a), null);
       const busiest = dow
-        .map((b, i) => ({ i, total: b.total }))
+        .map((b, i) => ({ i, total: summary[i].realTrips }))
         .reduce((a, x) => (x.total > a.total ? x : a), { i: 0, total: -1 });
       kpiEl.innerHTML = [
-        best ? { label: '🟢 היום הכי מצליח', value: HEBREW_WEEKDAYS[best.i], sub: best.succ + '% הצלחה', color: '#10b981' } : null,
-        worst ? { label: '🔴 היום הכי פחות מצליח', value: HEBREW_WEEKDAYS[worst.i], sub: worst.succ + '% הצלחה', color: '#ef4444' } : null,
+        best ? { label: '🟢 היום עם True Success הגבוה ביותר', value: HEBREW_WEEKDAYS[best.i], sub: best.succ + '% True Success', color: '#10b981' } : null,
+        worst ? { label: '🔴 היום עם True Success הנמוך ביותר', value: HEBREW_WEEKDAYS[worst.i], sub: worst.succ + '% True Success', color: '#ef4444' } : null,
         { label: '🔔 היום העמוס ביותר', value: HEBREW_WEEKDAYS[busiest.i], sub: busiest.total + ' sessions', color: '#3b82f6' },
       ].filter(Boolean).map(k =>
         `<div class="kpi"><div class="label">${k.label}</div><div class="value" style="font-size:1.4rem;color:${k.color}">${k.value}</div><div class="sub">${k.sub}</div></div>`
@@ -985,16 +1007,21 @@ async function loadDayOfWeek(sb, since30) {
       data: {
         labels: HEBREW_WEEKDAYS,
         datasets: [{
-          label: '% הצלחה real-time',
+          label: 'True Success Rate',
           data: successPct,
           backgroundColor: successPct.map(p => p === null ? '#475569' : p >= 70 ? '#10b981' : p >= 50 ? '#f59e0b' : '#ef4444'),
+          borderRadius: 4,
+        }, {
+          label: 'real-time ring rate',
+          data: ringPct,
+          backgroundColor: '#38bdf8',
           borderRadius: 4,
         }]
       },
       options: {
         plugins: {
-          legend: { display: false },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}% (${dow[ctx.dataIndex].total} sessions)` } }
+          legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+          tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}% (${summary[ctx.dataIndex].realTrips} real trips)` } }
         },
         scales: {
           x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },
@@ -1008,12 +1035,12 @@ async function loadDayOfWeek(sb, since30) {
       type: 'bar',
       data: {
         labels: HEBREW_WEEKDAYS,
-        datasets: [{ label: 'sessions', data: dow.map(b => b.total), backgroundColor: '#6366f1', borderRadius: 4 }]
+        datasets: [{ label: 'real-trip sessions', data: summary.map(b => b.realTrips), backgroundColor: '#6366f1', borderRadius: 4 }]
       },
       options: {
         plugins: {
           legend: { display: false },
-          tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} sessions (${pctNum(ctx.parsed.y, totalSessions)}% מהשבוע)` } }
+          tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y} real trips` } }
         },
         scales: {
           x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },
@@ -1028,7 +1055,7 @@ async function loadDayOfWeek(sb, since30) {
       data: {
         labels: HEBREW_WEEKDAYS,
         datasets: [
-          { label: '✅ הצלחה real-time', data: successPct, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
+          { label: '✅ True Success Rate', data: successPct, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
           { label: '🟡 צלצל מאוחר', data: latePct, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 2, stack: 's' },
           { label: '🔴 כשל שקט', data: silentPct, backgroundColor: 'rgba(239,68,68,0.82)', borderRadius: 2, stack: 's' },
           { label: '⚪ אחר', data: otherPct, backgroundColor: 'rgba(100,116,139,0.7)', borderRadius: 2, stack: 's' },

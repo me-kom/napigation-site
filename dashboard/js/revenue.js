@@ -359,7 +359,7 @@ async function loadEngagementDepth(sb, since30) {
     const devs = Object.values(deviceStats).filter(d => d.total >= b.min && d.total <= b.max);
     const n = devs.length;
     const hit = devs.filter(d => d.triggered > 0).length;
-    return { n, successRate: n > 0 ? Math.round(hit / n * 100) : 0 };
+    return { n, deviceReach: n > 0 ? Math.round(hit / n * 100) : 0 };
   });
 
   renderChart('chart-engagement-depth', {
@@ -367,7 +367,7 @@ async function loadEngagementDepth(sb, since30) {
     data: {
       labels: BUCKETS.map(b => b.label),
       datasets: [
-        { label: '% שצלצלו לפחות פעם', data: bucketData.map(b => b.successRate), backgroundColor: bucketData.map(b => b.successRate >= 70 ? '#10b981' : b.successRate >= 50 ? '#f59e0b' : '#ef4444'), borderRadius: 4 },
+        { label: '% מכשירים עם real-time ring', data: bucketData.map(b => b.deviceReach), backgroundColor: bucketData.map(b => b.deviceReach >= 70 ? '#10b981' : b.deviceReach >= 50 ? '#f59e0b' : '#ef4444'), borderRadius: 4 },
       ]
     },
     options: {
@@ -383,20 +383,20 @@ async function loadEngagementDepth(sb, since30) {
   const routeDevs   = Object.values(deviceStats).filter(d => d.hasRoute);
   const noRouteDevs = Object.values(deviceStats).filter(d => !d.hasRoute);
 
-  const routeSuccess   = routeDevs.length   ? Math.round(routeDevs.filter(d => d.triggered > 0).length   / routeDevs.length   * 100) : null;
-  const noRouteSuccess = noRouteDevs.length ? Math.round(noRouteDevs.filter(d => d.triggered > 0).length / noRouteDevs.length * 100) : null;
+  const routeDeviceReach   = routeDevs.length   ? Math.round(routeDevs.filter(d => d.triggered > 0).length   / routeDevs.length   * 100) : null;
+  const noRouteDeviceReach = noRouteDevs.length ? Math.round(noRouteDevs.filter(d => d.triggered > 0).length / noRouteDevs.length * 100) : null;
 
   const kpiEl = document.getElementById('kpi-route-success-row');
   if (kpiEl) {
     kpiEl.innerHTML = (routeDevs.length > 0 || noRouteDevs.length > 0)
       ? [
-          ['🗺️ משתמשי מסלולים', routeDevs.length,   routeSuccess],
-          ['📍 מיקומים בלבד',   noRouteDevs.length, noRouteSuccess],
+          ['🗺️ Device reach — מסלולים', routeDevs.length, routeDeviceReach],
+          ['📍 Device reach — מיקומים', noRouteDevs.length, noRouteDeviceReach],
         ].map(([label, n, rate]) => `
           <div class="kpi">
             <div class="label">${label}</div>
             <div class="value" style="font-size:1.4rem">${rate !== null ? rate + '%' : '—'}</div>
-            <div class="sub">${n} מכשירים</div>
+            <div class="sub">מכשירים עם לפחות real-time ring / ${n} מכשירים</div>
           </div>
         `).join('')
       : '<div style="color:#475569;font-size:0.8rem">props.is_route לא מדווח עדיין</div>';
@@ -418,8 +418,8 @@ async function loadEngagementDepth(sb, since30) {
     data: {
       labels: BUCKETS.map(b => b.label),
       datasets: [
-        { label: '🗺️ מסלולים', data: routeBuckets,   backgroundColor: '#6366f1', borderRadius: 4 },
-        { label: '📍 מיקומים', data: noRouteBuckets, backgroundColor: '#3b82f6', borderRadius: 4 },
+        { label: '🗺️ Device reach — מסלולים', data: routeBuckets,   backgroundColor: '#6366f1', borderRadius: 4 },
+        { label: '📍 Device reach — מיקומים', data: noRouteBuckets, backgroundColor: '#3b82f6', borderRadius: 4 },
       ]
     },
     options: {

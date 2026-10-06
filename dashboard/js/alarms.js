@@ -10,7 +10,7 @@ async function loadAlarmSessions(sb, since30) {
   let trueSuccessTotal = 0;
   let technicalKills = 0;
   let abandonedKills = 0;
-  let firstTotal = 0, firstTriggered = 0;
+  let firstTotal = 0, firstTriggered = 0, firstTrueSuccess = 0;
   let firstCancelled = 0, firstTimeout = 0, firstKilled = 0;
   const now = Date.now();
   const staleByVersion = {};
@@ -19,6 +19,7 @@ async function loadAlarmSessions(sb, since30) {
   let trigMissing = 0;
   let trigUnknownValue = 0;
   let trigKnown = 0;
+  let trigUnverified = 0;
   const failedSessions = [];
 
   (data || []).forEach(r => {
@@ -30,15 +31,12 @@ async function loadAlarmSessions(sb, since30) {
     if (key === 'user_cancelled' && r.props?.reason === 'already_inside_radius') {
       key = 'already_inside_radius';
     }
-    // ⚠️ "צלצל מאוחר": triggered שמקורו notification_open / eta_fallback
-    // = מסלול ה-real-time נכשל והצלצול נתפס רק כשהמשתמש פתח נוטיפיקציה / ע"י רשת הביטחון.
-    // ⚠️ foreground_check אינו late: קיום pending = הוכחה ש-scheduleLocationAlarm (נתיב הרקע) רץ וצלצל
-    // בזמן-אמת; ה-FSI רק פתח את האפליקציה להצגת ה-overlay. unknown/missing נשאר 'triggered'.
+    // Unknown or missing trigger sources are not proof of a real-time ring.
     if (key === 'triggered') {
-      const ts = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
-      if (ts === 'notification_open' || ts === 'eta_fallback') {
+      const triggerClass = classifyTriggerSource(r);
+      if (triggerClass === 'late') {
         key = 'triggered_late';
-      }
+      } else if (triggerClass === 'unknown') key = 'triggered_unverified';
     }
     const appKilledKind = classifyAppKilledSession(r);
     if (appKilledKind === 'technical_kill') {
@@ -66,9 +64,11 @@ async function loadAlarmSessions(sb, since30) {
       if (!rawSrc) {
         trigMissing += 1;
         triggerSourceDaily[day].missing += 1;
-      } else if (rawSrc === 'unknown') {
+        trigUnverified += 1;
+      } else if (classifyTriggerSource(r) === 'unknown') {
         trigUnknownValue += 1;
         triggerSourceDaily[day].unknown += 1;
+        trigUnverified += 1;
       } else {
         trigKnown += 1;
       }
@@ -90,9 +90,9 @@ async function loadAlarmSessions(sb, since30) {
     }
     if (r.is_first_alarm && isRealTripSession(r)) {
       firstTotal++;
-      // Use the reclassified key (real-time 'triggered' only — excludes 'triggered_late')
-      // so first-alarm success matches the headline definition.
-      if (key === 'triggered') firstTriggered++;
+      // The real-time ring rate requires a recognized real-time source.
+      if (isRealtimeTriggered(r)) firstTriggered++;
+      if (isTrueSuccessSession(r)) firstTrueSuccess++;
       if (key === 'user_cancelled') firstCancelled++;
       if (key === 'timeout') firstTimeout++;
       if (key === 'app_killed_technical' || key === 'app_killed_abandoned' || key === 'open_stale') firstKilled++;
@@ -109,7 +109,8 @@ async function loadAlarmSessions(sb, since30) {
   const kpiHtml = firstTotal > 0 ? [
     ['סה"כ ראשונות', firstTotal],
     ['צלצלו (ראשונות)', firstTriggered],
-    ['% הצלחה (ראשונות)', pct(firstTriggered, firstTotal)],
+    ['True Success Rate (ראשונות)', pct(firstTrueSuccess, firstTotal)],
+    ['real-time ring rate (ראשונות)', pct(firstTriggered, firstTotal)],
     ['בוטלו (ראשונות)', firstCancelled],
     ['timeout/kill (ראשונות)', firstTimeout + firstKilled],
   ].map(([label, val]) => `
@@ -124,10 +125,11 @@ async function loadAlarmSessions(sb, since30) {
   const kpiElAlarms = document.getElementById('first-alarm-kpi-alarms');
   if (kpiElAlarms) kpiElAlarms.innerHTML = kpiHtml;
 
-  const ORDER = ['triggered', 'triggered_late', 'user_cancelled', 'already_inside_radius', 'auto_cancelled_moving_away', 'stale_tracking', 'timeout', 'app_killed_technical', 'app_killed_abandoned', 'open_active', 'open_stale'];
+  const ORDER = ['triggered', 'triggered_late', 'triggered_unverified', 'user_cancelled', 'already_inside_radius', 'auto_cancelled_moving_away', 'stale_tracking', 'timeout', 'app_killed_technical', 'app_killed_abandoned', 'open_active', 'open_stale'];
   const LABELS = {
     triggered:                  '✅ צלצל בזמן אמת',
     triggered_late:             '🟡 צלצל מאוחר (נתפס בפתיחה / ETA)',
+    triggered_unverified:       '❓ צלצל — מקור לא מאומת',
     user_cancelled:             '👤 בוטל ע"י משתמש',
     already_inside_radius:      '📍 כבר בפנים בהפעלה',
     auto_cancelled_moving_away: '🚶 בוטל (התרחק)',
@@ -231,14 +233,19 @@ async function loadAlarmSessions(sb, since30) {
   }
 
   // ── Free vs. Paid engagement ───────────────────────────────────────────
-  const paidSessions    = (data || []).filter(r => r.props?.subscription_status === 'premium' || r.props?.is_premium === true);
-  const freeSessions    = (data || []).filter(r => !r.props?.subscription_status || r.props?.subscription_status !== 'premium');
-  const paidTriggered   = paidSessions.filter(isRealtimeTriggered).length;
-  const freeTriggered   = freeSessions.filter(isRealtimeTriggered).length;
+  const isPaidSession = r => r.props?.subscription_status === 'premium' || r.props?.is_premium === true;
+  const paidSessions    = (data || []).filter(isPaidSession);
+  const freeSessions    = (data || []).filter(r => !isPaidSession(r));
+  const paidSummary     = summarizeTrueSuccess(paidSessions);
+  const freeSummary     = summarizeTrueSuccess(freeSessions);
+  const paidRingSummary = summarizeRealtimeRingRate(paidSessions);
+  const freeRingSummary = summarizeRealtimeRingRate(freeSessions);
   const paidDevices     = new Set(paidSessions.map(r => r.device_id_anon)).size;
   const freeDevices     = new Set(freeSessions.map(r => r.device_id_anon)).size;
-  const paidSuccessRate = paidSessions.length > 0 ? Math.round(paidTriggered / paidSessions.length * 100) : null;
-  const freeSuccessRate = freeSessions.length > 0 ? Math.round(freeTriggered / freeSessions.length * 100) : null;
+  const paidSuccessRate = paidSummary.rate;
+  const freeSuccessRate = freeSummary.rate;
+  const paidRealtimeRate = paidRingSummary.rate;
+  const freeRealtimeRate = freeRingSummary.rate;
   const avgPaidSessions = paidDevices > 0 ? +(paidSessions.length / paidDevices).toFixed(1) : null;
   const avgFreeSessions = freeDevices > 0 ? +(freeSessions.length / freeDevices).toFixed(1) : null;
 
@@ -246,18 +253,20 @@ async function loadAlarmSessions(sb, since30) {
   if (pvfKpiEl) {
     if (paidSessions.length > 0) {
       pvfKpiEl.innerHTML = [
-        { label: '👑 Paid — % הצלחה',   value: paidSuccessRate !== null ? paidSuccessRate + '%' : '—', sub: paidSessions.length + ' sessions · ' + paidDevices + ' מכשירים', color: '#f59e0b' },
-        { label: '🆓 Free — % הצלחה',   value: freeSuccessRate !== null ? freeSuccessRate + '%' : '—', sub: freeSessions.length + ' sessions · ' + freeDevices + ' מכשירים', color: '#3b82f6' },
+        { label: '👑 Paid — True Success Rate', value: paidSuccessRate !== null ? paidSuccessRate + '%' : '—', sub: paidSummary.realTrips + ' real trips · ' + paidDevices + ' מכשירים', color: '#f59e0b' },
+        { label: '🆓 Free — True Success Rate', value: freeSuccessRate !== null ? freeSuccessRate + '%' : '—', sub: freeSummary.realTrips + ' real trips · ' + freeDevices + ' מכשירים', color: '#3b82f6' },
+        { label: '👑 Paid — real-time ring rate', value: paidRealtimeRate !== null ? paidRealtimeRate + '%' : '—', sub: 'צלצולים אוטומטיים / real trips', color: '#f59e0b' },
+        { label: '🆓 Free — real-time ring rate', value: freeRealtimeRate !== null ? freeRealtimeRate + '%' : '—', sub: 'צלצולים אוטומטיים / real trips', color: '#3b82f6' },
         { label: '👑 Paid — sessions/מכשיר', value: avgPaidSessions ?? '—', sub: 'מחויבות גבוהה יותר?', color: '#f59e0b' },
         { label: '🆓 Free — sessions/מכשיר', value: avgFreeSessions ?? '—', sub: '', color: '#3b82f6' },
       ].map(k => `<div class="kpi"><div class="label">${k.label}</div><div class="value" style="font-size:1.4rem;color:${k.color}">${k.value}</div><div class="sub">${k.sub}</div></div>`).join('');
       renderChart('chart-paid-vs-free', {
         type: 'bar',
         data: {
-          labels: ['% הצלחה', 'sessions ממוצע למכשיר'],
+          labels: ['True Success Rate', 'real-time ring rate'],
           datasets: [
-            { label: '👑 Paid', data: [paidSuccessRate, avgPaidSessions], backgroundColor: '#f59e0b', borderRadius: 4 },
-            { label: '🆓 Free', data: [freeSuccessRate, avgFreeSessions], backgroundColor: '#3b82f6', borderRadius: 4 },
+            { label: '👑 Paid', data: [paidSuccessRate, paidRealtimeRate], backgroundColor: '#f59e0b', borderRadius: 4 },
+            { label: '🆓 Free', data: [freeSuccessRate, freeRealtimeRate], backgroundColor: '#3b82f6', borderRadius: 4 },
           ]
         },
         options: {
@@ -282,7 +291,7 @@ async function loadAlarmSessions(sb, since30) {
   const silentTotal  = silentKilled + silentStale;
   const trigBg       = trigSrcCounts['background'] || 0;
   const trigFg       = trigSrcCounts['foreground_check'] || 0;
-  const trigUnknown  = trigSrcCounts['unknown'] || 0;
+  const trigUnknown  = trigUnverified;
 
   const reliKpisEl = document.getElementById('reliability-kpis');
   if (reliKpisEl && total > 0) {
@@ -367,7 +376,7 @@ async function loadAlarmSessions(sb, since30) {
       triggerSrcAlertEl.innerHTML = `
         איכות trigger_source: <strong>${level}</strong>
         · unresolved=${trigUnresolvedShare}% (סף אזהרה ${warn}%, סף קריטי ${critical}%)
-        <br><span style="opacity:0.85">📅 סיווג real-time מול late אמין מ-${TRIGGER_SOURCE_RELIABLE_DATE} והלאה (לפני כן triggered חסרי-מקור נספרים כ-real-time).</span>
+        <br><span style="opacity:0.85">📅 רק מקורות RT מוכרים נספרים כצלצול בזמן אמת; missing / unknown / source לא מוכר אינם הוכחת הצלחה.</span>
       `;
     }
   }
@@ -838,11 +847,9 @@ async function loadPeakHours(sb, since30) {
 
     if (r.outcome === 'triggered') {
       triggered[h]++;
-      const src = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
-      // foreground_check = background rang + FSI opened the app (real-time). Only notification_open
-      // (user tapped a notification) and eta_fallback (timed safety-net) are genuine late catches.
-      if (src === 'background' || src === 'geofence' || src === 'native_sampling' || src === 'foreground_check') trigRealtimeByHour[h]++;
-      else if (src === 'notification_open' || src === 'eta_fallback') trigLateByHour[h]++;
+      const triggerClass = classifyTriggerSource(r);
+      if (triggerClass === 'realtime') trigRealtimeByHour[h]++;
+      else if (triggerClass === 'late') trigLateByHour[h]++;
       else trigUnknownByHour[h]++;
     }
     if (key === 'app_killed' || key === 'open_stale') {
