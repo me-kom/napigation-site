@@ -315,92 +315,35 @@
     .feature-card h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--primary); }
     .feature-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
-    /* ── Plans ── */
+    /* ── Experience ── */
     #plans { background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%); }
-    .compare-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-    .compare-card {
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-    }
-    .compare-card.featured {
-      background: var(--white);
-      border: 2px solid var(--accent);
-      box-shadow: 0 8px 30px rgba(67,97,238,0.12);
-    }
-    .compare-header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-    .compare-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      border-radius: 999px;
-      padding: 6px 12px;
-      text-transform: uppercase;
-    }
-    .compare-pill.free {
-      background: rgba(67, 97, 238, 0.1);
-      color: var(--primary);
-    }
-    .compare-pill.premium {
-      background: rgba(245, 158, 11, 0.12);
-      color: #92400e;
-    }
-    .compare-card h3 {
-      margin: 0;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--primary);
-    }
-    .compare-list {
+    .experience-content { max-width: 760px; margin: 0 auto; }
+    .experience-content h3 { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+    .experience-content p { font-size: 1rem; color: var(--text-light); line-height: 1.7; }
+    .experience-list {
       list-style: none;
+      margin: 24px 0 0;
       padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex-grow: 1;
+      display: grid;
+      gap: 14px;
     }
-    .compare-list li {
+    .experience-list li {
       position: relative;
-      font-size: 0.95rem;
+      padding-right: 26px;
       color: var(--text-light);
       line-height: 1.6;
-      padding-right: 22px;
     }
-    .compare-list li::before {
+    .experience-list li::before {
       content: "✓";
       position: absolute;
       right: 0;
-      top: 0;
       color: var(--accent);
       font-weight: 800;
     }
-    .compare-note {
-      margin-top: 20px;
-      padding-top: 16px;
+    .premium-note {
+      margin-top: 36px;
+      padding-top: 28px;
       border-top: 1px solid var(--border);
-      font-size: 0.84rem;
-      color: var(--text-light);
-      line-height: 1.5;
     }
       color: var(--text);
       display: flex;
@@ -502,10 +445,6 @@
       .feature-card { padding: 24px 20px; }
       .feature-card h3 { font-size: 1rem; }
       .feature-card p { font-size: 0.9rem; }
-      .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-      .compare-card { padding: 24px 20px; }
-      .compare-card h3 { font-size: 1.05rem; }
-      .compare-list li { font-size: 0.9rem; }
       .faq-item { padding: 18px 20px; }
       .faq-q { font-size: 1rem; }
       .faq-a { font-size: 0.9rem; }
@@ -545,11 +484,6 @@
       .adv-card h3 { font-size: 0.95rem; }
       .feature-card { padding: 20px 16px; }
       .feature-icon { font-size: 1.8rem; }
-      .compare-card { padding: 22px 16px; }
-      .compare-header { margin-bottom: 14px; }
-      .compare-list { gap: 10px; }
-      .compare-list li { font-size: 0.85rem; }
-      .compare-note { font-size: 0.8rem; }
       .faq-item { padding: 16px 12px; }
       .faq-q { font-size: 0.95rem; }
       .faq-a { font-size: 0.85rem; max-height: 350px; }
@@ -572,7 +506,7 @@
   <div class="navbar-links">
     <a href="#how">איך זה עובד</a>
     <a href="#advantage">היתרון הטכנולוגי</a>
-    <a href="#plans">תוכניות</a>
+    <a href="#plans">חוויית השימוש</a>
     <a href="#faq">שאלות נפוצות</a>
     <div class="nav-controls">
       <div class="seg" role="group" aria-label="בחירת פלטפורמה">
@@ -592,7 +526,7 @@
     <div class="hero-buttons">
       <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        הורד עכשיו בחינם
+        הורדת מי-קום
       </a>
       <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">בקרוב ל-App Store</span>
     </div>
@@ -650,42 +584,20 @@
 <!-- Plans -->
 <section id="plans">
   <div class="section-inner">
-    <p class="section-label">חינם מול פרימיום</p>
-    <h2 class="section-title">הגרסה החינמית עובדת; הפרימיום מוסיף שליטה, מסלולים ושמירת מקומות.</h2>
-    <div class="compare-grid">
-      <div class="compare-card">
-        <div class="compare-header">
-          <span class="compare-pill free">חינם</span>
-          <h3>לשימוש יומיומי</h3>
-        </div>
-        <ul class="compare-list">
-          <li>מעקב ברקע</li>
-          <li>התראות לפי זמן</li>
-          <li>שליטה דינמית בעוצמת הצליל וברטט</li>
-          <li>בחירת צלצול מותאם אישית</li>
-          <li>מעקף של מצב שקט</li>
-          <li>מעקף של ווליום נמוך</li>
-          <li>תזכורת אחרי הגעה</li>
-          <li>מצב לילה + עיצוב אישי</li>
-          <li>עד 5 מקומות שמורים</li>
-          <li>מסלול אחד של מספר תחנות</li>
-        </ul>
-      </div>
-      <div class="compare-card featured">
-        <div class="compare-header">
-          <span class="compare-pill premium">פרימיום</span>
-          <h3>לנסיעות קבועות</h3>
-        </div>
-        <ul class="compare-list">
-          <li>יעדים חד-פעמיים</li>
-          <li>ניווט באמצעות אפליקציית ניווט חיצונית</li>
-          <li>שליטה חכמה במצב "נא לא להפריע"</li>
-          <li>תצוגת שיחה נכנסת</li>
-          <li>פתיחה אוטומטית של האפליקציה בצלצול</li>
-          <li>מסלולים ללא הגבלה</li>
-          <li>מקומות שמורים ללא הגבלה</li>
-          <li>אמינות חזקה יותר של התראות</li>
-        </ul>
+    <p class="section-label">הנסיעה שלך, בדרך שלך</p>
+    <h2 class="section-title">מגדירים יעד. ממשיכים בנסיעה.</h2>
+    <div class="experience-content">
+      <h3>תזכורת בזמן, בלי לעקוב אחרי המסך</h3>
+      <p>מי-קום עוקבת אחרי הנסיעה ומתריעה כשהיעד מתקרב. מגדירים התראה, מניחים את הטלפון בצד ומתפנים למה שחשוב לכם.</p>
+      <ul class="experience-list">
+        <li>מעקב ברקע והתראות לפי זמן</li>
+        <li>בחירת עוצמת צליל, רטט וצלצול</li>
+        <li>תזכורות שימושיות וממשק נוח בלילה</li>
+        <li>שמירת עד 5 מקומות ומסלול אחד עם כמה תחנות</li>
+      </ul>
+      <div class="premium-note">
+        <h3>יותר גמישות למי שנוסעים הרבה</h3>
+        <p>פרימיום מוסיף מקומות ומסלולים ללא הגבלה, יעדים חד-פעמיים ואפשרויות נוספות לשליטה בהתראות. באפליקציה זמינים מסלול מנוי וגם רכישה חד-פעמית.</p>
       </div>
     </div>
   </div>
@@ -714,8 +626,8 @@
       </div>
       <div class="adv-card">
         <div class="adv-icon">🆓</div>
-        <h3>גרסה חינמית שבאמת שימושית</h3>
-        <p>הורידו עכשיו וקבלו בחינם את כל מה שצריך כדי לא לפספס אף תחנה. שדרוגים קיימים רק למי שרוצה לנהל מסלולים קבועים.</p>
+        <h3>פשוט להתחיל לנסוע</h3>
+        <p>בוחרים יעד, מגדירים התראה ומניחים את הטלפון בצד. בלי חשבון ובלי פרסומות שמפריעות.</p>
       </div>
     </div>
   </div>
@@ -737,8 +649,8 @@
         <div class="faq-a">אפליקציות ניווט רגילות מיועדות למסך פתוח ולהכוונה רציפה. מי-קום מיועדת לנוסעים שרק צריכים תזכורת לרדת בזמן.</div>
       </div>
       <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם אפשר להשתמש באפליקציה בלי לשלם?</div>
-        <div class="faq-a">כן. האפליקציה זמינה להורדה בחינם וכוללת את חוויית הליבה לשימוש יומיומי. קיימות גם יכולות מתקדמות למשתמשים שרוצים הרחבה מעבר לכך.</div>
+        <div class="faq-q" onclick="toggleFaq(this)">האם צריך מנוי כדי לקבל התראה?</div>
+        <div class="faq-a">לא. אפשר לבחור יעד ולקבל התראה גם בלי מנוי. פרימיום הוא אפשרות למי שרוצים יותר גמישות בנסיעות קבועות, למשל מסלולים ומקומות שמורים ללא הגבלה.</div>
       </div>
       <div class="faq-item">
         <div class="faq-q" onclick="toggleFaq(this)">האם האפליקציה תשרוד כשהמסך כבוי והטלפון בכיס?</div>

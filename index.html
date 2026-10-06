@@ -234,85 +234,33 @@
     .feature-card p { font-size: 0.95rem; color: var(--text-light); line-height: 1.6; }
 
     #plans { background: linear-gradient(180deg, var(--white) 0%, var(--bg) 100%); }
-    .compare-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 24px;
-      max-width: 980px;
-      margin: 0 auto;
-    }
-    .compare-card {
-      border-radius: var(--radius);
-      padding: 32px 28px;
-      border: 1px solid var(--border);
-      background: var(--bg);
-      display: flex;
-      flex-direction: column;
-      min-height: 100%;
-    }
-    .compare-card.featured {
-      background: var(--white);
-      border: 2px solid var(--accent);
-      box-shadow: 0 8px 30px rgba(67,97,238,0.12);
-    }
-    .compare-header {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-    .compare-pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 800;
-      letter-spacing: 0.04em;
-      border-radius: 999px;
-      padding: 6px 12px;
-      text-transform: uppercase;
-    }
-    .compare-pill.free {
-      background: rgba(67, 97, 238, 0.1);
-      color: var(--primary);
-    }
-    .compare-pill.premium {
-      background: rgba(245, 158, 11, 0.12);
-      color: #92400e;
-    }
-    .compare-card h3 { margin: 0; font-size: 1.15rem; font-weight: 800; color: var(--primary); }
-    .compare-list {
+    .experience-content { max-width: 760px; margin: 0 auto; }
+    .experience-content h3 { font-size: 1.2rem; font-weight: 800; color: var(--primary); margin-bottom: 12px; }
+    .experience-content p { font-size: 1rem; color: var(--text-light); line-height: 1.7; }
+    .experience-list {
       list-style: none;
+      margin: 24px 0 0;
       padding: 0;
-      margin: 0;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      flex-grow: 1;
+      display: grid;
+      gap: 14px;
     }
-    .compare-list li {
+    .experience-list li {
       position: relative;
-      font-size: 0.95rem;
+      padding-left: 26px;
       color: var(--text-light);
       line-height: 1.6;
-      padding-left: 22px;
     }
-    .compare-list li::before {
+    .experience-list li::before {
       content: "✓";
       position: absolute;
       left: 0;
-      top: 0;
       color: var(--accent);
       font-weight: 800;
     }
-    .compare-note {
-      margin-top: 20px;
-      padding-top: 16px;
+    .premium-note {
+      margin-top: 36px;
+      padding-top: 28px;
       border-top: 1px solid var(--border);
-      font-size: 0.84rem;
-      color: var(--text-light);
-      line-height: 1.5;
     }
 
     #advantage {
@@ -456,7 +404,6 @@
       .hero { padding: 50px 16px 60px; }
       .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); margin-bottom: 16px; }
       .hero p { font-size: 1rem; }
-      .compare-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .faq-item { padding: 20px 18px; }
     }
     @media (max-width: 480px) {
@@ -471,7 +418,7 @@
     <div class="navbar-links">
       <a href="#how">How it works</a>
       <a href="#advantage">Why Napigation</a>
-      <a href="#plans">Plans</a>
+      <a href="#plans">The experience</a>
       <a href="#faq">FAQ</a>
       <div class="nav-controls">
         <div class="seg" role="group" aria-label="Platform selector">
@@ -490,7 +437,7 @@
       <div class="hero-buttons">
         <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Download for Free
+          Get Napigation
         </a>
         <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">Coming soon to the App Store</span>
       </div>
@@ -545,43 +492,20 @@
 
   <section id="plans">
     <div class="section-inner">
-      <p class="section-label">Free vs Premium</p>
-      <h2 class="section-title">The free version works; premium adds more control, routes, and saved places.</h2>
-      <div class="compare-grid">
-        <div class="compare-card">
-          <div class="compare-header">
-            <span class="compare-pill free">Free</span>
-            <h3>Everyday use</h3>
-          </div>
-          <ul class="compare-list">
-            <li>Background tracking</li>
-            <li>Time-based alerts</li>
-            <li>Dynamic volume and vibration control</li>
-            <li>Custom ringtone selection</li>
-            <li>Silent mode bypass</li>
-            <li>Low-volume bypass</li>
-            <li>Post-arrival reminder</li>
-            <li>Night mode + custom interface</li>
-            <li>Up to 5 saved places</li>
-            <li>One multi-stop route</li>
-          </ul>
-        </div>
-        <div class="compare-card featured">
-          <div class="compare-header">
-            <span class="compare-pill premium">Premium</span>
-            <h3>For frequent trips</h3>
-          </div>
-          <ul class="compare-list">
-            <li>One-time destinations</li>
-            <li>Open in an external navigation app</li>
-            <li>Smart Do Not Disturb control</li>
-            <li>Incoming-call display</li>
-            <li>Auto-open app on ring</li>
-            <li>Unlimited routes</li>
-            <li>Unlimited saved places</li>
-            <li>Stronger alert reliability</li>
-          </ul>
-          <div class="compare-note">Lifetime option: one-time payment, no recurring billing.</div>
+      <p class="section-label">Your ride, your way</p>
+      <h2 class="section-title">Set your destination. Then enjoy the ride.</h2>
+      <div class="experience-content">
+        <h3>A timely reminder, without watching the screen</h3>
+        <p>Napigation keeps an eye on your trip and lets you know when your stop is near. Set it up, put your phone away, and focus on what you would rather do.</p>
+        <ul class="experience-list">
+          <li>Background tracking and time-based alerts</li>
+          <li>Choose alert volume, vibration, and ringtone</li>
+          <li>Helpful reminders and a night-friendly interface</li>
+          <li>Save places and routes for trips you make often</li>
+        </ul>
+        <div class="premium-note">
+          <h3>More flexibility for frequent trips</h3>
+          <p>Premium adds unlimited saved places and routes, one-time destinations, and extra alert controls. Subscription and lifetime purchase options are available in the app.</p>
         </div>
       </div>
     </div>
@@ -609,8 +533,8 @@
         </div>
         <div class="adv-card">
           <div class="adv-icon">🆓</div>
-          <h3>A free version that is actually useful</h3>
-          <p>Download it now and get everything you need to avoid missing your stop. Premium upgrades are only for riders who want more control over regular routes and saved places.</p>
+          <h3>Simple from the first ride</h3>
+          <p>Choose a destination, set your alert, and put your phone away. No account or ad interruptions to get in the way.</p>
         </div>
       </div>
     </div>
@@ -630,8 +554,8 @@
           <div class="faq-a">Regular navigation apps are made for constant guidance with the screen in use. Napigation is for riders who only need a reliable reminder before getting off.</div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(this)">Can I use Napigation without paying?</div>
-          <div class="faq-a">Yes. The app is free to download and includes the core daily-use experience. Advanced capabilities are available for riders who want expanded functionality.</div>
+          <div class="faq-q" onclick="toggleFaq(this)">Do I need a subscription to get an alert?</div>
+          <div class="faq-a">No. You can set a destination and use the core alert experience without a subscription. Premium is optional and adds more flexibility for frequent trips, including unlimited routes and saved places.</div>
         </div>
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(this)">Will the app keep working if my phone is in my pocket with the screen off?</div>
