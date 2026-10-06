@@ -1,0 +1,2 @@
+- Static dashboard entry points -> index.html, auth.html, auth/index.html
+- Runtime Supabase public configuration is served by ../api/dashboard-config.js from deployment environment; never add credentials to dashboard source

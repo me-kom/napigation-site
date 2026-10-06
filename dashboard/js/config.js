@@ -1,6 +1,13 @@
 // ─── Config ────────────────────────────────────────────────────────────────
-const SUPABASE_URL = 'https://zkszmclqycfqpupazpcl.supabase.co';
-const SUPABASE_ANON_KEY = 'sb_publishable_RlVvv6BOGDCztWDFDyMU8w_nrwwXsVK';
+const runtimeConfig = window.DASHBOARD_RUNTIME_CONFIG;
+const SUPABASE_URL = runtimeConfig?.supabaseUrl;
+const SUPABASE_ANON_KEY = runtimeConfig?.supabaseAnonKey;
+if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+  const setupMessage = 'Dashboard setup required. Configure SUPABASE_URL or EXPO_PUBLIC_SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY, SUPABASE_ANON_KEY, or EXPO_PUBLIC_SUPABASE_ANON_KEY in deployment environment.';
+  console.error(setupMessage);
+  if (document.body) document.body.textContent = setupMessage;
+  throw new Error(setupMessage);
+}
 window.DASHBOARD_SUPABASE_URL = SUPABASE_URL;
 window.DASHBOARD_SUPABASE_ANON_KEY = SUPABASE_ANON_KEY;
 const VERSION_FILTERABLE_TABLES = new Set(['alarm_sessions', 'device_daily_active', 'device_feature_events']);
