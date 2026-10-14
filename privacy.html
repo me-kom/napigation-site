@@ -145,7 +145,7 @@
 
 <div class="container">
   <h1>Privacy Policy</h1>
-  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: June 30, 2026</p>
+  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: October 13, 2026</p>
 
   <h2>1. Introduction</h2>
   <p>Welcome to <strong>Napigation</strong> ("the App", "we", "us"). Your privacy matters to us. This Privacy Policy explains how we collect, use, store, and protect your information.</p>
@@ -161,15 +161,15 @@
   <h3>2.2 Information Collected Automatically</h3>
   <ul>
     <li><strong>Geographic location:</strong> When you activate proximity alerts, the app tracks your location in the background (up to 10 hours per activation, stops on arrival) — <strong>processed locally on your device only, never sent to a server</strong></li>
-    <li><strong>Anonymous usage data:</strong>
+    <li><strong>Usage analytics and alarm diagnostics:</strong>
       <ul>
         <li>Address searches — search text and your approximate location are sent to a geocoding service — <strong>forwarded to third party, not stored by us</strong></li>
         <li>Map point selection (Reverse Geocoding) — exact coordinates of the selected point are sent to a geocoding service — <strong>forwarded to third party, not stored by us</strong></li>
-        <li>In-app actions (analytics — creating a location, activating an alarm, changing settings) — <strong>stored by us (Supabase, anonymous) + forwarded to Amplitude</strong></li>
-        <li>Anonymous identifier created randomly on first install (no name, email, or phone number)</li>
-        <li>Device manufacturer (e.g. Samsung) and Android version — <strong>stored anonymously</strong></li>
-        <li><strong>GPS signal quality:</strong> Accuracy radius in meters (number only) — <strong>no coordinates stored</strong></li>
-        <li><strong>Background tracking stability:</strong> Longest GPS gap duration in seconds (number only) — <strong>no location or coordinates</strong></li>
+        <li>In-app actions (such as creating a location, activating an alarm, and changing settings) may be used for analytics.</li>
+        <li>In app versions that include alarm diagnostics, collection is <strong>enabled by default</strong> and can be turned off in Settings. It uses random pseudonymous installation and run IDs that can link diagnostic records; these data are not fully anonymous and do not include a direct user ID.</li>
+        <li>Diagnostics include app/build/platform and coarse manufacturer/API context; task and geofence results; GPS fix-age, accuracy, and gap buckets; tri-state permission states; battery and power buckets; trigger source and distance-to-radius band; audio attempt, result, and fallback; notification scheduling result; wake-attempt status; whether AppState became active within 30 seconds; and the alarm Modal onShow callback. These are technical observations only: they do not prove Android caused a resume, that an Activity visibly covered another app, or that anyone saw or heard anything.</li>
+        <li>Diagnostics batches are sent only while the app is in the foreground. A bounded local queue may hold pending data for up to 7 days.</li>
+        <li>The diagnostics payload does not include exact coordinates; destination, location, or route identifiers or names; notification contents; direct user IDs; IP addresses or SSIDs; hardware IDs; or raw logs and errors.</li>
       </ul>
     </li>
   </ul>
@@ -191,7 +191,7 @@
   <ul>
     <li><strong>Proximity alerts:</strong> Track your location to alert you when approaching a saved location</li>
     <li><strong>Saving preferences:</strong> Storing locations, routes, and personal settings</li>
-    <li><strong>Service improvement:</strong> Anonymous analytics to improve user experience</li>
+    <li><strong>Service improvement:</strong> Usage analytics and pseudonymous alarm diagnostics to improve reliability</li>
     <li><strong>Technical support:</strong> Debugging and issue resolution</li>
   </ul>
 
@@ -200,13 +200,13 @@
   <h3>4.1 Where Data Is Stored</h3>
   <ul>
     <li><strong>Local (on your device):</strong> All locations, routes, and personal settings — stored <strong>exclusively</strong> on your device</li>
-    <li><strong>Cloud (Supabase) — anonymous data only:</strong> Aggregate action counts; anonymous alarm session data; numeric quality metrics; device manufacturer, Android version, app version — no personally identifiable information; optional user feedback with no identity link</li>
+    <li><strong>Cloud (Supabase):</strong> Aggregate action counts and pseudonymous, session-linked alarm diagnostics. Random installation/run IDs can link diagnostic records, so these diagnostics are not fully anonymous. They do not contain a direct user ID or the excluded data listed above.</li>
   </ul>
 
   <h3>4.2 Security Measures</h3>
   <ul>
     <li><strong>Encryption:</strong> All server communication is encrypted (SSL/TLS)</li>
-    <li><strong>Anonymization:</strong> Analytics use a randomly generated anonymous identifier</li>
+    <li><strong>Pseudonymous diagnostics:</strong> Alarm diagnostics use random IDs and can be linked by installation/run; they are not fully anonymous and do not include a direct user ID</li>
     <li><strong>No cloud location storage:</strong> Personal location data never leaves your device</li>
     <li><strong>No data selling:</strong> We will never sell your personal data</li>
   </ul>
@@ -219,7 +219,7 @@
     <li><strong>Google Maps Platform:</strong> Geocoding fallback — subject to <a href="https://policies.google.com/privacy">Google's Privacy Policy</a></li>
     <li><strong>Amplitude:</strong> Anonymous analytics and crash reporting (no identifying data)</li>
     <li><strong>RevenueCat:</strong> Subscription management. Purchases processed by Google Play</li>
-    <li><strong>Supabase:</strong> Cloud infrastructure for anonymous analytics</li>
+    <li><strong>Supabase:</strong> Cloud infrastructure for analytics and pseudonymous, session-linked alarm diagnostics</li>
     <li><strong>Expo / EAS:</strong> App distribution infrastructure</li>
   </ul>
 
@@ -234,14 +234,17 @@
   <ul>
     <li><strong>View:</strong> See all your data through the app</li>
     <li><strong>Edit and delete:</strong> Edit or delete locations and routes at any time</li>
-    <li><strong>Delete all data:</strong> Settings → Delete all data</li>
+    <li><strong>Alarm diagnostics:</strong> You can turn collection off and request deletion of cloud diagnostics in the app's Settings. Opt-out takes effect on the device immediately; cloud deletion is retried when the app is online.</li>
+    <li><strong>Delete local data:</strong> Settings → Delete all data</li>
     <li><strong>Contact us:</strong> <a href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a></li>
   </ul>
 
   <h2>7. Data Retention</h2>
   <ul>
-    <li><strong>User data (local):</strong> As long as the app is installed. Uninstalling the app deletes all data</li>
-    <li><strong>Anonymous analytics (cloud):</strong> Retained for product improvement purposes (fully anonymous)</li>
+    <li><strong>Alarm diagnostic runs and checkpoints (cloud):</strong> Retained for up to 30 days.</li>
+    <li><strong>Pending diagnostic batches (local):</strong> Held in a bounded queue for up to 7 days.</li>
+    <li><strong>Revoked-capability marker:</strong> A minimal tombstone may be retained for up to 90 days. V1 does not retain a separate persistent 90-day diagnostics aggregate.</li>
+    <li><strong>Local user data:</strong> Stored on your device. Uninstalling removes local app data, but does not guarantee deletion of diagnostics already uploaded to the cloud. Use the in-app Settings controls to opt out and request deletion.</li>
   </ul>
 
   <h2>8. Children's Privacy</h2>
@@ -262,7 +265,7 @@
   <p>This policy is governed by the laws of the State of Israel.</p>
 
   <footer>
-    <p>Version 1.5 &nbsp;·&nbsp; Updated: June 30, 2026 &nbsp;·&nbsp; Napigation</p>
+    <p>Version 1.6 &nbsp;·&nbsp; Updated: October 14, 2026 &nbsp;·&nbsp; Napigation</p>
   </footer>
 </div>
 
