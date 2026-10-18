@@ -49,7 +49,7 @@ async function loadAlarmSessions(sb, since30) {
 
     counts[key] = (counts[key] || 0) + 1;
     total++;
-    // Success-rate denominator = genuine trips only, excluding neutral noise such as <2m cancels.
+    // Success-rate denominator excludes neutral cancellations within the first five minutes.
     if (isRealTripSession(r)) realTripTotal++;
     if (isTrueSuccessSession(r)) trueSuccessTotal++;
     if (r.outcome === 'triggered') {
@@ -100,8 +100,8 @@ async function loadAlarmSessions(sb, since30) {
   });
 
   // Session-based KPIs — מדויקים יותר מ-feature event counts.
-  // Use the true-success definition: neutral noise is excluded, soft-success is counted as
-  // success, and hard failures remain failures.
+  // Use the true-success definition: neutral cancellations are excluded and only recognized
+  // real-time triggers count as success. Ring-backed cancellations remain unverified.
   setText('kpi-timeout', counts['timeout'] || 0);
   setText('kpi-session-success', pct(trueSuccessTotal || 0, realTripTotal));
 

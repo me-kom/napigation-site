@@ -272,7 +272,7 @@ async function explorerAlarms(sb, since, metric, dim) {
       values: keys.map(k => summarizeTrueSuccess(groups[k].sessions).rate ?? 0),
       metricLabel: 'True Success Rate',
       color: '#10b981',
-      description: `True Success Rate לפי ${DIM_INFO[dim].label} — הצלחה מאומתת בזמן אמת או soft success, מתוך real-trip sessions, מ-${since}`,
+      description: `True Success Rate לפי ${DIM_INFO[dim].label} — צלצול עם מקור real-time מוכר מתוך real-trip sessions; ביטול עד 5 דקות מנוטרל, ביטול מאוחר ללא ראיית ring הוא כשל, וביטול אחרי ring מוכר נשאר לא מאומת בהיעדר מקור סגירה, מ-${since}`,
     };
   }
 }
@@ -694,12 +694,14 @@ async function loadPlatformSuccess(sb, since30) {
 //                  closed as app_killed; those go to their own 'killed' band (outcome UNKNOWN, not a
 //                  confirmed miss and not a confirmed success — the cron-close carries no GPS data).
 //   • killed     = app killed/suspended mid-life then auto-closed by the 24h cron — unknown outcome.
-//   • other      = timeout (10h) or a genuine mid-trip user cancel.
+//   • dismissal_unverified = a recognized real-time ring followed by cancellation, with no
+//                            dismissal-source telemetry to distinguish alarm screen vs list.
+//   • other      = timeout (10h) or a mid-trip user cancel without ring evidence (failure).
 // Denominator = real trips only (isRealTripSession) so toggle noise can't distort the split.
 // RELIABILITY_SILENT_OUTCOMES + isAbandonedStaleSession live in helpers.js (single source of truth).
 function classifyReliability(r) {
   if (isRealtimeTriggered(r)) return 'realtime';
-  if (isSoftSuccessSession(r)) return 'soft_success';
+  if (classifyUserCancelledSession(r) === 'dismissal_unverified') return 'dismissal_unverified';
   if (isLateTriggered(r)) return 'late';
   if (r.outcome === 'triggered') return 'unverified';
   if (isAbandonedStaleSession(r)) return 'killed';     // 24h-cron abandoned/killed — outcome unknown
@@ -714,12 +716,12 @@ async function loadReliabilityBreakdown(sb, since30) {
     return;
   }
 
-  // version → { realtime, soft_success, late, unverified, silent, killed, other, total }
+  // version → { realtime, dismissal_unverified, late, unverified, silent, killed, other, total }
   const byVer = {};
   data.forEach(r => {
     if (!isRealTripSession(r)) return;  // exclude toggle noise from the reliability denominator
     const v = r.app_version || 'unknown';
-    if (!byVer[v]) byVer[v] = { realtime: 0, soft_success: 0, late: 0, unverified: 0, silent: 0, killed: 0, other: 0, total: 0 };
+    if (!byVer[v]) byVer[v] = { realtime: 0, dismissal_unverified: 0, late: 0, unverified: 0, silent: 0, killed: 0, other: 0, total: 0 };
     byVer[v][classifyReliability(r)]++;
     byVer[v].total++;
   });
@@ -737,7 +739,7 @@ async function loadReliabilityBreakdown(sb, since30) {
 
   const CATS = [
     { key: 'realtime', label: 'צלצל בזמן אמת', color: '#10b981' },
-    { key: 'soft_success', label: 'Soft success (בוטל רחוק)', color: '#34d399' },
+    { key: 'dismissal_unverified', label: 'צלצל — מקור הסגירה לא מאומת', color: '#a3a3a3' },
     { key: 'late',     label: 'נתפס מאוחר (רקע קפא)', color: '#f59e0b' },
     { key: 'unverified', label: 'צלצל — מקור לא מאומת', color: '#a3e635' },
     { key: 'silent',   label: 'כשל שקט (מיס)', color: '#ef4444' },

@@ -14,7 +14,7 @@ function pct(a, b) {
 // the attribution race (fixed at source in useLocationMonitor + end_alarm_session, 13.7.2026).
 // Still LATE (real-time path failed): notification_open (user tapped a notification) and
 // eta_fallback (timed safety-net fired because GPS/geofence never triggered).
-// Use this only for the real-time ring-rate metric; True Success also includes soft success.
+// Use this only for the real-time ring-rate metric; True Success uses the same ring evidence.
 const REALTIME_TRIGGER_SOURCES = new Set(['background', 'geofence', 'native_sampling', 'foreground_check']);
 const LATE_TRIGGER_SOURCES = new Set(['notification_open', 'eta_fallback']);
 function classifyTriggerSource(r) {
@@ -29,26 +29,14 @@ function isRealtimeTriggered(r) {
 }
 
 // Single source of truth for success-rate filtering.
-// The dashboard must distinguish three buckets instead of treating them as one problem:
-//   • Neutral noise: immediate cancel / already-inside / test behavior -> excluded from both
-//     numerator and denominator.
-//   • Soft success: user cancelled after a real trip started but was still far from the target,
-//     so the system did not fail; it should not count as a failure.
-//   • Hard failure: app_killed with movement evidence, timeout, or manual cancel very close to
-//     the destination -> real defects that must affect the KPI.
-const NEUTRAL_CANCEL_MAX_MIN = 2;
-const SOFT_SUCCESS_MIN_MIN = 2;
+// Cancellations within five minutes are neutral. Later cancellations are failures unless a
+// recognized trigger source proves the alarm rang; without dismissal-source telemetry those
+// ring-backed cancellations remain unverified rather than being called success or failure.
+const NEUTRAL_CANCEL_MAX_MIN = 5;
 function sessionDurationMinutes(r) {
   if (!r || !r.started_at || !r.ended_at) return null;
   const mins = (new Date(r.ended_at) - new Date(r.started_at)) / 60000;
   return Number.isFinite(mins) ? mins : null;
-}
-function isNearArrivalCancel(r) {
-  if (!r || r.outcome !== 'user_cancelled') return false;
-  const dist = Number(r.props?.distance_km);
-  const radius = Number(r.props?.radius_km);
-  if (!Number.isFinite(dist) || !Number.isFinite(radius) || radius <= 0) return false;
-  return dist <= radius * 2;
 }
 function hasMovementEvidence(r) {
   if (!r) return false;
@@ -73,30 +61,34 @@ function isNeutralNoiseSession(r) {
   if (reason === 'already_inside_radius') return true;
   if (r.outcome === 'user_cancelled' && r.started_at && r.ended_at) {
     const mins = sessionDurationMinutes(r);
-    if (Number.isFinite(mins) && mins < NEUTRAL_CANCEL_MAX_MIN) return true;
+    if (Number.isFinite(mins) && mins <= NEUTRAL_CANCEL_MAX_MIN) return true;
   }
   return false;
 }
+function classifyUserCancelledSession(r) {
+  if (!r || r.outcome !== 'user_cancelled') return null;
+  if (isNeutralNoiseSession(r)) return 'neutral';
+  const triggerSource = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
+  if (REALTIME_TRIGGER_SOURCES.has(triggerSource) || LATE_TRIGGER_SOURCES.has(triggerSource)) {
+    return 'dismissal_unverified';
+  }
+  return 'failure';
+}
 function isSoftSuccessSession(r) {
-  if (!r || r.outcome !== 'user_cancelled') return false;
-  if (isNeutralNoiseSession(r)) return false;
-  const mins = sessionDurationMinutes(r);
-  if (!Number.isFinite(mins) || mins < SOFT_SUCCESS_MIN_MIN) return false;
-  if (isNearArrivalCancel(r)) return false;
-  return true;
+  return false;
 }
 function isHardFailureSession(r) {
   if (!r) return false;
   if (r.outcome === 'timeout') return true;
   if (r.outcome === 'app_killed') return hasMovementEvidence(r);
-  if (r.outcome === 'user_cancelled') return isNearArrivalCancel(r);
+  if (r.outcome === 'user_cancelled') return classifyUserCancelledSession(r) === 'failure';
   return false;
 }
 function isLateTriggered(r) {
   return classifyTriggerSource(r) === 'late';
 }
 function isTrueSuccessSession(r) {
-  return isRealTripSession(r) && (isSoftSuccessSession(r) || isRealtimeTriggered(r));
+  return isRealTripSession(r) && isRealtimeTriggered(r);
 }
 // True when the session is a genuine navigation attempt — use to filter success-rate denominators.
 function isRealTripSession(r) {
@@ -413,6 +405,7 @@ if (typeof module !== 'undefined' && module.exports) {
     classifyTriggerSource,
     isRealtimeTriggered,
     isNeutralNoiseSession,
+    classifyUserCancelledSession,
     isSoftSuccessSession,
     isHardFailureSession,
     isTrueSuccessSession,

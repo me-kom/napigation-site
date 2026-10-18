@@ -70,9 +70,9 @@
   <h2>📘 מילון מושגים לדשבורד</h2>
   <div class="kpi-row" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;">
     <div class="kpi"><div class="label">Session / real trip</div><div class="value">נסיעת התראה</div><div class="sub">מוציאים neutral noise: ביטול קצר מאוד ו-already_inside_radius.</div></div>
-    <div class="kpi"><div class="label">True Success Rate</div><div class="value">(RT מוכר + soft success) / real trips</div><div class="sub">late catch ו-trigger source חסר, unknown או לא מוכר אינם הצלחה מוכחת.</div></div>
+    <div class="kpi"><div class="label">True Success Rate</div><div class="value">RT מוכר / real trips</div><div class="sub">ביטול עד 5 דקות מנוטרל; ביטול מאוחר ללא ראיית ring הוא כשל; סגירה אחרי ring מוכר ללא מקור סגירה נשארת לא מאומתת.</div></div>
     <div class="kpi"><div class="label">real-time ring rate</div><div class="value">RT מוכר / real trips</div><div class="sub">מדד צלצול טכני, נפרד מ-True Success; אינו מוכיח מיקום או תזמון נכונים.</div></div>
-    <div class="kpi"><div class="label">Soft success</div><div class="value">ביטול תקף רחוק מהיעד</div><div class="sub">נספר כהצלחה אך לא כצלצול real-time.</div></div>
+    <div class="kpi"><div class="label">סגירה אחרי ring</div><div class="value">מקור סגירה לא מאומת</div><div class="sub">הנתונים אינם מבדילים בין מסך ההתראה, notification ורשימת היעדים.</div></div>
     <div class="kpi"><div class="label">Trigger rate</div><div class="value">triggered / כל sessions</div><div class="sub">ספירת trigger גולמית, לא מדד הצלחה.</div></div>
     <div class="kpi"><div class="label">Device reach</div><div class="value">מכשירים עם צלצול / מכשירים</div><div class="sub">יחידת הניתוח היא מכשיר, לא session.</div></div>
   </div>
@@ -114,7 +114,7 @@
         <div class="kpi"><div class="label">הופעלו</div><div class="value" id="kpi-enabled">—</div><div class="sub" id="kpi-enabled-scope"></div></div>
         <div class="kpi"><div class="label">צלצלו (sessions)</div><div class="value" id="kpi-triggered">—</div></div>
         <div class="kpi"><div class="label">Trigger rate</div><div class="value" id="kpi-success-rate">—</div><div class="sub">triggered / כל ה-sessions; אינו שיעור הצלחה</div></div>
-        <div class="kpi highlight"><div class="label">✅ True Success Rate</div><div class="value" id="kpi-session-success">—</div><div class="sub">נסיעות אמיתיות · ללא רעש + soft success</div></div>
+        <div class="kpi highlight"><div class="label">✅ True Success Rate</div><div class="value" id="kpi-session-success">—</div><div class="sub">צלצולים עם מקור real-time מוכר · ללא ביטולי 5 הדקות הראשונות</div></div>
       </div>
     </div>
 
@@ -165,7 +165,7 @@
     </div>
     <div class="card wide">
       <h2>📈 True Success Rate — מגמה יומית (30 יום)</h2>
-      <p class="chart-desc">(מקור real-time מוכר + soft success) מתוך <strong>real-trip sessions</strong>; late catch ומקור לא מאומת אינם הצלחה. זהו proxy תפעולי ואינו מוכיח מיקום או תזמון נכון. עמודות = נתון יומי · קו = ממוצע נע משוקלל של עד 7 ימים עם נתונים.</p>
+      <p class="chart-desc">מקור real-time מוכר מתוך <strong>real-trip sessions</strong>; ביטול עד 5 דקות מנוטרל, ביטול מאוחר ללא ראיית ring הוא כשל, וסגירה אחרי ring מוכר נשארת לא מאומתת כי מקור הסגירה אינו נאסף. זהו proxy תפעולי ואינו מוכיח מיקום או תזמון נכון. עמודות = נתון יומי · קו = ממוצע נע משוקלל של עד 7 ימים עם נתונים.</p>
       <canvas id="chart-success-trend" height="80"></canvas>
     </div>
     <div class="card wide">
@@ -230,7 +230,7 @@
 
     <div class="card wide">
       <h2>📱 True Success ו-real-time ring rate לפי יצרן</h2>
-      <p class="chart-desc">השוואת True Success Rate ושיעור צלצול בזמן אמת מתוך real-trip sessions לפי יצרן. פער ביניהם מצביע על צלצולים מאוחרים, ביטולי soft success או מקורות לא מאומתים.</p>
+      <p class="chart-desc">השוואת True Success Rate ושיעור צלצול בזמן אמת מתוך real-trip sessions לפי יצרן. ביטולים אחרי ring מוכר עם מקור סגירה חסר מוצגים כלא מאומתים, לא כהצלחה.</p>
       <canvas id="chart-mfr-success" height="120"></canvas>
     </div>
 
@@ -700,7 +700,7 @@
 
     <div class="card wide">
       <h2>📊 פירוק תוצאות לפי גרסה (% מכל ה-sessions)</h2>
-      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100% מה-real-trip sessions, כולל soft success ומקור trigger לא מאומת.</p>
+      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100% מה-real-trip sessions, כולל סגירות ring שמקורן לא מאומת, late catch ומקור trigger לא מאומת.</p>
       <canvas id="chart-version-breakdown" height="120"></canvas>
     </div>
 
@@ -730,7 +730,7 @@
   <div class="grid">
     <div class="card wide">
       <h2>✅ True Success ו-real-time ring rate לפי יום בשבוע</h2>
-      <p class="chart-desc">שני השיעורים משתמשים ב-real-trip sessions כמכנה; True Success כולל soft success, ו-real-time ring rate כולל רק מקור RT מוכר.</p>
+      <p class="chart-desc">שני השיעורים משתמשים ב-real-trip sessions כמכנה; True Success כולל רק מקור RT מוכר, ו-real-time ring rate מודד את אותו צלצול טכני.</p>
       <div id="weekday-success-kpis" class="kpi-row" style="margin-bottom:16px"></div>
       <canvas id="chart-weekday-success" height="80"></canvas>
     </div>

@@ -546,6 +546,7 @@ async function loadFeatureEvents(sb, since30) {
       const realTripSessions = sessData.filter(isRealTripSession);
       const trueSuccessSummary = summarizeTrueSuccess(realTripSessions);
       const ringSummary = summarizeRealtimeRingRate(realTripSessions);
+      const dismissalUnverified = realTripSessions.filter(r => classifyUserCancelledSession(r) === 'dismissal_unverified').length;
       // Real-time certain success = rang automatically without the user having to act.
       //   background = GPS proximity loop · geofence = native OS geofence safety-net (both ring live) ·
       //   native_sampling = native dynamic GPS sampling · foreground_check = background rang +
@@ -563,7 +564,7 @@ async function loadFeatureEvents(sb, since30) {
       //   the user tapped a notification (notification_open) or the timed ETA fallback fired.
       const lateCatch = realTripSessions.filter(isLateTriggered).length;
       const silentCertain = realTripSessions.filter(r => ['app_killed', 'stale_tracking', 'open_stale'].includes(r.outcome)).length;
-      const unclassified = Math.max(0, trueSuccessSummary.realTrips - trueSuccessSummary.successes - lateCatch - trigUnknown - silentCertain);
+      const unclassified = Math.max(0, trueSuccessSummary.realTrips - trueSuccessSummary.successes - lateCatch - trigUnknown - silentCertain - dismissalUnverified);
 
       const certainSuccessRate = ringSummary.rate || 0;
       const lateRate = trueSuccessSummary.realTrips ? Math.round((lateCatch / trueSuccessSummary.realTrips) * 100) : 0;
@@ -590,6 +591,7 @@ async function loadFeatureEvents(sb, since30) {
         ${fRow('📡 real-time ring rate', realtimeCertain, trueSuccessSummary.realTrips, '#38bdf8')}
         ${fRow('🟡 Late catch', lateCatch, trueSuccessSummary.realTrips, '#eab308')}
         ${fRow('❓ Trigger source לא מאומת', trigUnknown, trueSuccessSummary.realTrips, '#a3e635')}
+        ${fRow('⏳ צלצל — מקור הסגירה לא מאומת', dismissalUnverified, trueSuccessSummary.realTrips, '#a3a3a3')}
         ${fRow('🔴 כשל שקט ודאי', silentCertain, trueSuccessSummary.realTrips, '#ef4444')}
         ${fRow('⚪ אחר', unclassified, trueSuccessSummary.realTrips, '#64748b')}
         <div style="margin-top:12px;font-size:0.82rem">
