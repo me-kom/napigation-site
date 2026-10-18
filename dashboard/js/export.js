@@ -226,6 +226,9 @@ function getExplorerQuerySummary() {
   const metric = document.getElementById('exp-metric')?.value || 'alarm_count';
   const dim = document.getElementById('exp-dim')?.value || 'dow';
   const period = document.getElementById('exp-period')?.value || '30';
+  const factor = document.getElementById('impact-factor')?.value || 'version';
+  const weights = ['realtime', 'soft', 'late', 'failure', 'unverified']
+    .map(key => `${key}=${document.getElementById(`weight-${key}`)?.value ?? '—'}`).join(', ');
   let source = 'feature_events';
   if (metric === 'alarm_count' || metric === 'alarm_success') source = 'dashboard_alarm_sessions_read';
   else if (metric === 'dau' || metric === 'new_users') source = 'device_daily_active';
@@ -236,6 +239,8 @@ function getExplorerQuerySummary() {
     `Metric: ${metric}`,
     `Dimension: ${dim}`,
     `Period days: ${period}`,
+    `Impact factor: ${factor} (${document.getElementById('impact-period')?.value || '30'} days)`,
+    `Weighted score points: ${weights} (${document.getElementById('score-period')?.value || '30'} days)`,
     `Primary source: ${source}`,
     'Filters: גרסה/מדינה/תאריך דרך createScopedClient, מערכת דרך FILTERED_DEVICE_IDS כאשר המקור פר-מכשיר',
     '```'
@@ -246,6 +251,9 @@ function getExplorerQuerySummaryForLLM() {
   const metric = document.getElementById('exp-metric')?.value || 'alarm_count';
   const dim = document.getElementById('exp-dim')?.value || 'dow';
   const period = document.getElementById('exp-period')?.value || '30';
+  const factor = document.getElementById('impact-factor')?.value || 'version';
+  const weights = ['realtime', 'soft', 'late', 'failure', 'unverified']
+    .map(key => `${key}=${document.getElementById(`weight-${key}`)?.value ?? '—'}`).join(', ');
   let source = 'feature_events';
   if (metric === 'alarm_count' || metric === 'alarm_success') source = 'dashboard_alarm_sessions_read';
   else if (metric === 'dau' || metric === 'new_users') source = 'device_daily_active';
@@ -257,6 +265,8 @@ function getExplorerQuerySummaryForLLM() {
     `- Dimension key: ${dim}`,
     `- Dimension label: ${document.getElementById('exp-dim')?.selectedOptions?.[0]?.textContent || '—'}`,
     `- Period days: ${period}`,
+    `- Impact factor: ${factor} (${document.getElementById('impact-period')?.value || '30'} days)`,
+    `- Weighted score points: ${weights} (${document.getElementById('score-period')?.value || '30'} days)`,
     `- Primary source: ${source}`,
     '- Filters: גרסה/מדינה/תאריך דרך createScopedClient, מערכת דרך FILTERED_DEVICE_IDS כאשר המקור פר-מכשיר',
   ].join('\n');
@@ -301,10 +311,19 @@ function getExplorerResult(tab) {
     `מדד: ${document.getElementById('exp-metric')?.selectedOptions?.[0]?.textContent || '—'}`,
     `פילוח: ${document.getElementById('exp-dim')?.selectedOptions?.[0]?.textContent || '—'}`,
     `תקופה: ${document.getElementById('exp-period')?.selectedOptions?.[0]?.textContent || '—'}`,
+    `גורם להשוואה: ${document.getElementById('impact-factor')?.selectedOptions?.[0]?.textContent || '—'} · ${document.getElementById('impact-period')?.selectedOptions?.[0]?.textContent || '—'}`,
+    `משקולות ציון: ${['realtime', 'soft', 'late', 'failure', 'unverified'].map(key => `${key}=${document.getElementById(`weight-${key}`)?.value ?? '—'}`).join(', ')} · ${document.getElementById('score-period')?.selectedOptions?.[0]?.textContent || '—'}`,
   ].join('\n');
   const blocks = ['### בחירה נוכחית', selections];
   if (desc) blocks.push('### הסבר גרף', desc);
   blocks.push('### תוצאה', chart || empty || 'אין תוצאה זמינה כרגע.');
+  const impact = normalizeExportText(document.getElementById('impact-summary')?.textContent || '');
+  const impactTable = normalizeExportText(document.getElementById('impact-table-wrap')?.textContent || '');
+  if (impact || impactTable) blocks.push(['### השוואת גורמים', impact, impactTable].filter(Boolean).join('\n\n'));
+  const score = normalizeExportText(document.getElementById('weighted-score-summary')?.textContent || '');
+  const scoreValue = normalizeExportText(document.getElementById('weighted-score-value')?.textContent || '');
+  const scoreTable = normalizeExportText(document.getElementById('weighted-table-wrap')?.textContent || '');
+  if (score || scoreTable) blocks.push(['### ציון משוקלל', scoreValue, score, scoreTable].filter(Boolean).join('\n\n'));
   return blocks.join('\n\n');
 }
 
@@ -316,10 +335,19 @@ function getExplorerResultForLLM() {
     `- Metric: ${document.getElementById('exp-metric')?.selectedOptions?.[0]?.textContent || '—'}`,
     `- Dimension: ${document.getElementById('exp-dim')?.selectedOptions?.[0]?.textContent || '—'}`,
     `- Period: ${document.getElementById('exp-period')?.selectedOptions?.[0]?.textContent || '—'}`,
+    `- Impact factor: ${document.getElementById('impact-factor')?.selectedOptions?.[0]?.textContent || '—'} (${document.getElementById('impact-period')?.selectedOptions?.[0]?.textContent || '—'})`,
+    `- Weighted score values: ${['realtime', 'soft', 'late', 'failure', 'unverified'].map(key => `${key}=${document.getElementById(`weight-${key}`)?.value ?? '—'}`).join(', ')} (${document.getElementById('score-period')?.selectedOptions?.[0]?.textContent || '—'})`,
   ].join('\n');
   const blocks = ['### Current selection', selections];
   if (desc) blocks.push('### Chart explanation', desc);
   blocks.push('### Result', chart || empty || 'No result currently available.');
+  const impact = normalizeExportText(document.getElementById('impact-summary')?.textContent || '');
+  const impactTable = normalizeExportText(document.getElementById('impact-table-wrap')?.textContent || '');
+  if (impact || impactTable) blocks.push(['### Factor comparison', impact, impactTable].filter(Boolean).join('\n\n'));
+  const score = normalizeExportText(document.getElementById('weighted-score-summary')?.textContent || '');
+  const scoreValue = normalizeExportText(document.getElementById('weighted-score-value')?.textContent || '');
+  const scoreTable = normalizeExportText(document.getElementById('weighted-table-wrap')?.textContent || '');
+  if (score || scoreTable) blocks.push(['### Weighted score', scoreValue, score, scoreTable].filter(Boolean).join('\n\n'));
   return blocks.join('\n\n');
 }
 

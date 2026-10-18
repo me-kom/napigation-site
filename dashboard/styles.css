@@ -230,6 +230,46 @@
     }
     .exp-empty { color: #475569; font-size: 0.9rem; text-align: center; }
 
+    .analysis-grid { display: grid; gap: 18px; margin-top: 22px; }
+    .analysis-panel {
+      min-width: 0; padding: 20px; background: #1e2130;
+      border: 1px solid #2d3250; border-radius: 8px;
+    }
+    .analysis-panel h2 { margin-bottom: 8px; color: #cbd5e1; font-size: 1rem; }
+    .analysis-note {
+      margin-bottom: 14px; color: #94a3b8; font-size: 0.78rem; line-height: 1.6;
+      padding: 9px 12px; background: #131722; border-right: 2px solid #14b8a6; border-radius: 4px;
+    }
+    .analysis-controls {
+      display: flex; align-items: flex-end; flex-wrap: wrap; gap: 12px; margin-bottom: 14px;
+    }
+    .analysis-controls .ctrl-group { min-width: 180px; }
+    .analysis-controls-compact .ctrl-group { max-width: 240px; }
+    .analysis-summary {
+      margin: 10px 0 14px; color: #cbd5e1; font-size: 0.82rem; line-height: 1.6;
+    }
+    .analysis-chart-wrap { min-height: 0; margin: 12px 0; }
+    .analysis-table-wrap { width: 100%; overflow-x: auto; }
+    .analysis-table { min-width: 680px; }
+    .analysis-table th, .analysis-table td { vertical-align: top; white-space: nowrap; }
+    .table-muted { color: #64748b; font-size: 0.75rem; }
+    .small-sample { color: #fbbf24; }
+    .weight-controls {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 8px 16px; padding: 12px 0; border-top: 1px solid #2d3250; border-bottom: 1px solid #2d3250;
+    }
+    .weight-control {
+      display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 4px 8px;
+      color: #cbd5e1; font-size: 0.76rem;
+    }
+    .weight-control output { color: #5eead4; font-variant-numeric: tabular-nums; }
+    .weight-control input { grid-column: 1 / -1; width: 100%; accent-color: #14b8a6; }
+    .weighted-score-line {
+      display: flex; align-items: baseline; flex-wrap: wrap; gap: 10px; margin: 14px 0;
+      color: #94a3b8; font-size: 0.8rem;
+    }
+    .weighted-score-line strong { color: #5eead4; font-size: 1.6rem; font-variant-numeric: tabular-nums; }
+
     /* ── Revenue error banner ─────────────────────────────────────────── */
     #revenue-error {
       display: none; color: #f59e0b; font-size: 0.82rem; margin-bottom: 20px;
@@ -253,4 +293,7 @@
       .card.wide {
         grid-column: span 1;
       }
+      .analysis-panel { padding: 14px; }
+      .analysis-controls .ctrl-group { min-width: min(100%, 180px); }
+      .weight-controls { grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); }
     }

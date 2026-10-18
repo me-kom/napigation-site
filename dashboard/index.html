@@ -652,6 +652,66 @@
     <canvas id="chart-explorer" style="display:none;width:100%"></canvas>
   </div>
 
+  <div class="analysis-grid">
+    <section class="analysis-panel" aria-labelledby="impact-title">
+      <h2 id="impact-title">בדיקת קשר לגורמי הצלחה</h2>
+      <p class="analysis-note">השוואה תצפיתית של True Success בין קבוצות. ההפרש אינו מוכיח סיבתיות ואינו מתקן ערבוב בין גרסה, מדינה או סוג שימוש. בהשוואת גרסאות או מדינות, השאר את המסנן העליון על "הכל".</p>
+      <div class="analysis-controls">
+        <div class="ctrl-group">
+          <label for="impact-factor">גורם להשוואה</label>
+          <select id="impact-factor">
+            <option value="version">גרסת אפליקציה</option>
+            <option value="country">מדינה</option>
+            <option value="route">מסלול או יעד יחיד</option>
+            <option value="first_alarm">התראה ראשונה או חוזרת</option>
+          </select>
+        </div>
+        <div class="ctrl-group">
+          <label for="impact-period">תקופה</label>
+          <select id="impact-period">
+            <option value="7">7 ימים</option>
+            <option value="30" selected>30 ימים</option>
+            <option value="90">90 ימים</option>
+            <option value="365">שנה</option>
+            <option value="9999">כל הזמן</option>
+          </select>
+        </div>
+        <button class="run-btn" id="impact-run-btn" type="button" onclick="runExplorerImpact()">השווה קבוצות</button>
+      </div>
+      <div class="analysis-summary" id="impact-summary" aria-live="polite">בחר גורם ותקופה כדי להשוות שיעורי הצלחה.</div>
+      <div class="analysis-chart-wrap"><canvas id="chart-impact" style="display:none;width:100%" aria-label="True Success לפי קבוצת השוואה"></canvas></div>
+      <div class="analysis-table-wrap" id="impact-table-wrap"></div>
+    </section>
+
+    <section class="analysis-panel" aria-labelledby="weighted-title">
+      <h2 id="weighted-title">ציון איכות התראה משוקלל</h2>
+      <p class="analysis-note">ציון 0–100 לפי ערכי הניקוד שתבחר. ברירות המחדל הן מדיניות מפורשת, לא משקולות שנלמדו מהנתונים. רעש ניטרלי וסשנים שעדיין פתוחים אינם במכנה; תוצאה לא מאומתת אינה מסווגת ככשל מוכח.</p>
+      <div class="analysis-controls analysis-controls-compact">
+        <div class="ctrl-group">
+          <label for="score-period">תקופה</label>
+          <select id="score-period">
+            <option value="7">7 ימים</option>
+            <option value="30" selected>30 ימים</option>
+            <option value="90">90 ימים</option>
+            <option value="365">שנה</option>
+            <option value="9999">כל הזמן</option>
+          </select>
+        </div>
+        <button class="run-btn" id="score-run-btn" type="button" onclick="runWeightedScore()">חשב ציון</button>
+      </div>
+      <div class="weight-controls" aria-label="ערכי ניקוד לרכיבי הציון">
+        <label class="weight-control" for="weight-realtime"><span>צלצול בזמן אמת</span><output id="weight-value-realtime">100</output><input id="weight-realtime" type="range" min="0" max="100" step="5" value="100" oninput="updateWeightedScoreView()"></label>
+        <label class="weight-control" for="weight-soft"><span>Soft success</span><output id="weight-value-soft">70</output><input id="weight-soft" type="range" min="0" max="100" step="5" value="70" oninput="updateWeightedScoreView()"></label>
+        <label class="weight-control" for="weight-late"><span>צלצול מאוחר</span><output id="weight-value-late">25</output><input id="weight-late" type="range" min="0" max="100" step="5" value="25" oninput="updateWeightedScoreView()"></label>
+        <label class="weight-control" for="weight-failure"><span>כשל מוכח</span><output id="weight-value-failure">0</output><input id="weight-failure" type="range" min="0" max="100" step="5" value="0" oninput="updateWeightedScoreView()"></label>
+        <label class="weight-control" for="weight-unverified"><span>תוצאה לא מאומתת</span><output id="weight-value-unverified">0</output><input id="weight-unverified" type="range" min="0" max="100" step="5" value="0" oninput="updateWeightedScoreView()"></label>
+      </div>
+      <div class="weighted-score-line"><strong id="weighted-score-value">—</strong><span id="weighted-score-summary">חשב ציון כדי לראות את פירוק הרכיבים.</span></div>
+      <div class="analysis-chart-wrap"><canvas id="chart-weighted-score" style="display:none;width:100%" aria-label="תרומת רכיבים לציון המשוקלל"></canvas></div>
+      <div class="analysis-table-wrap" id="weighted-table-wrap"></div>
+    </section>
+  </div>
+
 </div>
 
 <!-- ══════════════════════════════════════════════════════════════════════
