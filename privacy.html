@@ -145,7 +145,7 @@
 
 <div class="container">
   <h1>Privacy Policy</h1>
-  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: October 15, 2026</p>
+  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: October 20, 2026</p>
 
   <h2>1. Introduction</h2>
   <p>Welcome to <strong>Napigation</strong> ("the App", "we", "us"). Your privacy matters to us. This Privacy Policy explains how we collect, use, store, and protect your information.</p>
@@ -155,22 +155,19 @@
   <h3>2.1 Information You Provide</h3>
   <ul>
     <li><strong>Saved locations:</strong> Names, descriptions, addresses, coordinates, and radii of locations you choose to save — <strong>on your device only</strong></li>
-    <li><strong>Routes:</strong> Journey route data you create — <strong>on your device only</strong></li>
+    <li><strong>Routes:</strong> Saved route details and route paths you create — <strong>on your device only</strong>. Alarm records may include a technical route reference and route progress, but not the destination details or route path (see section 2.2).</li>
   </ul>
 
   <h3>2.2 Information Collected Automatically</h3>
   <ul>
     <li><strong>Geographic location:</strong> When you activate proximity alerts, GPS is processed on your device for up to 10 hours or until arrival. We do not store raw GPS coordinates on our servers. Address searches send a rounded approximate region to geocoding providers; reverse geocoding may send the exact coordinates of a map point you select to LocationIQ to return an address. These requests are not stored by Me-Kum.</li>
-    <li><strong>Usage analytics and alarm diagnostics:</strong>
+    <li><strong>Usage analytics and error reporting:</strong>
       <ul>
         <li>Address searches send the search text and a rounded approximate region (about 1.1 km precision) to geocoding providers to rank results. Me-Kum does not store these request coordinates.</li>
         <li>Map point selection (reverse geocoding) sends the selected point's exact coordinates to LocationIQ to return an address. Me-Kum does not store these request coordinates.</li>
-        <li>In-app actions (such as creating a location, activating an alarm, and changing settings) may be used for product analytics. Amplitude events use a random per-install identifier; they do not use your name or contact details, and address-search tracking omits the search text and selected address.</li>
-        <li>In app versions that include alarm diagnostics, collection is <strong>enabled by default</strong> and can be turned off in Settings. It uses random pseudonymous installation and run IDs that can link diagnostic records; these data are not fully anonymous and do not include a direct user ID.</li>
-        <li>Error and trace reporting is sent to Sentry with a stable per-install identifier. Sentry is configured to send default personal data, which may include IP address and device context. Sampled mobile session replay is enabled for 10% of sessions and all sessions with errors. This Sentry data is collected and used solely to diagnose technical errors and troubleshoot app reliability; it is not used for advertising or marketing. It is separate from the Supabase alarm-diagnostics payload below.</li>
-        <li>Diagnostics include app/build/platform and coarse manufacturer/API context; task and geofence results; GPS fix-age, accuracy, and gap buckets; tri-state permission states; battery and power buckets; trigger source and distance-to-radius band; audio attempt, result, and fallback; notification scheduling result; wake-attempt status; whether AppState became active within 30 seconds; and the alarm Modal onShow callback. These are technical observations only: they do not prove Android caused a resume, that an Activity visibly covered another app, or that anyone saw or heard anything.</li>
-        <li>Diagnostics batches are sent only while the app is in the foreground. A bounded local queue may hold pending data for up to 7 days.</li>
-        <li>The Supabase alarm-diagnostics payload does not include exact coordinates; destination, location, or route identifiers or names; notification contents; direct user IDs; IP addresses or SSIDs; hardware IDs; or raw logs and errors. This exclusion applies to that payload, not to Sentry's separate reporting described above.</li>
+        <li>In-app actions (such as creating a location, activating an alarm, and changing settings) may be used for product analytics. Amplitude events use a random per-install identifier; they do not use your name or contact details, and address-search tracking omits the search text and selected address. When an alarm is activated, a technical session record linked to a pseudonymous installation ID is stored in Supabase. It may include the outcome, alarm/route type, a technical route reference and route progress, app version, language/country, subscription status and system permissions, as well as battery, duration, speed, and GPS quality/continuity metrics. The record does not include raw GPS coordinates, destination names/addresses, or the route path.</li>
+        <li>Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
+        <li>Error and trace reports are sent to Sentry with a stable pseudonymous installation ID so recurring technical issues can be analyzed. Default PII collection is disabled. Before reports are sent, request query strings, headers, cookies, and bodies are removed; the reported user IP field is replaced with a placeholder. Sentry may still process network metadata needed to receive a report. Session Replay is captured only for sessions with an error, not ordinary sessions, and text, images, and vector content are configured to be masked. This data is used to diagnose technical issues and improve reliability, not for advertising or marketing.</li>
       </ul>
     </li>
   </ul>
@@ -192,7 +189,7 @@
   <ul>
     <li><strong>Proximity alerts:</strong> Track your location to alert you when approaching a saved location</li>
     <li><strong>Saving preferences:</strong> Storing locations, routes, and personal settings</li>
-    <li><strong>Service improvement:</strong> Usage analytics and pseudonymous alarm diagnostics to improve reliability</li>
+    <li><strong>Service improvement:</strong> Usage analytics and error reports to improve reliability</li>
     <li><strong>Technical support:</strong> Debugging and issue resolution</li>
   </ul>
 
@@ -201,15 +198,15 @@
   <h3>4.1 Where Data Is Stored</h3>
   <ul>
     <li><strong>Local (on your device):</strong> Saved destinations, routes, their coordinates, and personal settings are stored on your device and are not stored on our servers.</li>
-    <li><strong>Cloud (Supabase):</strong> Aggregate action counts and pseudonymous, session-linked alarm diagnostics. Random installation/run IDs can link diagnostic records, so these diagnostics are not fully anonymous. The Supabase diagnostic payload does not contain exact coordinates, saved destination/route content, a direct user ID, or the other excluded data listed above.</li>
-    <li><strong>Sentry:</strong> Receives error/trace reports with a stable per-install identifier, default personal data as described above, and sampled mobile session replays.</li>
+    <li><strong>Cloud (Supabase):</strong> Aggregate action counts, service data, and technical alarm-session records linked to a pseudonymous installation ID, as described in section 2.2. These records do not store raw GPS coordinates, destination names/addresses, or the route path. Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
+    <li><strong>Sentry:</strong> Receives pseudonymous error/trace reports and masked Session Replay only for sessions with an error. Default PII collection is disabled and request query strings, headers, cookies, and bodies are removed before reporting; Sentry may process network metadata needed to receive reports.</li>
   </ul>
 
   <h3>4.2 Security Measures</h3>
   <ul>
     <li><strong>Encryption:</strong> All server communication is encrypted (SSL/TLS)</li>
-    <li><strong>Pseudonymous diagnostics:</strong> Alarm diagnostics use random IDs and can be linked by installation/run; they are not fully anonymous and do not include a direct user ID</li>
-    <li><strong>No server-side storage of saved places or routes:</strong> We do not store raw GPS coordinates, saved destinations, or routes on our servers. Geocoding requests may transmit an approximate search region or selected map-point coordinates to the providers listed above.</li>
+    <li><strong>Pseudonymous identifiers:</strong> Analytics and error reports may use an installation ID that links events from the same installation; they are not fully anonymous.</li>
+    <li><strong>No server-side storage of destination details or route paths:</strong> We do not store raw GPS coordinates, saved destination names/addresses, or route paths on our servers. Alarm records may include a technical route reference and route progress, as described in section 2.2. Geocoding requests may transmit an approximate search region or selected map-point coordinates to the providers listed above.</li>
     <li><strong>No data selling:</strong> We will never sell your personal data</li>
   </ul>
 
@@ -220,16 +217,16 @@
     <li><strong>LocationIQ + OpenStreetMap Nominatim:</strong> Geocoding services</li>
     <li><strong>Google Maps Platform:</strong> Geocoding fallback — subject to <a href="https://policies.google.com/privacy">Google's Privacy Policy</a></li>
     <li><strong>Amplitude:</strong> Product analytics using a random per-install identifier; address-search events omit the search text and selected address</li>
-    <li><strong>Sentry:</strong> Error/trace reporting and sampled mobile session replay; configured to send default personal data and a stable per-install identifier</li>
+    <li><strong>Sentry:</strong> Error/trace reporting with a stable pseudonymous installation ID, plus masked Session Replay only for sessions with an error. Default PII collection is disabled and request query strings, headers, cookies, and bodies are removed before reporting.</li>
     <li><strong>RevenueCat:</strong> Subscription management. Billing is handled by Apple App Store or Google Play, depending on your platform</li>
-    <li><strong>Supabase:</strong> Cloud infrastructure for analytics and pseudonymous, session-linked alarm diagnostics</li>
+    <li><strong>Supabase:</strong> Cloud infrastructure for analytics and server features, including technical alarm-session records linked to a pseudonymous installation ID</li>
     <li><strong>Expo / EAS:</strong> App distribution infrastructure</li>
   </ul>
 
   <h3>5.2 What We Won't Share</h3>
   <ul>
     <li>We will <strong>never sell</strong> your data to third parties</li>
-    <li>We share data with the service providers listed above only to operate app features such as geocoding, analytics, diagnostics, and subscriptions</li>
+    <li>We share data with the service providers listed above to operate app features such as geocoding, analytics, error reporting, and subscriptions</li>
     <li>We will <strong>not send</strong> spam or unsolicited advertisements</li>
   </ul>
 
@@ -237,18 +234,15 @@
   <ul>
     <li><strong>View:</strong> See all your data through the app</li>
     <li><strong>Edit and delete:</strong> Edit or delete locations and routes at any time</li>
-    <li><strong>Alarm diagnostics:</strong> You can turn collection off and request deletion of cloud diagnostics in the app's Settings. Opt-out takes effect on the device immediately; cloud deletion is retried when the app is online.</li>
     <li><strong>Delete local data:</strong> Settings → Delete all data</li>
     <li><strong>Contact us:</strong> <a href="mailto:me.kum.support@gmail.com">me.kum.support@gmail.com</a></li>
   </ul>
 
   <h2>7. Data Retention</h2>
   <ul>
-    <li><strong>Alarm diagnostic runs and checkpoints (cloud):</strong> Retained for up to 30 days.</li>
-    <li><strong>Pending diagnostic batches (local):</strong> Held in a bounded queue for up to 7 days.</li>
-    <li><strong>Revoked-capability marker:</strong> A minimal tombstone may be retained for up to 90 days. V1 does not retain a separate persistent 90-day diagnostics aggregate.</li>
+    <li><strong>Alarm diagnostics:</strong> Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
     <li><strong>Sentry reports and session replays:</strong> Retention is governed by Sentry's service settings and policies.</li>
-    <li><strong>Local user data:</strong> Stored on your device. Uninstalling removes local app data, but does not guarantee deletion of diagnostics already uploaded to the cloud. Use the in-app Settings controls to opt out and request deletion.</li>
+    <li><strong>Local user data:</strong> Stored on your device. Uninstalling removes local app data, but does not guarantee deletion of information already transferred to third-party services.</li>
   </ul>
 
   <h2>8. Children's Privacy</h2>

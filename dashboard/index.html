@@ -671,13 +671,14 @@
   <div class="grid">
     <div class="card wide">
       <h2>טבלת השוואה — כל הגרסאות</h2>
-      <p class="chart-desc">כל שורה = גרסה (חדשה למעלה). העמודות באחוזים מאפשרות השוואה גם כשמספר המשתמשים שונה מאוד. <span class="insight">📐 העמודה <strong>"מנורמל"</strong> מנטרלת את הרכב המכשירים — build קצר שרץ רק על Pixel "ינצח" מלאכותית בעמודה הגולמית, אבל המנורמל משווה לכל יצרן לפי שיעור ההצלחה הבסיסי שלו. ⚠️ = מדגם מוטה (יצרן יחיד או <30 sessions) — הסתמך על המנורמל.</span></p>
+      <p class="chart-desc">כל שורה = גרסה (חדשה למעלה). Sessions ללא outcome נכללים במכנה ונספרים ככישלון; אלה שמתחת ל-12 שעות מוצגים גם בעמודה נפרדת. <span class="insight">📐 הנרמול להרכב יצרנים מוצג רק מ-30 נסיעות להערכה; מדגם קטן או חד-יצרני אינו מאפשר מסקנה יציבה.</span></p>
       <div style="overflow-x:auto">
         <table id="table-version-compare">
           <thead><tr>
             <th>גרסה</th>
             <th>מכשירים</th>
-            <th>Sessions</th>
+            <th>נסיעות להערכה</th>
+            <th>פתוח &lt;12ש (נחשב כשל)</th>
             <th>📡 real-time ring rate</th>
             <th>✅ True Success Rate</th>
             <th>📐 מנורמל</th>
@@ -687,7 +688,7 @@
             <th>👤 בוטל</th>
             <th>Sessions/מכשיר</th>
           </tr></thead>
-          <tbody id="tbody-version-compare"><tr><td colspan="10" class="loading">טוען...</td></tr></tbody>
+          <tbody id="tbody-version-compare"><tr><td colspan="12" class="loading">טוען...</td></tr></tbody>
         </table>
       </div>
     </div>

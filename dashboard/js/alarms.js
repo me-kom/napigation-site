@@ -25,8 +25,7 @@ async function loadAlarmSessions(sb, since30) {
   (data || []).forEach(r => {
     let key = r.outcome || null;
     if (!key) {
-      const ageH = (now - new Date(r.started_at).getTime()) / 3600000;
-      key = ageH < 12 ? 'open_active' : 'open_stale';
+      key = isOpenActiveSession(r, now) ? 'open_active' : 'open_stale';
     }
     if (key === 'user_cancelled' && r.props?.reason === 'already_inside_radius') {
       key = 'already_inside_radius';
@@ -137,8 +136,8 @@ async function loadAlarmSessions(sb, since30) {
     timeout:                    '⏰ פג זמן (10 שע)',
     app_killed_technical:       '💀 app_killed — kill טכני בזמן נסיעה',
     app_killed_abandoned:       '🧟 app_killed — זומבי / נטוש',
-    open_active:                '🔄 פעיל כרגע (פחות מ-12 שע)',
-    open_stale:                 '⚠️ לא נסגר אי פעם (יותר מ-12 שע)',
+    open_active:                '🔴 ללא תוצאה — נספר ככשל (<12 שע)',
+    open_stale:                 '🔴 ללא תוצאה — נספר ככשל (12+ שע)',
   };
 
   const tbody = document.getElementById('tbody-sessions');

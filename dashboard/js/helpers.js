@@ -17,6 +17,7 @@ function pct(a, b) {
 // Use this only for the real-time ring-rate metric; True Success uses the same ring evidence.
 const REALTIME_TRIGGER_SOURCES = new Set(['background', 'geofence', 'native_sampling', 'foreground_check']);
 const LATE_TRIGGER_SOURCES = new Set(['notification_open', 'eta_fallback']);
+const OPEN_SESSION_STALE_HOURS = 12;
 function classifyTriggerSource(r) {
   if (!r || r.outcome !== 'triggered') return 'unknown';
   const ts = typeof r.props?.trigger_source === 'string' ? r.props.trigger_source.trim() : '';
@@ -90,12 +91,18 @@ function isLateTriggered(r) {
 function isTrueSuccessSession(r) {
   return isRealTripSession(r) && isRealtimeTriggered(r);
 }
+function isOpenActiveSession(r, nowMs = Date.now()) {
+  if (!r || r.outcome) return false;
+  const startedAt = Date.parse(r.started_at);
+  if (!Number.isFinite(startedAt)) return false;
+  return (nowMs - startedAt) / 3600000 < OPEN_SESSION_STALE_HOURS;
+}
 // True when the session is a genuine navigation attempt — use to filter success-rate denominators.
 function isRealTripSession(r) {
   return !!r && !isNeutralNoiseSession(r);
 }
 function summarizeSessionRate(sessions, qualifies) {
-  const realTrips = (sessions || []).filter(isRealTripSession);
+  const realTrips = (sessions || []).filter(r => isRealTripSession(r));
   const successes = realTrips.filter(qualifies).length;
   return {
     successes,
@@ -409,6 +416,7 @@ if (typeof module !== 'undefined' && module.exports) {
     isSoftSuccessSession,
     isHardFailureSession,
     isTrueSuccessSession,
+    isOpenActiveSession,
     isRealTripSession,
     summarizeSessionRate,
     summarizeTrueSuccess,

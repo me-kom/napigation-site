@@ -529,8 +529,7 @@ async function loadFeatureEvents(sb, since30) {
       (sessData || []).forEach(r => {
         let key = r.outcome || null;
         if (!key) {
-          const ageH = (now - new Date(r.started_at).getTime()) / 3600000;
-          key = ageH < 12 ? 'open_active' : 'open_stale';
+          key = isOpenActiveSession(r, now) ? 'open_active' : 'open_stale';
         }
         if (key === 'user_cancelled' && r.props?.reason === 'already_inside_radius') {
           key = 'already_inside_radius';
@@ -543,7 +542,7 @@ async function loadFeatureEvents(sb, since30) {
       });
 
       const totalSessions = sessData.length;
-      const realTripSessions = sessData.filter(isRealTripSession);
+      const realTripSessions = sessData.filter(r => isRealTripSession(r));
       const trueSuccessSummary = summarizeTrueSuccess(realTripSessions);
       const ringSummary = summarizeRealtimeRingRate(realTripSessions);
       const dismissalUnverified = realTripSessions.filter(r => classifyUserCancelledSession(r) === 'dismissal_unverified').length;
@@ -563,8 +562,9 @@ async function loadFeatureEvents(sb, since30) {
       // Late catch = the alarm DID alert, but only after the real-time path failed —
       //   the user tapped a notification (notification_open) or the timed ETA fallback fired.
       const lateCatch = realTripSessions.filter(isLateTriggered).length;
-      const silentCertain = realTripSessions.filter(r => ['app_killed', 'stale_tracking', 'open_stale'].includes(r.outcome)).length;
-      const unclassified = Math.max(0, trueSuccessSummary.realTrips - trueSuccessSummary.successes - lateCatch - trigUnknown - silentCertain - dismissalUnverified);
+      const silentCertain = realTripSessions.filter(r => ['app_killed', 'stale_tracking'].includes(r.outcome)).length;
+      const openNoOutcome = realTripSessions.filter(r => !r.outcome).length;
+      const unclassified = Math.max(0, trueSuccessSummary.realTrips - trueSuccessSummary.successes - lateCatch - trigUnknown - silentCertain - dismissalUnverified - openNoOutcome);
 
       const certainSuccessRate = ringSummary.rate || 0;
       const lateRate = trueSuccessSummary.realTrips ? Math.round((lateCatch / trueSuccessSummary.realTrips) * 100) : 0;
@@ -592,6 +592,7 @@ async function loadFeatureEvents(sb, since30) {
         ${fRow('🟡 Late catch', lateCatch, trueSuccessSummary.realTrips, '#eab308')}
         ${fRow('❓ Trigger source לא מאומת', trigUnknown, trueSuccessSummary.realTrips, '#a3e635')}
         ${fRow('⏳ צלצל — מקור הסגירה לא מאומת', dismissalUnverified, trueSuccessSummary.realTrips, '#a3a3a3')}
+        ${fRow('🔴 ללא outcome — נספר ככשל', openNoOutcome, trueSuccessSummary.realTrips, '#ef4444')}
         ${fRow('🔴 כשל שקט ודאי', silentCertain, trueSuccessSummary.realTrips, '#ef4444')}
         ${fRow('⚪ אחר', unclassified, trueSuccessSummary.realTrips, '#64748b')}
         <div style="margin-top:12px;font-size:0.82rem">
@@ -656,8 +657,7 @@ async function loadVersions(sb, since30) {
 function classifySessionOutcome(r, nowMs) {
   let key = r.outcome || null;
   if (!key) {
-    const ageH = (nowMs - new Date(r.started_at).getTime()) / 3600000;
-    key = ageH < 12 ? 'open_active' : 'open_stale';
+    key = isOpenActiveSession(r, nowMs) ? 'open_active' : 'open_stale';
   }
   if (key === 'user_cancelled' && r.props?.reason === 'already_inside_radius') {
     key = 'already_inside_radius';
@@ -712,7 +712,7 @@ async function loadVersionComparison(sb, since30) {
 
   const tbody = document.getElementById('tbody-version-compare');
   if (sErr) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="11" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
     return;
   }
 
@@ -722,14 +722,15 @@ async function loadVersionComparison(sb, since30) {
   const baseMfr = {}; // שיעור הצלחה בסיס לכל יצרן באוכלוסייה כולה (ליבת הנירמול)
   const byVersion = {};
   const ensure = (v) => byVersion[v] || (byVersion[v] = {
-    total: 0, triggered: 0, late: 0, silent: 0, timeout: 0, cancelled: 0,
+    total: 0, active: 0, triggered: 0, late: 0, silent: 0, timeout: 0, cancelled: 0,
     sessions: [], devices: new Set(), mfrTotals: {}, mfrSet: new Set(),
   });
   (sessions || []).forEach(r => {
-    // Real trips only — exclude toggle noise so every per-version rate matches the headline.
-    if (!isRealTripSession(r)) return;
     const v = r.app_version || 'לא ידוע';
     const b = ensure(v);
+    if (isOpenActiveSession(r, now)) b.active++;
+    // Unresolved sessions stay in the denominator and count as failures.
+    if (!isRealTripSession(r)) return;
     b.total++;
     b.sessions.push(r);
     b.devices.add(r.device_id_anon);
@@ -761,7 +762,7 @@ async function loadVersionComparison(sb, since30) {
   const baseRate = {};
   Object.entries(baseMfr).forEach(([m, s]) => { baseRate[m] = s.total > 0 ? s.triggered / s.total : null; });
   function adjustedSuccess(b) {
-    if (!b.total || crudeRate === null) return null;
+    if (b.total < 30 || crudeRate === null) return null;
     let expected = 0, haveBase = 0;
     Object.entries(b.mfrTotals).forEach(([m, n]) => {
       const br = baseRate[m];
@@ -783,8 +784,8 @@ async function loadVersionComparison(sb, since30) {
   const pctNum = (a, b) => (b > 0 ? Math.round((a / b) * 100) : null);
   const fmtPct = (n) => (n === null ? '—' : n + '%');
 
-  if (!versions.length || versions.every(v => byVersion[v].total === 0 && !devicesByVersion[v])) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="11" style="color:#475569">אין נתונים עדיין</td></tr>';
+  if (!versions.length || versions.every(v => byVersion[v].total === 0 && byVersion[v].active === 0 && !devicesByVersion[v])) {
+    if (tbody) tbody.innerHTML = '<tr><td colspan="12" style="color:#475569">אין נתונים עדיין</td></tr>';
     showEmptyState('chart-version-success', 'אין נתונים עדיין');
     showEmptyState('chart-version-breakdown', 'אין נתונים עדיין');
     showEmptyState('chart-version-silent', 'אין נתונים עדיין');
@@ -806,15 +807,20 @@ async function loadVersionComparison(sb, since30) {
       const adj = adjustedSuccess(b);
       const adjColor = adj === null ? '#64748b' : adj >= 70 ? '#10b981' : adj >= 50 ? '#f59e0b' : '#ef4444';
       const mfrList = Object.entries(b.mfrTotals).sort((a, c) => c[1] - a[1]).map(([m, n]) => `${m}:${n}`).join(' · ');
-      const adjTitle = adj === null ? 'אין מספיק בסיס יצרני לנירמול' : `מנורמל להרכב היצרנים של הגרסה (${mfrList}). מסיר את יתרון/חיסרון המכשירים.`;
+      const adjTitle = b.total < 30
+        ? 'הנרמול מוסתר: נדרשות לפחות 30 נסיעות להערכה; המדגם קטן מדי לאומדן יציב.'
+        : adj === null
+          ? 'אין מספיק בסיס יצרני לנירמול'
+          : `מנורמל להרכב היצרנים של הגרסה (${mfrList}).`;
       const reasons = biasNote(b);
       const warn = reasons.length
-        ? ` <span title="מדגם מוטה — ${reasons.join(' · ')}. ההשוואה הגולמית לא אמינה; הסתמך על העמודה המנורמלת." style="color:#f59e0b;cursor:help">⚠️</span>`
+        ? ` <span title="מדגם לא יציב — ${reasons.join(' · ')}. אין להסיק ממנו על ביצועי הגרסה; הנרמול מוסתר מתחת ל-30 נסיעות." style="color:#f59e0b;cursor:help">⚠️</span>`
         : '';
       return `<tr>
         <td style="font-weight:600;color:#7dd3fc">v${escHtml(v)}${warn}</td>
         <td>${devices.toLocaleString()}</td>
         <td>${b.total.toLocaleString()}</td>
+        <td title="ללא outcome מתחת ל-12 שעות; נכללים במכנה ונספרים ככישלון">${b.active.toLocaleString()}</td>
         <td style="color:${succColor};font-weight:600">${fmtPct(succ)}</td>
         <td>${fmtPct(trueSuccess.rate)}</td>
         <td style="color:${adjColor}" title="${escHtml(adjTitle)}">${adj === null ? '—' : adj + '%'}</td>
