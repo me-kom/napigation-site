@@ -114,15 +114,21 @@
 
       const referralPayload = new URLSearchParams({ src, lang });
       if (code) referralPayload.set('code', code);
-      const finalUrl = `${storeUrl}${storeUrl.includes('?') ? '&' : '?'}${referralPayload.toString()}`;
+      const payloadQuery = referralPayload.toString();
+      const finalUrl = isAndroid
+        ? `${ANDROID_STORE_URL}&referrer=${encodeURIComponent(payloadQuery)}`
+        : `${storeUrl}${storeUrl.includes('?') ? '&' : '?'}${payloadQuery}`;
+      const intentFallback = encodeURIComponent(finalUrl);
+      const androidIntentUrl = `intent://referral?${payloadQuery}#Intent;scheme=mekom;package=com.mekom.app;S.browser_fallback_url=${intentFallback};end`;
+      const destinationUrl = isAndroid ? androidIntentUrl : finalUrl;
 
-      storeLink.href = finalUrl;
-      storeLink.textContent = isAndroid ? 'Open Google Play' : (isiOS ? 'Open App Store' : 'Open store');
+      storeLink.href = destinationUrl;
+      storeLink.textContent = isAndroid ? 'Open app or Google Play' : (isiOS ? 'Open App Store' : 'Open store');
       meta.textContent = `language=${lang} · source=${src}`;
       fallback.textContent = `Device detected: ${isAndroid ? 'Android' : (isiOS ? 'iOS' : 'unknown')} · ${finalUrl}`;
 
       window.setTimeout(() => {
-        window.location.replace(finalUrl);
+        window.location.replace(destinationUrl);
       }, 350);
     </script>
   </body>
