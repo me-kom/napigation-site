@@ -411,6 +411,239 @@ async function explorerFeatureEvent(sb, since, metric, dim) {
   };
 }
 
+const IMPACT_FACTOR_LABELS = {
+  version: 'גרסת אפליקציה',
+  country: 'מדינה',
+  route: 'סוג יעד',
+  first_alarm: 'סוג התראה',
+};
+
+function getCompletedRealTrips(sessions) {
+  return (sessions || []).filter(session => session?.outcome != null && session?.ended_at != null && isRealTripSession(session));
+}
+
+function getImpactGroupKey(session, factor) {
+  if (factor === 'version') return session.app_version || 'לא ידוע';
+  if (factor === 'country') return session.country_code || 'לא ידוע';
+  if (factor === 'route') {
+    if (typeof session.is_route !== 'boolean') return 'לא ידוע';
+    return session.is_route ? 'מסלול' : 'יעד יחיד';
+  }
+  if (factor === 'first_alarm') {
+    if (typeof session.is_first_alarm !== 'boolean') return 'לא ידוע';
+    return session.is_first_alarm ? 'התראה ראשונה' : 'התראה חוזרת';
+  }
+  return 'לא ידוע';
+}
+
+function wilsonInterval(successes, sampleSize) {
+  if (!sampleSize) return null;
+  const zScore = 1.96;
+  const proportion = successes / sampleSize;
+  const denominator = 1 + (zScore * zScore) / sampleSize;
+  const center = (proportion + (zScore * zScore) / (2 * sampleSize)) / denominator;
+  const margin = zScore * Math.sqrt(
+    (proportion * (1 - proportion) / sampleSize) + (zScore * zScore) / (4 * sampleSize * sampleSize)
+  ) / denominator;
+  return { low: center - margin, high: center + margin };
+}
+
+function summarizeImpactGroups(sessions, factor) {
+  const completed = getCompletedRealTrips(sessions);
+  const totalSuccesses = completed.filter(isTrueSuccessSession).length;
+  const groups = new Map();
+
+  completed.forEach(session => {
+    const key = getImpactGroupKey(session, factor);
+    if (!groups.has(key)) groups.set(key, { total: 0, successes: 0 });
+    const group = groups.get(key);
+    group.total += 1;
+    if (isTrueSuccessSession(session)) group.successes += 1;
+  });
+
+  const overallRate = completed.length ? totalSuccesses / completed.length : null;
+  const rows = [...groups.entries()].map(([label, group]) => {
+    const otherTotal = completed.length - group.total;
+    const otherSuccesses = totalSuccesses - group.successes;
+    const rate = group.successes / group.total;
+    const otherRate = otherTotal ? otherSuccesses / otherTotal : null;
+    const difference = otherRate == null ? null : (rate - otherRate) * 100;
+    const groupInterval = wilsonInterval(group.successes, group.total);
+    const otherInterval = wilsonInterval(otherSuccesses, otherTotal);
+    return {
+      label,
+      total: group.total,
+      successes: group.successes,
+      rate: rate * 100,
+      otherTotal,
+      otherRate: otherRate == null ? null : otherRate * 100,
+      difference,
+      ciLow: otherInterval == null ? null : (groupInterval.low - otherInterval.high) * 100,
+      ciHigh: otherInterval == null ? null : (groupInterval.high - otherInterval.low) * 100,
+    };
+  }).sort((a, b) => b.total - a.total || a.label.localeCompare(b.label, 'he'));
+
+  return {
+    rows,
+    total: completed.length,
+    successes: totalSuccesses,
+    overallRate: overallRate == null ? null : overallRate * 100,
+    excluded: (sessions || []).length - completed.length,
+  };
+}
+
+function formatPercent(value) {
+  return value == null ? '—' : `${value.toFixed(1)}%`;
+}
+
+function formatPercentagePoints(value) {
+  if (value == null) return 'אין קבוצת השוואה';
+  return `${value > 0 ? '+' : ''}${value.toFixed(1)} נק׳ אחוז`;
+}
+
+async function runExplorerImpact() {
+  const factor = document.getElementById('impact-factor').value;
+  const period = parseInt(document.getElementById('impact-period').value, 10);
+  const since = period >= 9999 ? DATA_START_DATE : dateNDaysAgo(period);
+  const button = document.getElementById('impact-run-btn');
+  const summary = document.getElementById('impact-summary');
+  const table = document.getElementById('impact-table-wrap');
+  const chart = document.getElementById('chart-impact');
+  button.disabled = true;
+  button.textContent = 'טוען...';
+  table.textContent = '';
+  chart.style.display = 'none';
+
+  try {
+    const { data, error } = await rpcAlarmSessions(getClient(), since + 'T00:00:00Z', 100000);
+    if (error) throw new Error(error.message || 'שגיאת טעינת נתונים');
+    const result = summarizeImpactGroups(data || [], factor);
+    if (!result.total || !result.rows.length) throw new Error('אין סשנים שהסתיימו ושאפשר להשוות בתקופה זו');
+
+    const overall = formatPercent(result.overallRate);
+    summary.textContent = `פילוח לפי ${IMPACT_FACTOR_LABELS[factor]}. True Success כללי: ${overall} מתוך ${result.total.toLocaleString()} נסיעות אמיתיות שהסתיימו. ${result.excluded.toLocaleString()} סשנים פתוחים או רעש ניטרלי לא נכללו. הפרש כל קבוצה מחושב מול יתר הקבוצות; רווח סמך 95% בשיטת Wilson/Newcombe. קשר תצפיתי בלבד.`;
+    table.innerHTML = `<table class="analysis-table"><thead><tr><th>קבוצה</th><th>True Success</th><th>מול יתר הקבוצות</th><th>רווח סמך 95% להפרש</th><th>איכות מדגם</th></tr></thead><tbody>${result.rows.map(row => {
+      const interval = row.ciLow == null ? 'אין קבוצת השוואה' : `${formatPercentagePoints(row.ciLow)} עד ${formatPercentagePoints(row.ciHigh)}`;
+      const sample = row.total < 30 ? 'מדגם קטן (n<30)' : 'n≥30';
+      return `<tr><td>${escHtml(row.label)}</td><td>${formatPercent(row.rate)} <span class="table-muted">(${row.successes}/${row.total})</span></td><td>${formatPercentagePoints(row.difference)} <span class="table-muted">(יתר הקבוצות: ${row.otherTotal})</span></td><td>${interval}</td><td class="${row.total < 30 ? 'small-sample' : ''}">${sample}</td></tr>`;
+    }).join('')}</tbody></table>`;
+    chart.style.display = 'block';
+    renderChart('chart-impact', {
+      type: 'bar',
+      data: {
+        labels: result.rows.map(row => row.label),
+        datasets: [{ label: 'True Success Rate', data: result.rows.map(row => +row.rate.toFixed(1)), backgroundColor: '#14b8a6', borderRadius: 4 }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },
+          y: { position: 'right', min: 0, max: 100, ticks: { color: '#64748b', callback: value => value + '%' }, grid: { color: '#1a1f30' } },
+        },
+      },
+    });
+  } catch (error) {
+    summary.textContent = `לא ניתן לחשב השוואה: ${error.message || 'שגיאה לא ידועה'}`;
+  } finally {
+    button.disabled = false;
+    button.textContent = 'השווה קבוצות';
+  }
+}
+
+const WEIGHTED_SCORE_BUCKETS = [
+  { key: 'realtime', label: 'צלצול בזמן אמת', input: 'weight-realtime', output: 'weight-value-realtime', defaultWeight: 100, qualifies: isRealtimeTriggered },
+  { key: 'soft', label: 'Soft success', input: 'weight-soft', output: 'weight-value-soft', defaultWeight: 70, qualifies: isSoftSuccessSession },
+  { key: 'late', label: 'צלצול מאוחר', input: 'weight-late', output: 'weight-value-late', defaultWeight: 25, qualifies: isLateTriggered },
+  { key: 'failure', label: 'כשל מוכח', input: 'weight-failure', output: 'weight-value-failure', defaultWeight: 0, qualifies: isHardFailureSession },
+  { key: 'unverified', label: 'תוצאה לא מאומתת', input: 'weight-unverified', output: 'weight-value-unverified', defaultWeight: 0, qualifies: null },
+];
+
+let weightedAlarmRows = null;
+
+function calculateWeightedAlarmScore(sessions, weights) {
+  const trips = getCompletedRealTrips(sessions);
+  const counts = Object.fromEntries(WEIGHTED_SCORE_BUCKETS.map(bucket => [bucket.key, 0]));
+  trips.forEach(session => {
+    const bucket = WEIGHTED_SCORE_BUCKETS.find(item => item.qualifies && item.qualifies(session));
+    counts[bucket ? bucket.key : 'unverified'] += 1;
+  });
+  const rows = WEIGHTED_SCORE_BUCKETS.map(bucket => {
+    const weight = Math.max(0, Math.min(100, Number(weights[bucket.key]) || 0));
+    const count = counts[bucket.key];
+    const share = trips.length ? count / trips.length : 0;
+    return { key: bucket.key, label: bucket.label, count, weight, share, contribution: share * weight };
+  });
+  const score = trips.length ? rows.reduce((sum, row) => sum + row.contribution, 0) : null;
+  return { score, total: trips.length, rows, excluded: (sessions || []).length - trips.length };
+}
+
+function getWeightedScoreWeights() {
+  const weights = {};
+  WEIGHTED_SCORE_BUCKETS.forEach(bucket => {
+    const input = document.getElementById(bucket.input);
+    const value = Number(input?.value);
+    weights[bucket.key] = Number.isFinite(value) ? value : bucket.defaultWeight;
+    setText(bucket.output, String(weights[bucket.key]));
+  });
+  return weights;
+}
+
+function updateWeightedScoreView() {
+  const weights = getWeightedScoreWeights();
+  if (!weightedAlarmRows) return;
+  const result = calculateWeightedAlarmScore(weightedAlarmRows, weights);
+  setText('weighted-score-value', result.score == null ? '—' : `${result.score.toFixed(1)}/100`);
+  setText('weighted-score-summary', result.total
+    ? `${result.total.toLocaleString()} נסיעות אמיתיות שהסתיימו · ${result.excluded.toLocaleString()} סשנים פתוחים או רעש ניטרלי לא נכללו`
+    : 'אין נסיעות אמיתיות שהסתיימו בתקופה שנבחרה.');
+  document.getElementById('weighted-table-wrap').innerHTML = result.total
+    ? `<table class="analysis-table"><thead><tr><th>רכיב</th><th>כמות</th><th>משקל נקודות</th><th>תרומה לציון</th></tr></thead><tbody>${result.rows.map(row => `<tr><td>${escHtml(row.label)}</td><td>${row.count.toLocaleString()} <span class="table-muted">(${(row.share * 100).toFixed(1)}%)</span></td><td>${row.weight}</td><td>${row.contribution.toFixed(2)} נק׳</td></tr>`).join('')}</tbody></table>`
+    : '';
+  const chart = document.getElementById('chart-weighted-score');
+  chart.style.display = result.total ? 'block' : 'none';
+  if (result.total) {
+    renderChart('chart-weighted-score', {
+      type: 'bar',
+      data: {
+        labels: result.rows.map(row => row.label),
+        datasets: [{ label: 'תרומה לציון (נקודות)', data: result.rows.map(row => +row.contribution.toFixed(2)), backgroundColor: ['#14b8a6', '#84cc16', '#f59e0b', '#ef4444', '#94a3b8'], borderRadius: 4 }],
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { labels: { color: '#94a3b8' } } },
+        scales: {
+          x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },
+          y: { position: 'right', beginAtZero: true, ticks: { color: '#64748b' }, grid: { color: '#1a1f30' } },
+        },
+      },
+    });
+  }
+}
+
+async function runWeightedScore() {
+  const period = parseInt(document.getElementById('score-period').value, 10);
+  const since = period >= 9999 ? DATA_START_DATE : dateNDaysAgo(period);
+  const button = document.getElementById('score-run-btn');
+  button.disabled = true;
+  button.textContent = 'טוען...';
+  try {
+    const { data, error } = await rpcAlarmSessions(getClient(), since + 'T00:00:00Z', 100000);
+    if (error) throw new Error(error.message || 'שגיאת טעינת נתונים');
+    weightedAlarmRows = data || [];
+    updateWeightedScoreView();
+  } catch (error) {
+    weightedAlarmRows = null;
+    setText('weighted-score-value', '—');
+    setText('weighted-score-summary', `לא ניתן לחשב ציון: ${error.message || 'שגיאה לא ידועה'}`);
+    document.getElementById('weighted-table-wrap').textContent = '';
+    document.getElementById('chart-weighted-score').style.display = 'none';
+  } finally {
+    button.disabled = false;
+    button.textContent = 'חשב ציון';
+  }
+}
+
 // ─── Success Rate Trend ────────────────────────────────────────────────────
 async function loadSuccessRateTrend(sb, since30) {
   const { data, error } = await rpcAlarmSessions(sb, since30 + 'T00:00:00Z', 100000);

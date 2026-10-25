@@ -1,3 +1,4 @@
 - Static dashboard entry points -> index.html, auth.html, auth/index.html
 - Reliability metric classification (True Success, cancellation noise/failure, unresolved sessions counted as failures, and unverified ring dismissal) -> js/helpers.js; charts and breakdowns -> js/alarms.js, js/engagement.js, js/trends.js.
+- Free exploration includes observational alarm-factor comparisons and a configurable weighted alarm-quality score -> js/trends.js; controls/results -> index.html; export summaries -> js/export.js
 - Runtime Supabase public configuration is served by ../api/dashboard-config.js from deployment environment; never add credentials to dashboard source
