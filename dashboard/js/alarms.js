@@ -1,9 +1,9 @@
 // ─── Alarm Sessions ────────────────────────────────────────────────────────
 async function loadAlarmSessions(sb, since30) {
-  const { data, error, excludedCount } = await rpcAlarmSessions(sb, since30 + 'T00:00:00Z', 100000);
+  const { data, error, excludedCount, historyCount } = await rpcAlarmSessions(sb, since30 + 'T00:00:00Z', 100000);
 
   if (error) { console.error('alarm_sessions error:', error); return; }
-  setText('session-exclusion-summary', `הוחרגו ${excludedCount.toLocaleString()} סשנים בחלון השעה הראשונה לכל גרסה (לפי הסינון הנוכחי). הרשומות נשמרו ללא שינוי; אין בכך הוכחה לבוטים.`);
+  setText('session-exclusion-summary', `נטענה היסטוריה מלאה: ${historyCount.toLocaleString()} סשנים (ספירה מאומתת). בסינון הנוכחי: ${data.length.toLocaleString()} נכללו ו־${excludedCount.toLocaleString()} הוחרגו בשעה הראשונה לגרסה. אין בכך הוכחה לבוטים.`);
 
   const counts = {};
   let total = 0;

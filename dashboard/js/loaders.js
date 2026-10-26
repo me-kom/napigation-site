@@ -96,6 +96,12 @@ async function loadAll() {
     ALARM_SESSION_METRICS = null;
     setText('last-updated', 'שגיאת טעינה — נתוני הסשנים אינם זמינים');
     setText('session-exclusion-summary', error.message);
+    setText('version-session-exclusions', 'נתוני ההשוואה אינם זמינים — טעינת ההיסטוריה נכשלה');
+    const versionTable = document.getElementById('tbody-version-compare');
+    if (versionTable) versionTable.innerHTML = '<tr><td colspan="13" class="error">נתוני הסשנים אינם זמינים — יש לרענן</td></tr>';
+    showEmptyState('chart-version-success', 'נתוני הסשנים אינם זמינים');
+    showEmptyState('chart-version-breakdown', 'נתוני הסשנים אינם זמינים');
+    showEmptyState('chart-version-silent', 'נתוני הסשנים אינם זמינים');
     if (typeof setDashboardExportBusy === 'function') setDashboardExportBusy(true);
     throw error;
   } finally {

@@ -779,6 +779,11 @@ async function loadVersionComparison(sb, since30) {
   const versions = Object.keys(byVersion).sort(compareVersions);
   const pctNum = (a, b) => (b > 0 ? Math.round((a / b) * 100) : null);
   const fmtPct = (n) => (n === null ? '—' : n + '%');
+  const evidenceRate = (count, total) => {
+    if (!total) return '—';
+    const rate = count > 0 && count / total < 0.01 ? '&lt;1%' : fmtPct(pctNum(count, total));
+    return `${rate} (${count}/${total})`;
+  };
 
   if (!versions.length || versions.every(v => byVersion[v].total === 0 && byVersion[v].active === 0 && !devicesByVersion[v])) {
     if (tbody) tbody.innerHTML = '<tr><td colspan="13" style="color:#475569">אין נתונים עדיין</td></tr>';
@@ -798,7 +803,7 @@ async function loadVersionComparison(sb, since30) {
       const trueSuccess = summarizeTrueSuccess(b.sessions);
       const succColor = succ === null ? '#64748b' : succ >= 70 ? '#10b981' : succ >= 50 ? '#f59e0b' : '#ef4444';
       const silentPct = pctNum(b.silent, b.total);
-      const silentColor = silentPct === null ? '#64748b' : silentPct >= 18 ? '#ef4444' : silentPct >= 10 ? '#f59e0b' : '#10b981';
+      const silentColor = silentPct === null || (b.silent === 0 && b.unverified > 0) ? '#94a3b8' : silentPct >= 18 ? '#ef4444' : silentPct >= 10 ? '#f59e0b' : '#10b981';
       const perDevice = devices > 0 && b.total > 0 ? (b.total / devices).toFixed(1) : '—';
       const adj = adjustedSuccess(b);
       const adjColor = adj === null ? '#64748b' : adj >= 70 ? '#10b981' : adj >= 50 ? '#f59e0b' : '#ef4444';
@@ -821,8 +826,8 @@ async function loadVersionComparison(sb, since30) {
         <td>${fmtPct(trueSuccess.rate)}</td>
         <td style="color:${adjColor}" title="${escHtml(adjTitle)}">${adj === null ? '—' : adj + '%'}</td>
         <td>${fmtPct(pctNum(b.late, b.total))}</td>
-        <td style="color:${silentColor}">${fmtPct(silentPct)}</td>
-        <td title="כולל sessions פתוחים/מיושנים ללא outcome, מקור צלצול לא ידוע ו-sessions נטושים; לא הוכח בהם כשל צלצול">${fmtPct(pctNum(b.unverified, b.total))}</td>
+        <td style="color:${silentColor}" title="רק מקרים העומדים בכללי עדות לכשל טכני; זה אינו שיעור כל ההחמצות בפועל">${evidenceRate(b.silent, b.total)}${b.unverified > 0 ? '<br><small>השיעור בפועל לא ידוע</small>' : ''}</td>
+        <td title="אין מספיק ראיות לקבוע הצלחה או כשל: ללא outcome, מקור צלצול לא ידוע או app_killed ללא עדות מספקת. נשארים במכנה ההצלחה">${evidenceRate(b.unverified, b.total)}</td>
         <td>${fmtPct(pctNum(b.timeout, b.total))}</td>
         <td>${fmtPct(pctNum(b.cancelled, b.total))}</td>
         <td>${perDevice}</td>
@@ -847,13 +852,14 @@ async function loadVersionComparison(sb, since30) {
   const successData = chartVersions.map(v => summarizeRealtimeRingRate(byVersion[v].sessions).rate);
   const trueSuccessData = chartVersions.map(v => summarizeTrueSuccess(byVersion[v].sessions).rate);
   const adjustedData = chartVersions.map(v => adjustedSuccess(byVersion[v]));
-  const lateData = chartVersions.map(v => pctNum(byVersion[v].late, byVersion[v].total));
-  const silentData = chartVersions.map(v => pctNum(byVersion[v].silent, byVersion[v].total));
-  const unverifiedData = chartVersions.map(v => pctNum(byVersion[v].unverified, byVersion[v].total));
+  const realtimeData = chartVersions.map(v => byVersion[v].triggered / byVersion[v].total * 100);
+  const lateData = chartVersions.map(v => byVersion[v].late / byVersion[v].total * 100);
+  const silentData = chartVersions.map(v => byVersion[v].silent / byVersion[v].total * 100);
+  const unverifiedData = chartVersions.map(v => byVersion[v].unverified / byVersion[v].total * 100);
   const otherData = chartVersions.map(v => {
     const b = byVersion[v];
     const accounted = b.triggered + b.late + b.silent + b.unverified;
-    return pctNum(b.total - accounted, b.total);
+    return (b.total - accounted) / b.total * 100;
   });
 
   renderChart('chart-version-success', {
@@ -909,9 +915,9 @@ async function loadVersionComparison(sb, since30) {
     data: {
       labels,
       datasets: [
-        { label: '📡 real-time ring rate', data: successData, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
+        { label: '📡 real-time ring rate', data: realtimeData, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
         { label: '🟡 צלצל מאוחר', data: lateData, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 2, stack: 's' },
-        { label: '🔴 כשל שקט', data: silentData, backgroundColor: 'rgba(239,68,68,0.82)', borderRadius: 2, stack: 's' },
+        { label: '🔴 כשל שקט — עם ראיות', data: silentData, backgroundColor: 'rgba(239,68,68,0.82)', borderRadius: 2, stack: 's' },
         { label: '❓ לא מאומת', data: unverifiedData, backgroundColor: 'rgba(168,85,247,0.75)', borderRadius: 2, stack: 's' },
         { label: '⚪ אחר (בוטל/פג זמן/וכו)', data: otherData, backgroundColor: 'rgba(100,116,139,0.7)', borderRadius: 2, stack: 's' },
       ]
@@ -933,16 +939,27 @@ async function loadVersionComparison(sb, since30) {
     data: {
       labels,
       datasets: [{
-        label: '% כשל שקט',
+        label: '% כשל שקט — עם ראיות',
         data: silentData,
-        backgroundColor: silentData.map(p => p === null ? '#475569' : p >= 18 ? '#ef4444' : p >= 10 ? '#f59e0b' : '#10b981'),
+        backgroundColor: '#ef4444',
+        borderRadius: 4,
+      }, {
+        label: '% לא מאומת — תוצאה לא ידועה',
+        data: unverifiedData,
+        backgroundColor: '#a855f7',
         borderRadius: 4,
       }]
     },
     options: {
       plugins: {
-        legend: { display: false },
-        tooltip: { callbacks: { label: ctx => ` ${ctx.parsed.y}% כשל שקט (${byVersion[chartVersions[ctx.dataIndex]].silent} sessions)` } }
+        legend: { display: true },
+        tooltip: { callbacks: { label: ctx => {
+          const b = byVersion[chartVersions[ctx.dataIndex]];
+          return [
+            `${b.silent}/${b.total} עם ראיות לכשל שקט`,
+            `${b.unverified}/${b.total} לא מאומתים — אינם הוכחת הצלחה או כשל`,
+          ];
+        } } }
       },
       scales: {
         x: { ticks: { color: '#94a3b8' }, grid: { color: '#1a1f30' } },

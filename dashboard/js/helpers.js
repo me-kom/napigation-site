@@ -289,18 +289,54 @@ function resetAlarmSessionHistory() {
 }
 
 async function loadGlobalAlarmSessionHistory(sb) {
-  const { data, error } = await sb.rpc('dashboard_alarm_sessions_read', {
-    p_since: '-infinity',
-    p_limit: ALARM_HISTORY_RPC_LIMIT,
-    p_app_version: null,
-    p_country_code: null,
-  });
-  if (error || !Array.isArray(data)) throw new Error('Global session history could not be loaded; statistics unavailable.');
-  // Reaching the cap may hide the earliest session and invalidate the release anchor.
-  if (data.length >= ALARM_HISTORY_RPC_LIMIT) {
-    throw new Error('Global session history reached the 200,000-row cap; release anchors may be truncated. Statistics unavailable.');
-  }
-  return { sessions: data, firstSeen: buildVersionFirstSeen(data) };
+  const sessions = [];
+  const seen = new Set();
+  let expectedCount = null;
+  // PostgREST can cap each response below p_limit. Only the exact count proves completion.
+  do {
+    const { data, error, count } = await sb.rpc('dashboard_alarm_sessions_read', {
+      p_since: '-infinity',
+      p_limit: ALARM_HISTORY_RPC_LIMIT,
+      p_app_version: null,
+      p_country_code: null,
+    }, { count: 'exact' })
+      .order('started_at', { ascending: true })
+      .order('device_id_anon', { ascending: true })
+      .order('ended_at', { ascending: true })
+      .order('app_version', { ascending: true })
+      .range(sessions.length, sessions.length + 999);
+    if (error || !Array.isArray(data) || !Number.isSafeInteger(count) || count < 0) {
+      throw new Error('Global session history could not be loaded completely; statistics unavailable.');
+    }
+    if (count >= ALARM_HISTORY_RPC_LIMIT) {
+      throw new Error('Global session history reached the 200,000-row cap; release anchors may be truncated. Statistics unavailable.');
+    }
+    if (expectedCount !== null && count !== expectedCount) {
+      throw new Error('Session history changed during loading; refresh required. Statistics unavailable.');
+    }
+    expectedCount = count;
+    if ((data.length === 0 && sessions.length < count) || sessions.length + data.length > count) {
+      throw new Error('Incomplete session history; statistics unavailable.');
+    }
+    const last = sessions[sessions.length - 1];
+    const first = data[0];
+    if (last && first && ['started_at', 'device_id_anon', 'ended_at', 'app_version']
+      .every(key => last[key] === first[key])) {
+      throw new Error('Ambiguous session page boundary; statistics unavailable.');
+    }
+    for (const row of data) {
+      const identity = JSON.stringify([
+        row.started_at, row.device_id_anon, row.ended_at, row.app_version,
+        row.outcome, row.props, row.is_first_alarm, row.is_route, row.country_code,
+      ]);
+      if (seen.has(identity)) {
+        throw new Error('Duplicate or shifted session history page; refresh required. Statistics unavailable.');
+      }
+      seen.add(identity);
+    }
+    sessions.push(...data);
+  } while (sessions.length < expectedCount);
+  return { sessions, firstSeen: buildVersionFirstSeen(sessions) };
 }
 
 async function rpcAlarmSessions(sb, sinceIso, limit = 100000, scopeOverrides = {}) {
@@ -314,7 +350,7 @@ async function rpcAlarmSessions(sb, sinceIso, limit = 100000, scopeOverrides = {
     (!countryCode || row.country_code === countryCode)
   )), endDate);
   const partition = partitionReleaseSessions(scoped, history.firstSeen);
-  return { data: partition.included, error: null, excludedCount: partition.excludedCount, excluded: partition.excluded };
+  return { data: partition.included, error: null, excludedCount: partition.excludedCount, excluded: partition.excluded, historyCount: history.sessions.length };
 }
 
 async function rpcLocationGrid(sb, sinceDate, limit = 5000) {
