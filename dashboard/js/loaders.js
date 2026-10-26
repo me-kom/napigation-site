@@ -44,6 +44,7 @@ async function loadAll() {
   if (btn) { btn.disabled = true; btn.textContent = '↻ טוען...'; }
   setText('last-updated', `מעדכן... (${getScopeLabel()})`);
   try {
+    resetAlarmSessionHistory();
     const today = new Date().toISOString().slice(0, 10);
     const since30 = sinceDate;
 
@@ -91,9 +92,15 @@ async function loadAll() {
 
     const now = new Date().toLocaleTimeString('he-IL');
     setText('last-updated', `עודכן: ${now} · ${getScopeLabel()}`);
+  } catch (error) {
+    ALARM_SESSION_METRICS = null;
+    setText('last-updated', 'שגיאת טעינה — נתוני הסשנים אינם זמינים');
+    setText('session-exclusion-summary', error.message);
+    if (typeof setDashboardExportBusy === 'function') setDashboardExportBusy(true);
+    throw error;
   } finally {
     if (btn) { btn.disabled = false; btn.textContent = '↻ רענן'; }
-    if (typeof setDashboardExportBusy === 'function') setDashboardExportBusy(false);
+    if (ALARM_SESSION_METRICS && typeof setDashboardExportBusy === 'function') setDashboardExportBusy(false);
   }
 }
 
@@ -278,4 +285,3 @@ async function loadGridHeatmap(sb, since30) {
   map.fitBounds(bounds, { padding: [20, 20], animate: false });
   attachHeatmap('map-grid', map, points);
 }
-

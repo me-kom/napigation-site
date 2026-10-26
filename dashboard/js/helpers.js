@@ -91,6 +91,25 @@ function isLateTriggered(r) {
 function isTrueSuccessSession(r) {
   return isRealTripSession(r) && isRealtimeTriggered(r);
 }
+function classifyVersionOutcome(r) {
+  if (!r || !r.outcome) return 'unverified';
+  if (r.outcome === 'triggered') {
+    const triggerClass = classifyTriggerSource(r);
+    if (triggerClass === 'realtime') return 'realtime';
+    if (triggerClass === 'late') return 'late';
+    return 'unverified';
+  }
+  if (r.outcome === 'app_killed') {
+    return classifyAppKilledSession(r) === 'technical_kill' ? 'silent' : 'unverified';
+  }
+  if (r.outcome === 'stale_tracking') {
+    return isAbandonedStaleSession(r) ? 'unverified' : 'silent';
+  }
+  if (r.outcome === 'open_stale' || r.outcome === 'open') return 'unverified';
+  if (r.outcome === 'timeout') return 'timeout';
+  if (r.outcome === 'user_cancelled') return 'cancelled';
+  return 'other';
+}
 function isOpenActiveSession(r, nowMs = Date.now()) {
   if (!r || r.outcome) return false;
   const startedAt = Date.parse(r.started_at);
@@ -226,23 +245,76 @@ function getDashboardScopeParams() {
   };
 }
 
-async function rpcAlarmSessions(sb, sinceIso, limit = 100000) {
-  const { appVersion, countryCode } = getDashboardScopeParams();
-  const result = await sb.rpc('dashboard_alarm_sessions_read', {
-    p_since: sinceIso,
-    p_limit: limit,
-    p_app_version: appVersion,
-    p_country_code: countryCode,
+const RELEASE_EXCLUSION_MS = 60 * 60 * 1000;
+const ALARM_HISTORY_RPC_LIMIT = 200000;
+let alarmSessionHistoryPromise = null;
+
+function buildVersionFirstSeen(sessions) {
+  const firstSeen = new Map();
+  sessions.forEach(row => {
+    const time = Date.parse(row.started_at);
+    if (!Number.isFinite(time)) throw new Error('Invalid session start time; release anchors unavailable.');
+    const version = typeof row.app_version === 'string' && row.app_version.trim()
+      ? row.app_version
+      : null;
+    if (version === null) return;
+    if (!firstSeen.has(version) || time < firstSeen.get(version)) firstSeen.set(version, time);
   });
-  
-  // RPC supports a start date only; apply the remaining dashboard scope consistently.
-  if (result.data && FILTERED_DEVICE_IDS) {
-    result.data = applyOSFilter(result.data);
+  return firstSeen;
+}
+
+function partitionReleaseSessions(sessions, firstSeen) {
+  const included = [], excluded = [];
+  sessions.forEach(row => {
+    const version = typeof row.app_version === 'string' && row.app_version.trim()
+      ? row.app_version
+      : null;
+    const time = Date.parse(row.started_at);
+    if (version === null) {
+      if (!Number.isFinite(time)) throw new Error('Invalid session start time; session statistics unavailable.');
+      included.push(row);
+      return;
+    }
+    const anchor = firstSeen.get(version);
+    if (anchor == null || !Number.isFinite(time)) {
+      throw new Error('Missing global release anchor; session statistics unavailable.');
+    }
+    (time >= anchor && time < anchor + RELEASE_EXCLUSION_MS ? excluded : included).push(row);
+  });
+  return { included, excluded, excludedCount: excluded.length };
+}
+
+function resetAlarmSessionHistory() {
+  alarmSessionHistoryPromise = null;
+}
+
+async function loadGlobalAlarmSessionHistory(sb) {
+  const { data, error } = await sb.rpc('dashboard_alarm_sessions_read', {
+    p_since: '-infinity',
+    p_limit: ALARM_HISTORY_RPC_LIMIT,
+    p_app_version: null,
+    p_country_code: null,
+  });
+  if (error || !Array.isArray(data)) throw new Error('Global session history could not be loaded; statistics unavailable.');
+  // Reaching the cap may hide the earliest session and invalidate the release anchor.
+  if (data.length >= ALARM_HISTORY_RPC_LIMIT) {
+    throw new Error('Global session history reached the 200,000-row cap; release anchors may be truncated. Statistics unavailable.');
   }
+  return { sessions: data, firstSeen: buildVersionFirstSeen(data) };
+}
+
+async function rpcAlarmSessions(sb, sinceIso, limit = 100000, scopeOverrides = {}) {
+  if (!alarmSessionHistoryPromise) alarmSessionHistoryPromise = loadGlobalAlarmSessionHistory(createBaseClient());
+  const history = await alarmSessionHistoryPromise;
+  const { appVersion, countryCode } = { ...getDashboardScopeParams(), ...scopeOverrides };
   const { endDate } = getDateRange();
-  if (result.data && endDate) result.data = filterSessionsByEndDate(result.data, endDate);
-  
-  return result;
+  const scoped = filterSessionsByEndDate(applyOSFilter(history.sessions.filter(row =>
+    Date.parse(row.started_at) >= Date.parse(sinceIso) &&
+    (!appVersion || row.app_version === appVersion) &&
+    (!countryCode || row.country_code === countryCode)
+  )), endDate);
+  const partition = partitionReleaseSessions(scoped, history.firstSeen);
+  return { data: partition.included, error: null, excludedCount: partition.excludedCount, excluded: partition.excluded };
 }
 
 async function rpcLocationGrid(sb, sinceDate, limit = 5000) {
@@ -416,6 +488,7 @@ if (typeof module !== 'undefined' && module.exports) {
     isSoftSuccessSession,
     isHardFailureSession,
     isTrueSuccessSession,
+    classifyVersionOutcome,
     isOpenActiveSession,
     isRealTripSession,
     summarizeSessionRate,
@@ -426,7 +499,11 @@ if (typeof module !== 'undefined' && module.exports) {
     hasMovementEvidence,
     isAbandonedStaleSession,
     classifyAppKilledSession,
+    buildVersionFirstSeen,
+    partitionReleaseSessions,
+    loadGlobalAlarmSessionHistory,
+    resetAlarmSessionHistory,
+    rpcAlarmSessions,
     sessionDurationMinutes,
   };
 }
-

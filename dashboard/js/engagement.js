@@ -677,13 +677,8 @@ async function loadVersionComparison(sb, since30) {
   const { endDate } = getDateRange();
   const sinceIso = since30 + 'T00:00:00Z';
 
-  const { data: rawSessions, error: sErr } = await baseClient.rpc('dashboard_alarm_sessions_read', {
-    p_since: sinceIso,
-    p_limit: 100000,
-    p_app_version: null,
-    p_country_code: countryCode,
-  });
-  const sessions = filterSessionsByEndDate(applyOSFilter(rawSessions || []), endDate);
+  const { data: sessions, error: sErr, excludedCount } = await rpcAlarmSessions(baseClient, sinceIso, 100000, { appVersion: null });
+  setText('version-session-exclusions', `הוחרגו ${excludedCount.toLocaleString()} סשנים בחלון השעה הראשונה (כל הגרסאות; סינון מדינה/מערכת/תאריך פעיל).`);
 
   // מכשירים פעילים לכל גרסה (הגרסה האחרונה שנראתה לכל מכשיר)
   const { data: deviceRows } = await fetchAllRows(() => {
@@ -712,7 +707,7 @@ async function loadVersionComparison(sb, since30) {
 
   const tbody = document.getElementById('tbody-version-compare');
   if (sErr) {
-    if (tbody) tbody.innerHTML = `<tr><td colspan="12" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
+    if (tbody) tbody.innerHTML = `<tr><td colspan="13" class="error">שגיאה: ${escHtml(sErr.message)}</td></tr>`;
     return;
   }
 
@@ -722,7 +717,7 @@ async function loadVersionComparison(sb, since30) {
   const baseMfr = {}; // שיעור הצלחה בסיס לכל יצרן באוכלוסייה כולה (ליבת הנירמול)
   const byVersion = {};
   const ensure = (v) => byVersion[v] || (byVersion[v] = {
-    total: 0, active: 0, triggered: 0, late: 0, silent: 0, timeout: 0, cancelled: 0,
+    total: 0, active: 0, triggered: 0, late: 0, silent: 0, unverified: 0, timeout: 0, cancelled: 0,
     sessions: [], devices: new Set(), mfrTotals: {}, mfrSet: new Set(),
   });
   (sessions || []).forEach(r => {
@@ -737,16 +732,17 @@ async function loadVersionComparison(sb, since30) {
     const mk = mfrKey(r.device_id_anon);
     b.mfrTotals[mk] = (b.mfrTotals[mk] || 0) + 1;
     b.mfrSet.add(mk);
-    const key = classifySessionOutcome(r, now);
-    if (key === 'triggered') b.triggered++;
-    else if (key === 'triggered_late') b.late++;
-    else if (key === 'app_killed' || key === 'open_stale') b.silent++;
-    else if (key === 'timeout') b.timeout++;
-    else if (key === 'user_cancelled') b.cancelled++;
+    const outcome = classifyVersionOutcome(r);
+    if (outcome === 'realtime') b.triggered++;
+    else if (outcome === 'late') b.late++;
+    else if (outcome === 'silent') b.silent++;
+    else if (outcome === 'unverified') b.unverified++;
+    else if (outcome === 'timeout') b.timeout++;
+    else if (outcome === 'cancelled') b.cancelled++;
     // בסיס אוכלוסייה לכל יצרן — הצלחה real-time בלבד (key === 'triggered')
     const pop = baseMfr[mk] || (baseMfr[mk] = { total: 0, triggered: 0 });
     pop.total++;
-    if (key === 'triggered') pop.triggered++;
+    if (outcome === 'realtime') pop.triggered++;
   });
 
   // ודא שגם גרסאות עם מכשירים אך ללא sessions מופיעות
@@ -785,7 +781,7 @@ async function loadVersionComparison(sb, since30) {
   const fmtPct = (n) => (n === null ? '—' : n + '%');
 
   if (!versions.length || versions.every(v => byVersion[v].total === 0 && byVersion[v].active === 0 && !devicesByVersion[v])) {
-    if (tbody) tbody.innerHTML = '<tr><td colspan="12" style="color:#475569">אין נתונים עדיין</td></tr>';
+    if (tbody) tbody.innerHTML = '<tr><td colspan="13" style="color:#475569">אין נתונים עדיין</td></tr>';
     showEmptyState('chart-version-success', 'אין נתונים עדיין');
     showEmptyState('chart-version-breakdown', 'אין נתונים עדיין');
     showEmptyState('chart-version-silent', 'אין נתונים עדיין');
@@ -826,6 +822,7 @@ async function loadVersionComparison(sb, since30) {
         <td style="color:${adjColor}" title="${escHtml(adjTitle)}">${adj === null ? '—' : adj + '%'}</td>
         <td>${fmtPct(pctNum(b.late, b.total))}</td>
         <td style="color:${silentColor}">${fmtPct(silentPct)}</td>
+        <td title="כולל sessions פתוחים/מיושנים ללא outcome, מקור צלצול לא ידוע ו-sessions נטושים; לא הוכח בהם כשל צלצול">${fmtPct(pctNum(b.unverified, b.total))}</td>
         <td>${fmtPct(pctNum(b.timeout, b.total))}</td>
         <td>${fmtPct(pctNum(b.cancelled, b.total))}</td>
         <td>${perDevice}</td>
@@ -852,9 +849,10 @@ async function loadVersionComparison(sb, since30) {
   const adjustedData = chartVersions.map(v => adjustedSuccess(byVersion[v]));
   const lateData = chartVersions.map(v => pctNum(byVersion[v].late, byVersion[v].total));
   const silentData = chartVersions.map(v => pctNum(byVersion[v].silent, byVersion[v].total));
+  const unverifiedData = chartVersions.map(v => pctNum(byVersion[v].unverified, byVersion[v].total));
   const otherData = chartVersions.map(v => {
     const b = byVersion[v];
-    const accounted = b.triggered + b.late + b.silent;
+    const accounted = b.triggered + b.late + b.silent + b.unverified;
     return pctNum(b.total - accounted, b.total);
   });
 
@@ -914,6 +912,7 @@ async function loadVersionComparison(sb, since30) {
         { label: '📡 real-time ring rate', data: successData, backgroundColor: 'rgba(16,185,129,0.85)', borderRadius: 2, stack: 's' },
         { label: '🟡 צלצל מאוחר', data: lateData, backgroundColor: 'rgba(245,158,11,0.85)', borderRadius: 2, stack: 's' },
         { label: '🔴 כשל שקט', data: silentData, backgroundColor: 'rgba(239,68,68,0.82)', borderRadius: 2, stack: 's' },
+        { label: '❓ לא מאומת', data: unverifiedData, backgroundColor: 'rgba(168,85,247,0.75)', borderRadius: 2, stack: 's' },
         { label: '⚪ אחר (בוטל/פג זמן/וכו)', data: otherData, backgroundColor: 'rgba(100,116,139,0.7)', borderRadius: 2, stack: 's' },
       ]
     },
@@ -1240,4 +1239,3 @@ async function loadManufacturers(sb, since30) {
     }
   });
 }
-

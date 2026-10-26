@@ -119,6 +119,8 @@ function buildDashboardExportMarkdown() {
   parts.push('# יצוא דאשבורד מי-קום');
   parts.push(`נוצר: ${now.toLocaleString('he-IL')}`);
   parts.push(`Scope: ${getScopeLabel()}`);
+  parts.push(`Session exclusions: ${normalizeExportText(document.getElementById('session-exclusion-summary')?.textContent || '—')}`);
+  parts.push(`Version comparison exclusions: ${normalizeExportText(document.getElementById('version-session-exclusions')?.textContent || '—')}`);
   parts.push(`Last updated label: ${normalizeExportText(document.getElementById('last-updated')?.textContent || '—')}`);
 
   const tabs = Array.from(document.querySelectorAll('.tab-content'));
@@ -137,6 +139,8 @@ function buildDashboardExportForLLM() {
   parts.push('Preferred response structure: 1. summary 2. anomalies or risks 3. recommended actions 4. open questions.');
   parts.push(`Generated at: ${now.toLocaleString('he-IL')}`);
   parts.push(`Active scope: ${getScopeLabel()}`);
+  parts.push(`Session exclusions: ${normalizeExportText(document.getElementById('session-exclusion-summary')?.textContent || '—')}`);
+  parts.push(`Version comparison exclusions: ${normalizeExportText(document.getElementById('version-session-exclusions')?.textContent || '—')}`);
   parts.push(`Last updated label: ${normalizeExportText(document.getElementById('last-updated')?.textContent || '—')}`);
 
   const tabs = Array.from(document.querySelectorAll('.tab-content'));

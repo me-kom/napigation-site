@@ -2,3 +2,5 @@
 - Reliability metric classification (True Success, cancellation noise/failure, unresolved sessions counted as failures, and unverified ring dismissal) -> js/helpers.js; charts and breakdowns -> js/alarms.js, js/engagement.js, js/trends.js.
 - Free exploration includes observational alarm-factor comparisons and a configurable weighted alarm-quality score -> js/trends.js; controls/results -> index.html; export summaries -> js/export.js
 - Runtime Supabase public configuration is served by ../api/dashboard-config.js from deployment environment; never add credentials to dashboard source
+- Global first-hour session exclusion and version outcome classification -> js/helpers.js; all session readers, including version comparison, use the shared boundary. Refresh resets cached history and fails closed on incomplete history; counts are displayed and exported.
+- Regression verification -> ../__tests__/dashboardSessions.test.js (`node --test __tests__/dashboardSessions.test.js`): rendered version rows, global anchors and filters, unknown/silent separation, refresh failure and exclusion exports.

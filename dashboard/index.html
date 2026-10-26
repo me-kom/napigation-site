@@ -17,6 +17,7 @@
   <div>
     <h1>🚌 מי-קום — דאשבורד</h1>
     <div class="subtitle" id="last-updated">טוען נתונים...</div>
+    <div class="subtitle" id="session-exclusion-summary">נתוני הסשנים מחריגים את השעה הראשונה לכל גרסה.</div>
   </div>
   <div class="top-bar-actions">
     <div id="dashboard-user-pill" style="padding:8px 12px;border-radius:999px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:#eef3ff;font-size:13px;min-width:160px;text-align:center;">בודק הרשאה...</div>
@@ -726,12 +727,13 @@
       <span class="insight">🎯 חפש גרסה שבה % ההצלחה בזמן-אמת קופץ מעלה או % הכשל השקט יורד — זו הגרסה שתיקנה משהו.</span>
       טבלה זו מתעלמת מפילוח הגרסה שבראש העמוד (תמיד מציגה את כל הגרסאות זו מול זו), אך מכבדת את פילוח המדינה.
     </p>
+    <p class="chart-desc" id="version-session-exclusions"></p>
   </div>
 
   <div class="grid">
     <div class="card wide">
       <h2>טבלת השוואה — כל הגרסאות</h2>
-      <p class="chart-desc">כל שורה = גרסה (חדשה למעלה). Sessions ללא outcome נכללים במכנה ונספרים ככישלון; אלה שמתחת ל-12 שעות מוצגים גם בעמודה נפרדת. <span class="insight">📐 הנרמול להרכב יצרנים מוצג רק מ-30 נסיעות להערכה; מדגם קטן או חד-יצרני אינו מאפשר מסקנה יציבה.</span></p>
+      <p class="chart-desc">כל שורה = גרסה (חדשה למעלה), לאחר החרגת השעה הראשונה לגרסה לפי ההיסטוריה הגלובלית. Sessions ללא outcome נשארים במכנה ההצלחה, אך מוצגים כ״לא מאומת״ ולא ככשל שקט מוכח; אלה שמתחת ל-12 שעות מוצגים גם בעמודת הפתוחים. <span class="insight">📐 הנרמול להרכב יצרנים מוצג רק מ-30 נסיעות להערכה; מדגם קטן או חד-יצרני אינו מאפשר מסקנה יציבה.</span></p>
       <div style="overflow-x:auto">
         <table id="table-version-compare">
           <thead><tr>
@@ -744,11 +746,12 @@
             <th>📐 מנורמל</th>
             <th>🟡 צלצל מאוחר</th>
             <th>🔴 כשל שקט</th>
+            <th>❓ לא מאומת</th>
             <th>⏰ פג זמן</th>
             <th>👤 בוטל</th>
             <th>Sessions/מכשיר</th>
           </tr></thead>
-          <tbody id="tbody-version-compare"><tr><td colspan="12" class="loading">טוען...</td></tr></tbody>
+          <tbody id="tbody-version-compare"><tr><td colspan="13" class="loading">טוען...</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -761,13 +764,13 @@
 
     <div class="card wide">
       <h2>📊 פירוק תוצאות לפי גרסה (% מכל ה-sessions)</h2>
-      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100% מה-real-trip sessions, כולל סגירות ring שמקורן לא מאומת, late catch ומקור trigger לא מאומת.</p>
+      <p class="chart-desc">עמודות מוערמות — כל גרסה ל-100% מה-real-trip sessions, כולל סגירות ring שמקורן לא מאומת, sessions פתוחים/נטושים, late catch ומקור trigger לא מאומת.</p>
       <canvas id="chart-version-breakdown" height="120"></canvas>
     </div>
 
     <div class="card wide">
-      <h2>🔴 % כשל שקט לפי גרסה (app_killed + לא נסגר)</h2>
-      <p class="chart-desc">אחוז ה-sessions שנכשלו בשקט (האפליקציה נהרגה / מעקב תקוע). <span class="insight">ירידה בין גרסאות = תיקון יציבות הצליח.</span></p>
+      <h2>🔴 % כשל שקט לפי גרסה — עדות לכשל טכני</h2>
+      <p class="chart-desc">app_killed עם עדות לתנועה ומעקב תקוע שאינו נטוש. Sessions ללא outcome או נטושים מוצגים כ״לא מאומת״. <span class="insight">מדגם קטן אינו מוכיח רגרסיה או שיפור ביציבות.</span></p>
       <canvas id="chart-version-silent" height="90"></canvas>
     </div>
   </div>
