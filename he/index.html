@@ -6,8 +6,7 @@
 
   <!-- Primary meta -->
   <title>מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית</title>
-  <meta name="description" content="מי-קום היא אפליקציית התראות קרבה לתחבורה ציבורית עם מעקב אמין ברקע, ללא פרסומות, ללא צורך בהרשמה ועם עיבוד מיקום מקומי ושומר פרטיות." />
-  <meta name="keywords" content="מי-קום, אפליקציה תחבורה ציבורית, התראה תחנה, me-kom, napigation, proximity alert, public transport app, bus stop alarm, background location alarm, ad-free transit app" />
+  <meta name="description" content="מי-קום עוזרת לנוסעי תחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, גם כשהאפליקציה פועלת ברקע." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="Me-Kum" />
@@ -20,16 +19,30 @@
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.napigation.com/he/" />
   <meta property="og:title" content="מי-קום - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta property="og:description" content="התראה מדויקת לפני ההגעה ליעד, ללא פרסומות, עם מעקב אמין ברקע ועיבוד מיקום מקומי לחלוטין." />
+  <meta property="og:description" content="מגדירים תחנה או יעד ומקבלים התראת קרבה לפני ההגעה. מי-קום זמינה ל-Android ב-Google Play." />
   <meta property="og:site_name" content="Napigation" />
   <meta property="og:locale" content="he_IL" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta name="twitter:description" content="אפליקציית התראות קרבה לתחבורה ציבורית עם עבודה אמינה ברקע, פרטיות מלאה וללא פרסומות." />
+  <meta name="twitter:description" content="אפליקציית התראות קרבה לתחבורה ציבורית ל-Android, זמינה ב-Google Play." />
 
   <link rel="canonical" href="https://www.napigation.com/he/" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Napigation",
+    "alternateName": "מי-קום",
+    "applicationCategory": "TravelApplication",
+    "operatingSystem": "Android",
+    "description": "מי-קום עוזרת לנוסעי תחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, גם כשהאפליקציה פועלת ברקע.",
+    "url": "https://www.napigation.com/he/",
+    "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
+    "image": "https://www.napigation.com/location-icon.png"
+  }
+  </script>
 
   <style>
     :root {
@@ -496,239 +509,196 @@
       .contact-email { padding: 10px 20px; font-size: 0.9rem; }
       footer { padding: 24px 12px; font-size: 0.8rem; }
     }
-  </style>
+
+    section { padding: 48px 24px; }
+    .hero { padding: 64px 24px 68px; }
+    .hero-badge { margin-bottom: 20px; }
+    .hero h1 { margin-bottom: 16px; }
+    .hero p { margin-bottom: 20px; }
+    .platform-note { color: rgba(255,255,255,0.9); font-weight: 600; }
+    #how { background: var(--white); }
+    .section-title { margin-bottom: 28px; }
+    .steps { max-width: 900px; margin: 0 auto; gap: 14px; }
+    .step { padding: 20px 16px; }
+    .step-number { width: 40px; height: 40px; font-size: 1.1rem; margin-bottom: 12px; }
+    .step h3 { margin-bottom: 6px; }
+    #faq { background: var(--bg); }
+    .faq-list { overflow: hidden; }
+    .faq-item { padding: 0; }
+    .faq-q { list-style: none; padding: 18px 22px; }
+    .faq-q::-webkit-details-marker { display: none; }
+    .faq-q::after { content: '+'; }
+    .faq-item[open] .faq-q::after { transform: rotate(45deg); }
+    .faq-a { max-height: none; overflow: visible; padding: 0 22px 18px; }
+    .faq-a a { color: var(--accent); }
+    .download-cta { background: linear-gradient(135deg, var(--primary) 0%, #0f3460 100%); color: #fff; text-align: center; }
+    .download-cta .section-label { color: #c8d2ff; }
+    .download-cta .section-title { color: #fff; margin-bottom: 10px; }
+    .download-cta .sub { margin: 0 auto 24px; color: rgba(255,255,255,0.88); font-size: 1.05rem; }
+    .footer-links { flex-wrap: wrap; justify-content: center; gap: 16px 28px; }
+    @media (max-width: 600px) {
+      section { padding: 38px 18px; }
+      .navbar { padding: 0 16px; }
+      .navbar-links { gap: 12px; }
+      .hero { padding: 50px 16px 54px; }
+      .hero h1 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
+      .hero p { font-size: 1rem; }
+      .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
+      .btn-primary { width: min(100%, 320px); justify-content: center; padding: 13px 18px; font-size: 0.96rem; }
+      .steps { grid-template-columns: 1fr; gap: 10px; }
+      .step { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; column-gap: 12px; text-align: start; padding: 12px; }
+      .step-number { width: 32px; height: 32px; grid-row: auto; margin: 0; font-size: 1rem; }
+      .step h3 { min-width: 0; font-size: 0.9rem; white-space: nowrap; }
+      .step p { display: none; }
+      .faq-item { padding: 0; }
+      .faq-q { padding: 16px 14px; font-size: 0.95rem; }
+      .faq-a { padding: 0 14px 16px; font-size: 0.9rem; }
+      .download-cta .sub { font-size: 0.95rem; }
+      .footer-links { gap: 12px 20px; }
+    }
+    .hero h1 { line-height: 1.2; }
+    .section-title { line-height: 1.2; }
+    .section-label { line-height: 1.3; }
+    .step h3, .faq-q { line-height: 1.35; }
+    .hero p, .hero-note, .step p, .faq-a { line-height: 1.55; }
+    .hero p.hero-note { margin-top: 12px; }
+</style>
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar">
   <a class="navbar-logo" href="#top"><img src="../location-icon.png" alt="Napigation logo" width="30" height="30" /><span style="color:inherit">מי<span>-</span>קום</span></a>
-  <div class="navbar-links">
+    <div class="navbar-links">
     <a href="#how">איך זה עובד</a>
-    <a href="#advantage">היתרון הטכנולוגי</a>
-    <a href="#plans">חוויית השימוש</a>
     <a href="#faq">שאלות נפוצות</a>
     <div class="nav-controls">
       <div class="seg" role="group" aria-label="בחירת פלטפורמה">
-        <button type="button" data-platform="android" class="active" onclick="setPlatform('android')">Android</button>
-        <button type="button" data-platform="ios" onclick="setPlatform('ios')">iOS</button>
+        <button type="button" data-platform="android" class="active" aria-pressed="true" onclick="setPlatform('android')">Android</button>
+        <button type="button" data-platform="ios" aria-pressed="false" onclick="setPlatform('ios')">iOS</button>
       </div>
     </div>
   </div>
 </nav>
 
 <!-- Hero -->
-<section class="hero" id="top">
-  <div>
-    <div class="hero-badge ios-content">גרסת iOS בדרך ל-App Store</div>
-    <h1>הגיע הזמן לרדת<br/><em>בדיוק בזמן</em></h1>
-    <p>לכו לישון בראש שקט, תנוחו, תעבדו או תקראו ספר, אנחנו כבר נדאג להעיר אתכם בזמן.</p>
-    <div class="hero-buttons">
-      <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-        הורדת מי-קום
-      </a>
-      <span class="btn-primary ios-content" style="opacity:0.7;cursor:default;box-shadow:none;">בקרוב ל-App Store</span>
+    <section class="hero" id="top">
+    <div>
+      <div class="hero-badge">התראות קרבה לתחבורה ציבורית</div>
+      <h1>יורדים<br /><em>בדיוק בתחנה</em></h1>
+      <p>מי-קום עוזרת לנוסעי אוטובוס, רכבת ותחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, בלי לעקוב אחרי ניווט רציף.</p>
+      <div class="hero-buttons">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדת מי-קום מ-Google Play">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          הורדת מי-קום מ-Google Play
+        </a>
+        <span class="ios-content platform-note">אין בעמוד זה קישור להורדה מ-App Store ל-iOS.</span>
+      </div>
+      <p class="hero-note">ללא חשבון · ללא פרסומות · התראות ברקע</p>
     </div>
-    <p class="hero-note">ללא הרשמה · ללא פרסומות · חסכוני בסוללה</p>
-  </div>
-</section>
+  </section>
 
-<!-- How it works -->
-<section id="how">
-  <div class="section-inner">
-    <p class="section-label">איך זה עובד</p>
-    <h2 class="section-title">שלושה צעדים פשוטים</h2>
-    <div class="steps">
-      <div class="step">
-        <div class="step-number">1</div>
-        <h3>בוחרים יעד</h3>
-        <p>מחפשים כתובת או בוחרים נקודה על המפה, ואז מגדירים מתי תרצו לקבל התראה לפני ההגעה.</p>
-      </div>
-      <div class="step">
-        <div class="step-number">2</div>
-        <h3>מפעילים התראה</h3>
-        <p>ברגע שהנסיעה מתחילה, מפעילים את ההתראה. מי-קום ממשיכה לעקוב גם כשהטלפון בכיס או כשהמסך כבוי.</p>
-      </div>
-      <div class="step">
-        <div class="step-number">3</div>
-        <h3>נוסעים בראש שקט</h3>
-        <p>אפשר לקרוא, לעבוד או לנוח. כשהיעד מתקרב, האפליקציה מתריעה בזמן כדי שלא תפספסו את הירידה.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- Features -->
-<section id="features">
-  <div class="section-inner">
-    <p class="section-label">בפועל</p>
-    <h2 class="section-title">מותאמת לנסיעה אמיתית</h2>
-    <div class="features-grid">
-      <div class="feature-card">
-        <h3>מעקב ברקע</h3>
-        <p>המעקב ממשיך גם כשהטלפון בכיס, כדי שלא תצטרכו להשאיר את האפליקציה פתוחה לאורך כל הדרך.</p>
-      </div>
-      <div class="feature-card">
-        <h3>שימוש מאוזן בסוללה</h3>
-        <p>מי-קום לא מתנהגת כמו אפליקציית ניווט מלאה, ולכן מתאימה יותר לנסיעות שבהן רק רוצים לקבל התראה בזמן.</p>
-      </div>
-      <div class="feature-card">
-        <h3>יעדים ומסלולים שמורים</h3>
-        <p>אפשר לשמור מקומות קבועים ולחזור אליהם במהירות, בלי להגדיר הכול מחדש בכל נסיעה.</p>
+  <section id="how">
+    <div class="section-inner">
+      <p class="section-label">מתחילים לנסוע</p>
+      <h2 class="section-title">מגדירים התראה בשלושה צעדים</h2>
+      <div class="steps">
+        <div class="step">
+          <div class="step-number">1</div>
+          <h3>בוחרים יעד</h3>
+          <p>מחפשים מקום או בוחרים נקודה על המפה.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">2</div>
+          <h3>מגדירים זמן להתראה</h3>
+          <p>בוחרים מתי לקבל התראה ומפעילים אותה לנסיעה.</p>
+        </div>
+        <div class="step">
+          <div class="step-number">3</div>
+          <h3>נחים בשקט</h3>
+          <p>מי-קום יכולה לעקוב ברקע ולהתריע כשהיעד מתקרב.</p>
+        </div>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- Plans -->
-<section id="plans">
-  <div class="section-inner">
-    <p class="section-label">הנסיעה שלך, בדרך שלך</p>
-    <h2 class="section-title">מגדירים יעד. ממשיכים בנסיעה.</h2>
-    <div class="experience-content">
-      <h3>תזכורת בזמן, בלי לעקוב אחרי המסך</h3>
-      <p>מי-קום עוקבת אחרי הנסיעה ומתריעה כשהיעד מתקרב. מגדירים התראה, מניחים את הטלפון בצד ומתפנים למה שחשוב לכם.</p>
-      <ul class="experience-list">
-        <li>מעקב ברקע והתראות לפי זמן</li>
-        <li>בחירת עוצמת צליל, רטט וצלצול</li>
-        <li>תזכורות שימושיות וממשק נוח בלילה</li>
-        <li>שמירת עד 5 מקומות ומסלול אחד עם כמה תחנות</li>
-      </ul>
-      <div class="premium-note">
-        <h3>יותר גמישות למי שנוסעים הרבה</h3>
-        <p>פרימיום מוסיף מקומות ומסלולים ללא הגבלה, יעדים חד-פעמיים ואפשרויות נוספות לשליטה בהתראות. באפליקציה זמינים מסלול מנוי וגם רכישה חד-פעמית.</p>
-        <ul class="experience-list">
-          <li>הגדרת יעד חד-פעמי</li>
-          <li>פתיחת היעד באפליקציית ניווט חיצונית</li>
-          <li>שליטה חכמה במצב "נא לא להפריע"</li>
-          <li>הצגת שיחה נכנסת</li>
-          <li>פתיחה אוטומטית של האפליקציה כשההתראה מצלצלת</li>
-          <li>מסלולים ללא הגבלה</li>
-          <li>מקומות שמורים ללא הגבלה</li>
-          <li>אמינות משופרת של ההתראות</li>
-        </ul>
+  <section id="faq">
+    <div class="section-inner">
+      <p class="section-label">שאלות נפוצות</p>
+      <h2 class="section-title">מה כדאי לדעת לפני הנסיעה</h2>
+      <div class="faq-list">
+        <details class="faq-item" name="faq">
+          <summary class="faq-q">מה אפשר לעשות עם מי-קום?</summary>
+          <div class="faq-a">מגדירים התראת קרבה לתחנה או ליעד, גם במסלול שמור. אפשר להתאים את הצליל, העוצמה והרטט. אין צורך בחשבון ואין פרסומות. מי-קום היא תזכורת לירידה, לא אפליקציית ניווט רציף.</div>
+        </details>
+        <details class="faq-item" name="faq">
+          <summary class="faq-q">מה כלול בחינם ומה מוסיף פרימיום?</summary>
+          <div class="faq-a">אפשר להשתמש בהתראות הבסיסיות ללא מנוי. בתוכנית החינמית אפשר לשמור עד חמישה מיקומים ומסלול אחד. פרימיום מוסיף מיקומים ומסלולים ללא הגבלה, יעדים חד-פעמיים, פתיחה בניווט חיצוני ואפשרויות נוספות לשליטה בהתראות. באפליקציה מוצגות אפשרויות הרכישה והמחירים.</div>
+        </details>
+        <details class="faq-item" name="faq">
+          <summary class="faq-q">איך מי-קום מטפלת במיקום ובמידע נוסף?</summary>
+          <div class="faq-a">מיקום GPS לצורך התראה פעילה מעובד במכשיר, ומיקומים ומסלולים שמורים נשארים במכשיר. ייתכן שנשלחים לספקי שירות נתוני שימוש ודוחות טכניים עם מזהים בדויים; חיפוש כתובת או נקודה במפה עשוי להעביר מידע לספקי geocoding חיצוניים. אנחנו לא שומרים בשרתים קואורדינטות GPS גולמיות או פרטי יעדים שמורים. לפרטים, קראו את <a href="../privacy.html">מדיניות הפרטיות</a>.</div>
+        </details>
+        <details class="faq-item" name="faq">
+          <summary class="faq-q">האם ההתראה פועלת כשהמסך כבוי או כשהטלפון על שקט?</summary>
+          <div class="faq-a">האפליקציה מיועדת להמשיך לעקוב ברקע. התראות ברקע תלויות בהרשאות מיקום והתראות, בהגדרות המכשיר ובניהול הסוללה. במכשירים נתמכים מי-קום יכולה להבליט את ההתראה; מומלץ לוודא שעוצמת המדיה אינה על אפס.</div>
+        </details>
+        <details class="faq-item" name="faq">
+          <summary class="faq-q">באילו פלטפורמות אפשר להוריד את האפליקציה?</summary>
+          <div class="faq-a">אפליקציית Android מופיעה ב-Google Play. בעמוד זה לא מופיע כרגע קישור להורדה מ-App Store ל-iOS.</div>
+        </details>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- פרטים נוספים -->
-<section id="advantage">
-  <div class="section-inner">
-    <p class="section-label">פרטים נוספים</p>
-    <h2 class="section-title">למה לבחור במי-קום ולא בניווט רגיל?</h2>
-    <div class="adv-grid">
-      <div class="adv-card">
-        <div class="adv-icon">🚫</div>
-        <h3>ללא פרסומות</h3>
-        <p>החווייה נשארת ממוקדת: אין באנרים, אין הפרעות פרסומות, ואין עומס מיותר על המסך בזמן שאתם מנסים לשמור על היעד.</p>
-      </div>
-      <div class="adv-card">
-        <div class="adv-icon">🔒</div>
-        <h3>פרטיות בשפה ברורה</h3>
-        <p>המיקום שלכם מעובד על המכשיר. אין צורך בהרשמה, והמידע הרגיש לא נשמר אצלנו בענן.</p>
-      </div>
-      <div class="adv-card">
-        <div class="adv-icon">🔔</div>
-        <h3>התראה אמינה גם ברקע</h3>
-        <p>מי-קום נבנית כדי להמשיך לעבוד גם כשהאפליקציה ברקע, כשהטלפון במצב שקט או רטט, כשהווליום 0, במצב "נא לא להפריע" או כשמערכת ההפעלה מנהלת את המשאבים.</p>
-      </div>
-      <div class="adv-card">
-        <div class="adv-icon">🆓</div>
-        <h3>פשוט להתחיל לנסוע</h3>
-        <p>בוחרים יעד, מגדירים התראה ומניחים את הטלפון בצד. בלי חשבון ובלי פרסומות שמפריעות.</p>
+  <section id="download" class="download-cta">
+    <div class="section-inner">
+      <p class="section-label">נוסעים בראש שקט</p>
+      <div class="hero-buttons">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדת מי-קום מ-Google Play">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          הורדה מ-Google Play
+        </a>
+        <span class="ios-content platform-note">אין בעמוד זה קישור להורדה מ-App Store ל-iOS.</span>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FAQ -->
-<section id="faq">
-  <div class="section-inner">
-    <p class="section-label">שאלות נפוצות</p>
-    <h2 class="section-title">מה חשוב לדעת לפני שמתחילים</h2>
-
-    <div class="faq-list">
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">איך מתחילים להשתמש במי-קום?</div>
-        <div class="faq-a">מורידים את האפליקציה, בוחרים יעד, מפעילים התראה וממשיכים בנסיעה. כאשר מתקרבים ליעד, מתקבלת התראה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">כיצד מי-קום שונה מאפליקציות ניווט מבוססות GPS סטנדרטיות?</div>
-        <div class="faq-a">אפליקציות ניווט רגילות מיועדות למסך פתוח ולהכוונה רציפה. מי-קום מיועדת לנוסעים שרק צריכים תזכורת לרדת בזמן.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם צריך מנוי כדי לקבל התראה?</div>
-        <div class="faq-a">לא. אפשר לבחור יעד ולקבל התראה גם בלי מנוי. פרימיום הוא אפשרות למי שרוצים יותר גמישות בנסיעות קבועות, למשל מסלולים ומקומות שמורים ללא הגבלה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם האפליקציה תשרוד כשהמסך כבוי והטלפון בכיס?</div>
-        <div class="faq-a">זאת בדיוק המטרה. מי-קום נבנתה לעבודה ברקע, כדי שלא תצטרכו להשאיר את המסך דלוק או את האפליקציה פתוחה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">למי מיועדת מי-קום?</div>
-        <div class="faq-a">מי-קום מיועדת לנוסעים באוטובוס, רכבת או כל תחבורה ציבורית אחרת שרוצים לקרוא, לעבוד או לנוח בזמן הנסיעה ולקבל התראה לפני הירידה.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">מה מדיניות איסוף הנתונים שלכם?</div>
-        <div class="faq-a">מיקום ה-GPS מעובד במכשיר ואיננו דורשים חשבון. אירועי שימוש מקושרים למזהה התקנה בדוי; אבחון התראות נפרד וכבוי עד להסכמה מפורשת, ומשתמש במזהים בדויים שמקשרים אירועים טכניים בלי קואורדינטות מדויקות או פרטי יעד. אבחון השרת אינו פעיל כרגע. חיפושי כתובות נשלחים לשירות geocoding חיצוני. הפירוט המלא במדיניות הפרטיות.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם הטלפון שלי יצלצל אם הוא מוגדר על "שקט" או "רטט בלבד"?</div>
-        <div class="faq-a">במכשירים נתמכים, האפליקציה מנסה להבליט את ההתראה גם אם הטלפון במצב שקט או רטט. עדיין מומלץ לוודא שעוצמת המדיה אינה על אפס.</div>
-      </div>
-      <div class="faq-item">
-        <div class="faq-q" onclick="toggleFaq(this)">האם קיימת גרסה ל-iPhone (iOS)?</div>
-        <div class="faq-a">אפליקציית ה-Android זמינה כעת להורדה ב-Google Play. גרסת ה-iOS נמצאת בפיתוח מתקדם ובבדיקות בטא, ותשוחרר בקרוב ל-App Store. ניתן לבחור פלטפורמה בראש העמוד כדי לראות את סטטוס הזמינות.</div>
-      </div>
+  <footer>
+    <div class="footer-links">
+      <a href="../privacy.html">מדיניות פרטיות</a>
+      <a href="../terms.html">תנאי שימוש</a>
+      <a href="mailto:me.kum.support@gmail.com">יצירת קשר</a>
+      <a href="../" lang="en">English</a>
     </div>
-  </div>
-</section>
+    <p>© 2026 מי-קום (Napigation). כל הזכויות שמורות.</p>
+  </footer>
 
-<!-- Footer -->
-<footer>
-  <div class="footer-links">
-    <a href="privacy.html">מדיניות פרטיות</a>
-    <a href="terms.html">תנאי שימוש</a>
-    <a href="mailto:me.kum.support@gmail.com">יצירת קשר</a>
-  </div>
-  <p>© 2026 מי-קום (Napigation). כל הזכויות שמורות.</p>
-</footer>
 
-<script>
-  (function() {
-    var params = new URLSearchParams(window.location.search);
-    var stored = localStorage.getItem('me-kom-platform');
-    var platform = params.get('platform') || stored ||
-                   (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
-    setPlatform(platform);
-  })();
+  <script>
+    (function() {
+      var params = new URLSearchParams(window.location.search);
+      var stored = localStorage.getItem('me-kom-platform');
+      var platform = params.get('platform') || stored || (/iPhone|iPad|iPod/i.test(navigator.userAgent) ? 'ios' : 'android');
+      setPlatform(platform);
+    })();
 
-  function setPlatform(platform) {
-    if (platform !== 'android' && platform !== 'ios') platform = 'android';
-    document.documentElement.setAttribute('data-platform', platform);
-    localStorage.setItem('me-kom-platform', platform);
-
-    document.querySelectorAll('.android-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', platform === 'android' ? 'false' : 'true');
-    });
-    document.querySelectorAll('.ios-content').forEach(function(el) {
-      el.setAttribute('aria-hidden', platform === 'ios' ? 'false' : 'true');
-    });
-    document.querySelectorAll('.seg button[data-platform]').forEach(function(btn) {
-      btn.classList.toggle('active', btn.getAttribute('data-platform') === platform);
-    });
-  }
-
-  function toggleFaq(el) {
-    var item = el.parentElement;
-    var isOpen = item.classList.contains('open');
-    item.parentElement.querySelectorAll('.faq-item').forEach(function(s) {
-      s.classList.remove('open');
-    });
-    if (!isOpen) item.classList.add('open');
-  }
-</script>
+    function setPlatform(platform) {
+      if (platform !== 'android' && platform !== 'ios') platform = 'android';
+      document.documentElement.setAttribute('data-platform', platform);
+      localStorage.setItem('me-kom-platform', platform);
+      document.querySelectorAll('.android-content').forEach(function(el) {
+        el.setAttribute('aria-hidden', platform === 'android' ? 'false' : 'true');
+      });
+      document.querySelectorAll('.ios-content').forEach(function(el) {
+        el.setAttribute('aria-hidden', platform === 'ios' ? 'false' : 'true');
+      });
+      document.querySelectorAll('.seg button[data-platform]').forEach(function(button) {
+        var selected = button.getAttribute('data-platform') === platform;
+        button.classList.toggle('active', selected);
+        button.setAttribute('aria-pressed', selected ? 'true' : 'false');
+      });
+    }
+  </script>
 </body>
 </html>
