@@ -4,8 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Napigation - Smart Proximity Alerts for Public Transit</title>
-  <meta name="description" content="Napigation helps public-transit riders set a destination and get a proximity alert before their stop, including while the app runs in the background." />
+  <title>Napigation - Public Transit Alarm Clock</title>
+  <meta name="description" content="A public transit alarm clock. No sign-up, no ads." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="Me-Kum" />
   <meta name="application-name" content="Napigation" />
@@ -15,14 +15,14 @@
 
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.napigation.com/" />
-  <meta property="og:title" content="Napigation - Smart Proximity Alerts for Public Transit" />
-  <meta property="og:description" content="Set a public-transit stop and receive a proximity alert before arrival. Napigation is available for Android on Google Play." />
+  <meta property="og:title" content="Napigation - Public Transit Alarm Clock" />
+  <meta property="og:description" content="A public transit alarm clock. No sign-up, no ads." />
   <meta property="og:site_name" content="Napigation" />
   <meta property="og:locale" content="en_US" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Napigation - Smart Proximity Alerts for Public Transit" />
-  <meta name="twitter:description" content="A public-transit proximity-alert app for Android, available on Google Play." />
+  <meta name="twitter:title" content="Napigation - Public Transit Alarm Clock" />
+  <meta name="twitter:description" content="A public transit alarm clock. No sign-up, no ads." />
 
   <link rel="canonical" href="https://www.napigation.com/" />
   <script type="application/ld+json">
@@ -32,7 +32,7 @@
     "name": "Napigation",
     "applicationCategory": "TravelApplication",
     "operatingSystem": "Android",
-    "description": "Napigation helps public-transit riders set a destination and get a proximity alert before their stop, including while the app runs in the background.",
+    "description": "A public transit alarm clock. No sign-up, no ads.",
     "url": "https://www.napigation.com/",
     "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
     "image": "https://www.napigation.com/location-icon.png"
@@ -421,6 +421,11 @@
     @media (max-width: 480px) {
       .hero-buttons { flex-direction: column; align-items: center; }
       .btn-primary { width: min(100%, 320px); justify-content: center; }
+      #how .section-title, #faq .section-title {
+        font-size: clamp(1rem, 5.8vw, 1.4rem);
+        letter-spacing: -0.6px;
+        white-space: nowrap;
+      }
     }
 
     section { padding: 48px 24px; }
@@ -457,7 +462,7 @@
       .hero h1 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
       .hero p { font-size: 1rem; }
       .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
-      .btn-primary { width: min(100%, 320px); justify-content: center; padding: 13px 18px; font-size: 0.96rem; }
+      .btn-primary { width: min(100%, 300px); justify-content: center; padding: 13px 18px; font-size: 0.96rem; }
       .steps { grid-template-columns: 1fr; gap: 10px; }
       .step { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; column-gap: 12px; text-align: start; padding: 12px; }
       .step-number { width: 32px; height: 32px; grid-row: auto; margin: 0; font-size: 1rem; }
@@ -494,17 +499,16 @@
 
       <section class="hero" id="top">
     <div>
-      <div class="hero-badge">Public-transit proximity alerts</div>
-      <h1>Get off<br /><em>at the right stop</em></h1>
-      <p>Napigation helps bus, train, and other public-transit riders set a destination and get a proximity alert before arrival, without following turn-by-turn directions.</p>
+      <div class="hero-badge">Alarm clock for public transit</div>
+      <h1>Wake up<br /><em>right on time</em></h1>
       <div class="hero-buttons">
-        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="Get Napigation on Google Play">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="Download from Google Play">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Get Napigation on Google Play
+          Download from Google Play
         </a>
         <span class="ios-content platform-note">No iOS App Store download link is listed on this page.</span>
       </div>
-      <p class="hero-note">No account required · No ads · Background alerts</p>
+      <p class="hero-note">No sign-up · No ads</p>
     </div>
   </section>
 
@@ -515,7 +519,7 @@
       <div class="steps">
         <div class="step">
           <div class="step-number">1</div>
-          <h3>Choose a stop on the map</h3>
+          <h3>Choose a destination</h3>
           <p>Search for a place or select a point on the map.</p>
         </div>
         <div class="step">
@@ -525,8 +529,8 @@
         </div>
         <div class="step">
           <div class="step-number">3</div>
-          <h3>Rest. We’ll alert you in time</h3>
-          <p>Napigation can monitor your trip in the background and alert you near your destination.</p>
+          <h3>Rest easy. We’ll wake you right on time</h3>
+          <p>Napigation can monitor your trip in the background and wake you as you near your destination.</p>
         </div>
       </div>
     </div>
@@ -563,10 +567,11 @@
 
   <section id="download" class="download-cta">
     <div class="section-inner">
+      <p class="section-label">Ride with peace of mind</p>
       <div class="hero-buttons">
-        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="Download Napigation from Google Play">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="Download from Google Play">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          Download on Google Play
+          Download from Google Play
         </a>
         <span class="ios-content platform-note">No iOS App Store download link is listed on this page.</span>
       </div>
