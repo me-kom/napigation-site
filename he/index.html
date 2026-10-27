@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
   <!-- Primary meta -->
-  <title>מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית</title>
-  <meta name="description" content="מי-קום עוזרת לנוסעי תחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, גם כשהאפליקציה פועלת ברקע." />
+  <title>מי-קום (Napigation) - שעון מעורר לתחבורה ציבורית</title>
+  <meta name="description" content="שעון מעורר לתחבורה ציבורית, ללא הרשמה וללא פרסומות." />
   <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="googlebot" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
   <meta name="author" content="Me-Kum" />
@@ -18,15 +18,15 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://www.napigation.com/he/" />
-  <meta property="og:title" content="מי-קום - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta property="og:description" content="מגדירים תחנה או יעד ומקבלים התראת קרבה לפני ההגעה. מי-קום זמינה ל-Android ב-Google Play." />
+  <meta property="og:title" content="מי-קום - שעון מעורר לתחבורה ציבורית" />
+  <meta property="og:description" content="שעון מעורר לתחבורה ציבורית, ללא הרשמה וללא פרסומות." />
   <meta property="og:site_name" content="Napigation" />
   <meta property="og:locale" content="he_IL" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="מי-קום (Napigation) - התראות קרבה חכמות לתחבורה ציבורית" />
-  <meta name="twitter:description" content="אפליקציית התראות קרבה לתחבורה ציבורית ל-Android, זמינה ב-Google Play." />
+  <meta name="twitter:title" content="מי-קום (Napigation) - שעון מעורר לתחבורה ציבורית" />
+  <meta name="twitter:description" content="שעון מעורר לתחבורה ציבורית, ללא הרשמה וללא פרסומות." />
 
   <link rel="canonical" href="https://www.napigation.com/he/" />
   <script type="application/ld+json">
@@ -37,7 +37,7 @@
     "alternateName": "מי-קום",
     "applicationCategory": "TravelApplication",
     "operatingSystem": "Android",
-    "description": "מי-קום עוזרת לנוסעי תחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, גם כשהאפליקציה פועלת ברקע.",
+    "description": "שעון מעורר לתחבורה ציבורית, ללא הרשמה וללא פרסומות.",
     "url": "https://www.napigation.com/he/",
     "downloadUrl": "https://play.google.com/store/apps/details?id=com.mekom.app",
     "image": "https://www.napigation.com/location-icon.png"
@@ -482,7 +482,7 @@
       .hero-badge { font-size: 0.75rem; padding: 4px 12px; margin-bottom: 20px; }
       .hero-fact { font-size: 0.85rem; padding: 10px 12px; margin: -8px auto 20px; }
       .hero-buttons { gap: 8px; flex-direction: column; }
-      .btn-primary, .btn-secondary { width: 100%; padding: 11px 20px; font-size: 0.9rem; }
+      .btn-primary, .btn-secondary { width: min(100%, 300px); padding: 11px 20px; font-size: 0.9rem; }
       .hero-note { font-size: 0.75rem; margin-top: 16px; }
       section { padding: 40px 12px; }
       .section-title { font-size: clamp(1.3rem, 2.8vw, 1.8rem); margin-bottom: 32px; }
@@ -544,7 +544,7 @@
       .hero h1 { font-size: clamp(1.9rem, 8vw, 2.5rem); }
       .hero p { font-size: 1rem; }
       .hero-buttons { flex-direction: column; align-items: center; gap: 12px; }
-      .btn-primary { width: min(100%, 320px); justify-content: center; padding: 13px 18px; font-size: 0.96rem; }
+      .btn-primary { width: min(100%, 300px); justify-content: center; padding: 13px 18px; font-size: 0.96rem; }
       .steps { grid-template-columns: 1fr; gap: 10px; }
       .step { display: grid; grid-template-columns: 32px minmax(0, 1fr); align-items: center; column-gap: 12px; text-align: start; padding: 12px; }
       .step-number { width: 32px; height: 32px; grid-row: auto; margin: 0; font-size: 1rem; }
@@ -584,17 +584,16 @@
 <!-- Hero -->
     <section class="hero" id="top">
     <div>
-      <div class="hero-badge">התראות קרבה לתחבורה ציבורית</div>
-      <h1>יורדים<br /><em>בדיוק בתחנה</em></h1>
-      <p>מי-קום עוזרת לנוסעי אוטובוס, רכבת ותחבורה ציבורית להגדיר יעד ולקבל התראת קרבה לפני ההגעה, בלי לעקוב אחרי ניווט רציף.</p>
+      <div class="hero-badge">שעון מעורר לתחבורה ציבורית</div>
+      <h1>מתעוררים<br /><em>בדיוק בזמן</em></h1>
       <div class="hero-buttons">
-        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדת מי-קום מ-Google Play">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדה מ-Google Play">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-          הורדת מי-קום מ-Google Play
+          הורדה מ-Google Play
         </a>
         <span class="ios-content platform-note">אין בעמוד זה קישור להורדה מ-App Store ל-iOS.</span>
       </div>
-      <p class="hero-note">ללא חשבון · ללא פרסומות · התראות ברקע</p>
+      <p class="hero-note">ללא הרשמה, ללא פרסומות</p>
     </div>
   </section>
 
@@ -655,7 +654,7 @@
     <div class="section-inner">
       <p class="section-label">נוסעים בראש שקט</p>
       <div class="hero-buttons">
-        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדת מי-קום מ-Google Play">
+        <a class="btn-primary android-content" href="https://play.google.com/store/apps/details?id=com.mekom.app" target="_blank" rel="noopener" aria-label="הורדה מ-Google Play">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
           הורדה מ-Google Play
         </a>
