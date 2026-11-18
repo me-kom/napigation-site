@@ -18,7 +18,7 @@
   <meta property="og:locale:alternate" content="he_IL" />
   <meta name="twitter:card" content="summary" />
   <meta name="twitter:title" content="Privacy Policy - Napigation" />
-  <meta name="twitter:description" content="Napigation's official privacy policy: what data is collected, what stays on-device, and what is shared with third parties." />
+  <meta name="twitter:description" content="Napigation's official privacy policy: what data is collected, what stays on-device, and what is sent to server services." />
   <link rel="canonical" href="https://www.napigation.com/privacy.html" />
   <link rel="alternate" hreflang="en" href="https://www.napigation.com/privacy.html" />
   <link rel="alternate" hreflang="he" href="https://www.napigation.com/he/privacy.html" />
@@ -145,7 +145,7 @@
 
 <div class="container">
   <h1>Privacy Policy</h1>
-  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: October 20, 2026</p>
+  <p class="subtitle">Napigation &nbsp;·&nbsp; Last updated: November 9, 2026</p>
 
   <h2>1. Introduction</h2>
   <p>Welcome to <strong>Napigation</strong> ("the App", "we", "us"). Your privacy matters to us. This Privacy Policy explains how we collect, use, store, and protect your information.</p>
@@ -155,16 +155,17 @@
   <h3>2.1 Information You Provide</h3>
   <ul>
     <li><strong>Saved locations:</strong> Names, descriptions, addresses, coordinates, and radii of locations you choose to save — <strong>on your device only</strong></li>
-    <li><strong>Routes:</strong> Saved route details and route paths you create — <strong>on your device only</strong>. Alarm records may include a technical route reference and route progress, but not the destination details or route path (see section 2.2).</li>
+    <li><strong>Routes:</strong> Saved routes and route paths are stored on your device. When you request Autopilot route options, origin and destination coordinates are sent to our route server on Supabase for calculation. The code does not write these coordinates to app tables, but retention in hosting infrastructure logs has not been verified. Alarm records may include a technical route reference and route progress, but not the destination details or route path (see section 2.2).</li>
   </ul>
 
   <h3>2.2 Information Collected Automatically</h3>
   <ul>
-    <li><strong>Geographic location:</strong> When you activate proximity alerts, GPS is processed on your device for up to 10 hours or until arrival. We do not store raw GPS coordinates on our servers. Address searches send a rounded approximate region to geocoding providers; reverse geocoding may send the exact coordinates of a map point you select to LocationIQ to return an address. These requests are not stored by Me-Kum.</li>
+    <li><strong>Geographic location:</strong> When you activate proximity alerts, GPS for alert tracking is processed on your device for up to 10 hours or until arrival. Separately, an Autopilot route-options request sends the exact origin and destination coordinates to our route server on Supabase to calculate options. The code does not write these request coordinates to app tables; retention in hosting infrastructure logs has not been verified, so we make no claim about how long such logs are retained. Address searches send a rounded approximate region to geocoding providers; reverse geocoding may send the exact coordinates of a map point you select to LocationIQ to return an address.</li>
     <li><strong>Usage analytics and error reporting:</strong>
       <ul>
         <li>Address searches send the search text and a rounded approximate region (about 1.1 km precision) to geocoding providers to rank results. Me-Kum does not store these request coordinates.</li>
         <li>Map point selection (reverse geocoding) sends the selected point's exact coordinates to LocationIQ to return an address. Me-Kum does not store these request coordinates.</li>
+        <li>Autopilot route-options requests send the exact origin and destination coordinates to our Supabase route server. They are used to calculate options and are not written to app tables; retention of requests or metadata in hosting infrastructure logs has not been verified.</li>
         <li>In-app actions (such as creating a location, activating an alarm, and changing settings) may be used for product analytics. Amplitude events use a random per-install identifier; they do not use your name or contact details, and address-search tracking omits the search text and selected address. When an alarm is activated, a technical session record linked to a pseudonymous installation ID is stored in Supabase. It may include the outcome, alarm/route type, a technical route reference and route progress, app version, language/country, subscription status and system permissions, as well as battery, duration, speed, and GPS quality/continuity metrics. The record does not include raw GPS coordinates, destination names/addresses, or the route path.</li>
         <li>Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
         <li>Error and trace reports are sent to Sentry with a stable pseudonymous installation ID so recurring technical issues can be analyzed. Default PII collection is disabled. Before reports are sent, request query strings, headers, cookies, and bodies are removed; the reported user IP field is replaced with a placeholder. Sentry may still process network metadata needed to receive a report. Session Replay is captured only for sessions with an error, not ordinary sessions, and text, images, and vector content are configured to be masked. This data is used to diagnose technical issues and improve reliability, not for advertising or marketing.</li>
@@ -197,8 +198,8 @@
 
   <h3>4.1 Where Data Is Stored</h3>
   <ul>
-    <li><strong>Local (on your device):</strong> Saved destinations, routes, their coordinates, and personal settings are stored on your device and are not stored on our servers.</li>
-    <li><strong>Cloud (Supabase):</strong> Aggregate action counts, service data, and technical alarm-session records linked to a pseudonymous installation ID, as described in section 2.2. These records do not store raw GPS coordinates, destination names/addresses, or the route path. Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
+    <li><strong>Local (on your device):</strong> Saved destinations, routes, and personal settings are stored on your device. Route-option searches send origin and destination coordinates to the server for calculation, but they are not written to app tables.</li>
+    <li><strong>Cloud (Supabase):</strong> Aggregate action counts, service data, and technical alarm-session records linked to a pseudonymous installation ID, as described in section 2.2. Autopilot requests transmit origin and destination coordinates to the server; actual retention of hosting infrastructure logs has not been verified. Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
     <li><strong>Sentry:</strong> Receives pseudonymous error/trace reports and masked Session Replay only for sessions with an error. Default PII collection is disabled and request query strings, headers, cookies, and bodies are removed before reporting; Sentry may process network metadata needed to receive reports.</li>
   </ul>
 
@@ -206,7 +207,7 @@
   <ul>
     <li><strong>Encryption:</strong> All server communication is encrypted (SSL/TLS)</li>
     <li><strong>Pseudonymous identifiers:</strong> Analytics and error reports may use an installation ID that links events from the same installation; they are not fully anonymous.</li>
-    <li><strong>No server-side storage of destination details or route paths:</strong> We do not store raw GPS coordinates, saved destination names/addresses, or route paths on our servers. Alarm records may include a technical route reference and route progress, as described in section 2.2. Geocoding requests may transmit an approximate search region or selected map-point coordinates to the providers listed above.</li>
+    <li><strong>Coordinate handling:</strong> GPS used for alarm tracking is processed on-device. Autopilot requests send origin and destination coordinates to Supabase for calculation; the code does not write them to app tables. Retention of requests or metadata in hosting infrastructure logs has not been verified. Alarm records may include a technical route reference and route progress, as described in section 2.2.</li>
     <li><strong>No data selling:</strong> We will never sell your personal data</li>
   </ul>
 
@@ -219,7 +220,7 @@
     <li><strong>Amplitude:</strong> Product analytics using a random per-install identifier; address-search events omit the search text and selected address</li>
     <li><strong>Sentry:</strong> Error/trace reporting with a stable pseudonymous installation ID, plus masked Session Replay only for sessions with an error. Default PII collection is disabled and request query strings, headers, cookies, and bodies are removed before reporting.</li>
     <li><strong>RevenueCat:</strong> Subscription management. Billing is handled by Apple App Store or Google Play, depending on your platform</li>
-    <li><strong>Supabase:</strong> Cloud infrastructure for analytics and server features, including technical alarm-session records linked to a pseudonymous installation ID</li>
+    <li><strong>Supabase:</strong> Cloud infrastructure for analytics and server features, including processing Autopilot requests containing origin and destination coordinates and technical alarm-session records linked to a pseudonymous installation ID</li>
     <li><strong>Expo / EAS:</strong> App distribution infrastructure</li>
   </ul>
 
@@ -243,6 +244,7 @@
     <li><strong>Alarm diagnostics:</strong> Detailed alarm-reliability checkpoints are not collected in the current app version.</li>
     <li><strong>Sentry reports and session replays:</strong> Retention is governed by Sentry's service settings and policies.</li>
     <li><strong>Local user data:</strong> Stored on your device. Uninstalling removes local app data, but does not guarantee deletion of information already transferred to third-party services.</li>
+    <li><strong>Autopilot requests:</strong> The code does not write request coordinates to app tables; hosting infrastructure log-retention periods have not been verified.</li>
   </ul>
 
   <h2>8. Children's Privacy</h2>
@@ -263,7 +265,7 @@
   <p>This policy is governed by the laws of the State of Israel.</p>
 
   <footer>
-    <p>Version 1.8 &nbsp;·&nbsp; Updated: October 15, 2026 &nbsp;·&nbsp; Napigation</p>
+    <p>Version 1.9 &nbsp;·&nbsp; Updated: November 9, 2026 &nbsp;·&nbsp; Napigation</p>
   </footer>
 </div>
 
